@@ -3,7 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sumarauto.web", "sumarauto.web\sumarauto.web.csproj", "{44CA9C1D-801E-4EC9-879D-C1891411811A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataModel", "DataModel", "{CB666E5B-E8F8-417C-BEB0-31A101A8FB0C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{392C4A13-6E5E-459D-BAC3-9845FE30F659}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{77F68CC3-613E-483F-B277-62A31CAE3498}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{91648CEE-4631-481D-9A85-E302B2842E33}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44CA9C1D-801E-4EC9-879D-C1891411811A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CA9C1D-801E-4EC9-879D-C1891411811A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CA9C1D-801E-4EC9-879D-C1891411811A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CA9C1D-801E-4EC9-879D-C1891411811A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
