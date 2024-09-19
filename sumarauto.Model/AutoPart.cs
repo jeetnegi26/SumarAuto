@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace sumarauto.Model
 {
-    public class AutoPart
+    public class AutoPart : Base
     {
         public int PartId { get; set; }
         public string PartName { get; set; }

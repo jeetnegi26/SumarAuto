@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace sumarauto.Model
 {
-    public class Liter
+    public class Liter : Base
     {
         public int LiterId { get; set; }
         public decimal LiterValue { get; set; }
 
         // Navigation properties
-        public ICollection<Engine> Engines { get; set; }
+        public List<AutoPart> AutoPart { get; set; }
     }
 }

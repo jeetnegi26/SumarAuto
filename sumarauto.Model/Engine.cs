@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace sumarauto.Model
 {
-    public class Engine
+    public class Engine : Base
     {
         public int EngineId { get; set; }
         public string EngineType { get; set; }
 
         // Navigation properties
-        public ICollection<MModel> Models { get; set; }
-        public ICollection<Liter> Liters { get; set; }
-        public ICollection<Chassis> Chassis { get; set; }
+        public List<AutoPart> AutoPart { get; set; }
     }
 }

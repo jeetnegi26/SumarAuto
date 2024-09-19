@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace sumarauto.Model
 {
-    public class Chassis
+    public class Chassis : Base
     {
         public int ChassisId { get; set; }
         public string ChassisType { get; set; }
-
-        // Navigation properties
-        public ICollection<MModel> Models { get; set; }
-        public ICollection<Year> Years { get; set; }
-        public ICollection<Engine> Engines { get; set; }
+        public List<AutoPart> AutoPart { get; set; }
     }
 }

@@ -12,6 +12,6 @@ namespace sumarauto.Model
         public string MakeName { get; set; }
 
         // Navigation properties
-        public ICollection<MModel> Models { get; set; }
+        public List<AutoPart> AutoPart { get; set; }
     }
 }
