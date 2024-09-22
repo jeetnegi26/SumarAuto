@@ -13,5 +13,8 @@ namespace sumarauto.web.Controllers
         {
             return View();
         }
+
+        #region Category
+        #endregion
     }
 }

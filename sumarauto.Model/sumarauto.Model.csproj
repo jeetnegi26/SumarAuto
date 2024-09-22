@@ -64,14 +64,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoPart.cs" />
+    <Compile Include="AutoPartImages.cs" />
+    <Compile Include="Banner.cs" />
+    <Compile Include="BannerImages.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Chassis.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Gallery.cs" />
+    <Compile Include="GalleryImage.cs" />
     <Compile Include="Liter.cs" />
     <Compile Include="Make.cs" />
     <Compile Include="MModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Role.cs" />
+    <Compile Include="RoleAssign.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="Year.cs" />
   </ItemGroup>
   <ItemGroup>

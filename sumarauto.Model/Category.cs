@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace sumarauto.Model
+namespace Model
 {
     public class Category : Base
     {
@@ -13,7 +13,6 @@ namespace sumarauto.Model
         public string Title { get; set; }
         [AllowHtml]
         public string Description { get; set; }
-        public List<Make> MyProperty { get; set; }
 
     }
 }

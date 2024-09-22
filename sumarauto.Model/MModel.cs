@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
-namespace sumarauto.Model
+namespace Model
 {
     public class MModel : Base
     {
-        public int ModelId { get; set; }
-        public string ModelName { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        [AllowHtml]
+        public string Description { get; set; }
     }
 }
