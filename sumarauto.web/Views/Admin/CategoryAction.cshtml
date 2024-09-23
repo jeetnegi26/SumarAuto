@@ -4,7 +4,20 @@
     ViewBag.Title = "CategoryAction";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
-
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<style>
+    .ql-toolbar.ql-snow {
+        background-color: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem .5rem 0 0;
+        padding: 8px;
+    }
+    .ql-container.ql-snow {
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 .5rem .5rem;
+    }
+</style>
 <div class="product-container py-2 dow_page_con">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
@@ -25,6 +38,7 @@
             <input type="text" class="d-none" name="CreatedBy" value="@Model.CreatedBy" />
             <input type="text" class="d-none" name="CreatedOn" value="@Model.CreatedOn" />
             <input type="text" class="d-none" name="Image" value="@Model.Image" />
+            <input type="text" class="d-none" name="NewImage" id="NewImage" value="" />
             <div class="row">
                 <div class="col-lg-8 col-12">
                     <div class="card mb-4">
@@ -35,29 +49,24 @@
                                     <input type="text" value="@Model.Title" name="Title" class="form-control" placeholder="Enter Title">
                                 </div>
                                 <div class="mb-3">
+                                    <input type="hidden" id="editor-content" name="Description" value="@Model.Description" />
+                                    <label class="form-label"> Overview</label>
+                                    <div class="pb-8" id="editor"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Order</label>
+                                    <input type="text" value="@Model.DisplayOrder" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Image Upload</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" required>
+                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
                                             <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select" name="Status" aria-label="Default select example">
-                                        @if (Model.Id > 0)
-                                        {
-                                            <option @(Model.Status == true ? "selected" : "") value="true">Published</option>
-                                            <option @(Model.Status == false ? "selected" : "") value="false">Unpublished</option>
-                                        }
-                                        else
-                                        {
-                                            <option selected value="true">Published</option>
-                                            <option value="false">Unpublished</option>
-                                        }
-                                    </select>
-                                </div>
+
                                 <div class="d-grid">
                                     @if (Model.Id > 0)
                                     {
@@ -82,3 +91,165 @@
         </form>
     </div>
 </div>
+
+<script>
+    var quill;
+    var Description = @Html.Raw(Json.Encode(Model.Description));
+    if ($("#editor").length) {
+        quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ['link', 'image'],
+                ]
+            }
+        });
+        if (Description != null && Description.length > 2) {
+            quill.clipboard.dangerouslyPasteHTML(Description);
+        }
+    }
+
+    $("#Create").validate({
+        rules: {
+            Title: {
+                required: true,
+            },
+        },
+        messages: {
+            Title: {
+                required: '*Title is required',
+            },
+        }
+    });
+    const CreateBtn = document.getElementById("CreateBtn");
+    if (CreateBtn) {
+            CreateBtn.addEventListener("click", function () {
+            const spinnerborder = document.querySelector(".spinner-border");
+            spinnerborder.classList.remove("d-none");
+            CreateBtn.setAttribute("disabled", true);
+
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
+
+            var formData = $("#Create").serialize();
+            if ($("#Create").valid()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CategoryAction")',
+                data: formData,
+                success: function (response) {
+                    if (response.Success == true) {
+                        if (response.Message != null && response.Message.length > 0 && uploadedFile.length > 0) {
+                            SaveImgOnServer(response.Message);
+                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Category saved successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/Category";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                },
+                complete: function (response) {
+                    spinnerborder.classList.add("d-none");
+                    CreateBtn.removeAttribute("disabled");
+                },
+            });
+        }
+        else {
+            spinnerborder.classList.add("d-none");
+            CreateBtn.removeAttribute("disabled");
+        }
+        });
+    }
+
+    //File upload
+    const uploadedFile = [];
+    document.getElementById('inputGroupFile04').addEventListener('change', function (e) {
+        let fileName = document.getElementById('inputGroupFile04').files[0].name;
+        let customFileLabel = e.target.parentElement.querySelector('.custom-file-label');
+        if (customFileLabel) {
+            customFileLabel.innerText = fileName;
+        }
+        const files = e.target.files;
+
+        if (uploadedFile.length > 0) {
+            const fileId = uploadedFile[0].fileId;
+            const fileIndex = uploadedFile.findIndex(item => item.fileId === fileId);
+            if (fileIndex !== -1) {
+                uploadedFile.splice(fileIndex, 1);
+            } else {
+                console.log(`File with fileId '${fileId}' not found in uploadedFile.`);
+            }
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = `file${i}`;
+                uploadedFile.push({ file, fileId });
+                $("#NewImage").val(file.name);
+            }
+        }
+        else {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = `file${i}`;
+                uploadedFile.push({ file, fileId });
+                $("#NewImage").val(file.name);
+            }
+        }
+    });
+    function SaveImgOnServer(prefix) {
+        const formData = new FormData(document.getElementById('Create'));
+        if (uploadedFile.length > 0) {
+            formData.append('Files', uploadedFile[0].file);
+                    formData.append('Prefix', prefix);
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("UploadComponent", "Image")',
+             data: formData,
+             dataType: 'json',
+             contentType: false,
+             processData: false
+         })
+         .done(function (response) {
+             if (response.Success) {
+                 return;
+             } else {
+                 Swal.fire({
+                     icon: 'error',
+                     title: 'Oops...',
+                     text: response.Message
+                 });
+             }
+         })
+         .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Oops! The images could not be saved on the server.'
+             });
+         });
+        }
+        return;
+    }
+</script>

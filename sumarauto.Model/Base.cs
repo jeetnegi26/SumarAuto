@@ -14,6 +14,7 @@ namespace Model
         public DateTime EditedOn { get; set; }
         public bool Status { get; set; }
         public string UserHostAdd { get; set; }
+        public string DisplayOrder { get; set; }
         public string RewriteUrl { get; set; }
         [NotMapped]
         public string CreatedOnString { get; set; }

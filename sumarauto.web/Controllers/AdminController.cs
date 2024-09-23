@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 using Model;
 using sumarauto.DataModel;
 
@@ -34,6 +35,7 @@ namespace sumarauto.web.Controllers
                         {
                             Category category = new Category
                             {
+                                Id = (int)reader["Id"],
                                 Title = Convert.ToString(reader["Title"]),
                                 Image = Convert.ToString(reader["Image"]),
                                 Description = Convert.ToString(reader["Description"]),
@@ -42,7 +44,7 @@ namespace sumarauto.web.Controllers
                                 CreatedOnString = ((DateTime)reader["CreatedOn"]).ToString("dd MMM yyyy"),
                                 EditedOnString = ((DateTime)reader["EditedOn"]).ToString("dd MMM yyyy"),
                             };
-
+                            categories.Add(category);
                         }
                     }
                 }
@@ -58,6 +60,26 @@ namespace sumarauto.web.Controllers
             var data = new Category();
             try
             {
+                if (Id > 0)
+                {
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        var command = new SqlCommand("GetCategoryById", connection);
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@Id", Id);
+                        connection.Open();
+                        var reader = command.ExecuteReader();
+                        if (reader.Read())
+                        {
+                            data.Id = (int)reader["Id"];
+                            data.Title = Convert.ToString(reader["Title"]);
+                            data.Image = Convert.ToString(reader["Image"]);
+                            data.Description = Convert.ToString(reader["Description"]);
+                            data.DisplayOrder = Convert.ToString(reader["DisplayOrder"]);
+                        }
+                    }
+                    return View(data);
+                }
                 return View(data);
             }
             catch (Exception)
@@ -69,14 +91,39 @@ namespace sumarauto.web.Controllers
         public ActionResult CategoryAction(Category category)
         {
             var data = new Category();
+            string message = DateTime.Now.ToString("yyyyMMddHHmmss");
+            if (category.NewImage != null && category.NewImage != "" && category.NewImage.Length > 0)
+            {
+                category.Image = "/Content/Component/" + message + category.NewImage;
+            }
             try
             {
-                return View(data);
+                using (var connection = new SqlConnection(connectionString)) {
+                    using(var command = new SqlCommand("CategoryAction", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@Id", category.Id);
+                        command.Parameters.AddWithValue("@Title", category.Title);
+                        command.Parameters.AddWithValue("@Description", (object)category.Description ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@Image", (object)category.Image ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CreatedBy", "Admin");
+                        command.Parameters.AddWithValue("@HostAddress", Request.UserHostAddress);
+                        command.Parameters.AddWithValue("@DisplayOrder", (object)category.DisplayOrder ?? "0");
+                        var requestparam = new SqlParameter("@Result", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        command.Parameters.Add(requestparam);
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        int result = (int)requestparam.Value;
+                        return Json(new { Success = result > 0 ? true : false, Message = message }, JsonRequestBehavior.AllowGet);
+                    }
+                }
             }
             catch (Exception)
             {
-
-                throw;
+                return Json(new { Success = false, Message = "" }, JsonRequestBehavior.AllowGet); ;
             }
         }
         public ActionResult CategoryStatus()
