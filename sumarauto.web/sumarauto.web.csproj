@@ -200,6 +200,7 @@
     <Content Include="Views\Admin\CategoryAction.cshtml" />
     <Content Include="Views\Admin\AutoPart.cshtml" />
     <Content Include="Views\Admin\AutoPartAction.cshtml" />
+    <Content Include="Views\Admin\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -238,6 +239,10 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\sumarauto.DataModel\sumarauto.DataModel.csproj">
+      <Project>{b67adee0-345b-40b1-829f-d198861e8787}</Project>
+      <Name>sumarauto.DataModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\sumarauto.Model\sumarauto.Model.csproj">
       <Project>{70a37b63-faf5-43dd-90b4-13c12b7a2630}</Project>
       <Name>sumarauto.Model</Name>
@@ -261,7 +266,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64627</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44390/</IISUrl>
+          <IISUrl>http://localhost:44390/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
