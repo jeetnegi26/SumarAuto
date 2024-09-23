@@ -1,0 +1,20 @@
+
+@font-face {
+    font-family: 'com';
+    src: url('../fonts/cormorantgaramond-bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'ver';
+    src: url('../fonts/verdana.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'rail';
+    src: url('../fonts/raleway-variablefont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'irail';
+    src: url('../fonts/raleway-italic-variablefont_wght.ttf') format('truetype');
+}

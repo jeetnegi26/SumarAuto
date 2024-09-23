@@ -127,6 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\adminstyle.min.css" />
+    <Content Include="Content\all.css" />
+    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -135,6 +137,7 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap-reboot.rtl.css" />
     <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-select.min.css" />
     <Content Include="Content\bootstrap-utilities.css" />
     <Content Include="Content\bootstrap-utilities.min.css" />
     <Content Include="Content\bootstrap-utilities.rtl.css" />
@@ -143,6 +146,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\fonts.css" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.svg" />
     <Content Include="Content\icons\tabler-icons\tabler-icons.css" />
     <Content Include="Content\images\backgrounds\rocket.png" />
@@ -150,10 +154,14 @@
     <Content Include="Content\images\logos\favicon.png" />
     <Content Include="Content\images\logos\logo.png" />
     <Content Include="Content\images\profile\user-1.jpg" />
+    <Content Include="Content\jquery-ui.min.css" />
+    <Content Include="Content\owl.carousel.min.css" />
+    <Content Include="Content\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\app.min.js" />
+    <Content Include="Scripts\bootstrap-select.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -164,6 +172,7 @@
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.ttf" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff2" />
+    <Content Include="Scripts\bootstrap-select.min.js.map" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -171,11 +180,13 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\owl.carousel.min.js" />
     <Content Include="Scripts\sidebarmenu.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

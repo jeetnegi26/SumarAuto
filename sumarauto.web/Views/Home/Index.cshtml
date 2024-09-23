@@ -2,32 +2,397 @@
     ViewBag.Title = "Home Page";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<script src="~/Scripts/bootstrap-select.min.js"></script>
+
+<style>
+    button:focus {
+        outline: none !important;
+    }
+
+    .custom-dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .selected-option {
+        padding: 10px;
+        border-bottom: 1px solid var(--bg);
+        cursor: pointer;
+    }
+
+    .dropdown-options {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: var(--text);
+        border: 0;
+        width: 100%;
+    }
+
+    .custom-dropdown.open .dropdown-options {
+        display: block;
+    }
+
+    .custom-dropdown label {
+        display: block;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .custom-dropdown label:hover {
+            background-color: #f0f0f0;
+        }
+
+
+
+    .title {
+        background: rgba(255, 255, 255, 0.7);
+        color: #333;
+        position: fixed;
+        text-align: right;
+        top: 0;
+        right: 0;
+        padding: 10px 15px;
+        margin: 0;
+        z-index: 100;
+    }
+
+    .slider {
+        position: relative;
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .buttons-container button:focus {
+        outline: none;
+    }
+
+    .slide {
+        background-position: center center;
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        height: 100%;
+        width: 100%;
+    }
+
+        .slide.active {
+            transform: translateX(-100%);
+        }
+
+        .slide .info {
+            color: var(--text);
+            padding: 20px 15px;
+            position: absolute;
+            opacity: 0.1;
+            top: 40%;
+            left: 20%;
+            text-align: left;
+            width: 60%;
+            max-width: 100%;
+        }
+
+        .slide.active .info {
+            opacity: 1;
+            transform: translateY(-40px);
+            transition: all 0.5s ease-in-out 0.8s;
+        }
+
+        .slide .info h1 {
+            margin: 10px 0;
+            border-bottom: 2px solid var(--text);
+            font-size: 4rem;
+        }
+
+        .slide .info h4 {
+            font-size: 2rem;
+        }
+
+        .slide .info h5 {
+            font-size: 1.5rem;
+        }
+
+
+
+        .slide .info p {
+            letter-spacing: 1px;
+        }
+
+        .slide .info a {
+            color: var(--lgold);
+        }
+
+    .eraser {
+        background: #f5f5f5;
+        position: absolute;
+        transition: transform 0.5s ease-in-out;
+        opacity: 0.95;
+        top: 0;
+        left: 100%;
+        height: 100%;
+        width: 100%;
+        z-index: 100;
+    }
+
+        .eraser.active {
+            transform: translateX(-100%);
+        }
+
+    .buttons-container {
+        position: absolute;
+        bottom: 10%;
+        right: 60px;
+        /*   display: flex; */
+    }
+
+        .buttons-container button {
+            border: 2px solid #fff;
+            background-color: transparent;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 30px;
+            margin-right: 10px;
+        }
+
+            .buttons-container button:hover {
+                background-color: #fff;
+                color: #A9A9A9;
+                opacity: 0.9;
+            }
+
+
+    @@media (max-width: 500px) {
+        .slide .info {
+            left: 10%;
+            width: 80%;
+            top: 25%;
+        }
+
+            .slide .info h1 {
+                font-size: 3rem;
+            }
+
+            .slide .info h4 {
+                font-size: 1.5rem;
+            }
+
+            .slide .info h5 {
+                font-size: 1rem;
+            }
+
+            .slide .info p {
+                font-size: 0.8rem;
+            }
+
+            .slide .info a {
+                font-size: 0.8rem;
+            }
+    }
+
+
+    .banner-box {
+        position: relative;
+    }
+
+    .overlap-form {
+        position: absolute;
+        bottom: -6%;
+        left: 2%;
+        z-index: 1;
+        color: #1e1e1e;
+        width: 95vw;
+    }
+
+        .overlap-form h6 {
+            padding-left: 3px;
+        }
+
+        .overlap-form select {
+            width: 100%;
+            border: 0;
+            color: var(--bg);
+            background-color: var(--text);
+            border-bottom: 1px solid var(--bg);
+            padding: 8px 0;
+        }
+
+    .form_book {
+        background: var(--text);
+        padding: 20px 33px;
+        border-radius: 50px;
+    }
+
+    .boo-btn {
+        align-self: center;
+        text-align: center;
+    }
+
+        .boo-btn button {
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+    .prop-feat-head {
+        text-align: center;
+        padding: 8rem 0 4rem;
+    }
+
+    .head-home {
+        display: inline-block;
+        border-bottom: 2px solid #FDE9A9;
+        margin-bottom: 5px;
+        padding: 4px 25px;
+    }
+
+    .subhead-home {
+        text-align: center;
+    }
+</style>
+
+<div class="banner-box">
+    <!-- <h5 class="title">Based on Florin-pop's tutorial https://www.florin-pop.com/blog/2019/03/full-page-slider/</h5> -->
+    <div class="slider">
+        <div class="slider-container">
+            <div class="slide active" style="background-image: url('../../content/images/b4.png');">
+                <div class="info">
+                    <h4>THE</h4>
+                    <h1>DUTCHES</h1>
+                    <h5>Downtown, UAE</h5>
+                    <p>
+                        Dubai’s most Exclusive Duplex  Penthous
+                        e available for sale at
+                        88 Mill aed in Downtown.
+                    </p>
+                    <a>View now <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('../../content/images/b2.png');">
+                <div class="info">
+                    <h1>Grand bazaar</h1>
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Amet, vero earum perspiciatis officia</p>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('../../content/images/b3.jpg');">
+                <div class="info">
+                    <h1>Turkish delight & confectionary</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt recusandae unde autem</p>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('../../content/images/b1.jpg');">
+                <div class="info">
+                    <h1>Grand bazaar</h1>
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Amet, vero earum perspiciatis officia</p>
+                </div>
+            </div>
+        </div>
+        <div class="eraser"></div>
+        <div class="buttons-container">
+            <button id="previous"><i class="fas fa-chevron-left"></i></i></button>
+            <button id="next"><i class="fas fa-chevron-right"></i></button>
+        </div>
     </div>
-</main>
+    <!-- end banner -->
+    <!-- form_lebal -->
+    <section class="overlap-form">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form_book">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-2 col-12 search-box">
+                            <h6 class="date">Category</h6>
+                            <select name="Category" id="Category" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose"> Air hose</option>
+                                <option value="Air hose"> Air hose</option>
+                                <option value="Air hose"> Air hose</option>
+                                <option value="Air hose"> Air hose</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12 search-box">
+                            <h6 class="date">Make</h6>
+                            <select name="Make" id="Make" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose"> Alfa Romeo</option>
+                                <option value="Air hose"> Audi</option>
+                                <option value="Air hose"> Aston Martin</option>
+                                <option value="Air hose"> Mazda Japan Ford</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Model</h6>
+                            <select name="Make" id="Make" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose"> RSX-TYPE-S</option>
+                                <option value="Air hose"> RL</option>
+                                <option value="Air hose"> TSX</option>
+                                <option value="Air hose"> TS215</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Years</h6>
+                            <select name="Years" id="Years" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose"> 2020</option>
+                                <option value="Air hose"> 2021</option>
+                                <option value="Air hose"> 2022</option>
+                                <option value="Air hose"> 2023</option>
+                                <option value="Air hose"> 2024</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Engine</h6>
+                            <select name="Engine" id="Engine" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose"> K24W7</option>
+                                <option value="Air hose"> K44W8</option>
+                                <option value="Air hose"> L24W7</option>
+                                <option value="Air hose"> A24W7</option>
+                                <option value="Air hose"> G24W7</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Liters</h6>
+                            <select name="Liters" id="Liters" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose">  2.4L</option>
+                                <option value="Air hose">  3.4L</option>
+                                <option value="Air hose">  1.4L</option>
+                                <option value="Air hose">  2.5L</option>
+                                <option value="Air hose">  3.4L</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Chassis</h6>
+                            <select name="Chassis" id="Chassis" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                                <option value="Air hose"> DE2F</option>
+                                <option value="Air hose"> 4D2F</option>
+                                <option value="Air hose"> PE2F</option>
+                                <option value="Air hose"> DL2F</option>
+                                <option value="Air hose"> DE4O</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-12 search-box">
+                            <h6 class="date">Search</h6>
+                            <input type="text" class="form-control" id="">
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 boo-btn search-box">
+                            <button class="book_btn" type="button"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- end form_lebal -->
+    <!-- end form_lebal -->
+</div>
