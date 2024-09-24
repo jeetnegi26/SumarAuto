@@ -2,11 +2,528 @@
     ViewBag.Title = "Home Page";
 }
 
-<link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />
 
-<script src="~/Scripts/bootstrap-select.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
 
 <style>
+
+    /*banner css starts*/
+
+    /* Arrows */
+    .slick-prev,
+    .slick-next {
+        font-size: 0;
+        line-height: 0;
+        position: absolute;
+        top: 50%;
+        display: block;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        -webkit-transform: translate(0, -50%);
+        -ms-transform: translate(0, -50%);
+        transform: translate(0, -50%);
+        cursor: pointer;
+        color: transparent;
+        border: none;
+        outline: none;
+        background: transparent;
+    }
+
+        .slick-prev:hover,
+        .slick-prev:focus,
+        .slick-next:hover,
+        .slick-next:focus {
+            color: transparent;
+            outline: none;
+            background: transparent;
+        }
+
+            .slick-prev:hover:before,
+            .slick-prev:focus:before,
+            .slick-next:hover:before,
+            .slick-next:focus:before {
+                opacity: 1;
+            }
+
+        .slick-prev.slick-disabled:before,
+        .slick-next.slick-disabled:before {
+            opacity: 0.25;
+        }
+
+        .slick-prev:before,
+        .slick-next:before {
+            font-family: "slick";
+            font-size: 20px;
+            line-height: 1;
+            opacity: 0.75;
+            color: white;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+    .slick-prev {
+        left: -25px;
+    }
+
+    [dir="rtl"] .slick-prev {
+        right: -25px;
+        left: auto;
+    }
+
+    .slick-prev:before {
+        content: "←";
+    }
+
+    [dir="rtl"] .slick-prev:before {
+        content: "→";
+    }
+
+    .slick-next {
+        right: -25px;
+    }
+
+    [dir="rtl"] .slick-next {
+        right: auto;
+        left: -25px;
+    }
+
+    .slick-next:before {
+        content: "→";
+    }
+
+    [dir="rtl"] .slick-next:before {
+        content: "←";
+    }
+
+    /* Dots */
+    .slick-dotted.slick-slider {
+        margin-bottom: 30px;
+    }
+
+    .slick-dots {
+        position: absolute;
+        bottom: -25px;
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        text-align: center;
+    }
+
+        .slick-dots li {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+            .slick-dots li button {
+                font-size: 0;
+                line-height: 0;
+                display: block;
+                width: 20px;
+                height: 20px;
+                padding: 5px;
+                cursor: pointer;
+                color: transparent;
+                border: 0;
+                outline: none;
+                background: transparent;
+            }
+
+                .slick-dots li button:hover,
+                .slick-dots li button:focus {
+                    outline: none;
+                }
+
+                    .slick-dots li button:hover:before,
+                    .slick-dots li button:focus:before {
+                        opacity: 1;
+                    }
+
+                .slick-dots li button:before {
+                    font-family: "slick";
+                    font-size: 6px;
+                    line-height: 20px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 20px;
+                    height: 20px;
+                    content: "•";
+                    text-align: center;
+                    opacity: 0.25;
+                    color: black;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+
+            .slick-dots li.slick-active button:before {
+                opacity: 0.75;
+                color: black;
+            }
+
+    * Slick Slider */
+    /* ==== Main CSS === */
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    .img-fill {
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        position: relative;
+        text-align: center;
+    }
+
+        .img-fill img {
+            height: 100%;
+            min-width: 100%;
+            position: relative;
+            display: inline-block;
+            max-width: none;
+        }
+
+    *,
+    *:before,
+    *:after {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.04);
+    }
+
+    .Grid1k {
+        padding: 0 15px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .blocks-box,
+    .slick-slider {
+        margin: 0 0;
+        padding: 0 !important;
+    }
+
+    .slick-slide {
+        float: left /* If RTL Make This Right */;
+        padding: 0px;
+    }
+
+    /* ==== Slider Style === */
+    .Modern-Slider {
+        position: relative;
+    }
+
+    .Gallery-Slider {
+        position: relative;
+        overflow: hidden;
+        background: red;
+    }
+
+    .Modern-Slider .Gallery-Slider {
+        background: #000;
+    }
+
+    .Modern-Slider .NextArrow {
+        position: absolute;
+        top: 50%;
+        right: 0px;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 0 none;
+        margin-top: -22.5px;
+        text-align: center;
+        font: 20px/45px FontAwesome;
+        color: #fff;
+        z-index: 5;
+        transition: all 1s;
+        opacity: 0;
+    }
+
+        .Modern-Slider .NextArrow:before {
+            content: "\f105";
+        }
+
+    .Modern-Slider .PrevArrow {
+        position: absolute;
+        top: 50%;
+        left: 0px;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 0 none;
+        margin-top: -22.5px;
+        text-align: center;
+        font: 20px/45px FontAwesome;
+        color: #fff;
+        z-index: 5;
+        opacity: 0;
+        transition: all 1s;
+    }
+
+        .Modern-Slider .PrevArrow:before {
+            content: "\f104";
+        }
+
+    .Modern-Slider .Gallery-Slider:hover .PrevArrow {
+        opacity: 1;
+    }
+
+    .Modern-Slider .Gallery-Slider:hover .NextArrow {
+        opacity: 1;
+    }
+
+    .Modern-Slider .Gallery-Slider .img-fill {
+         height: 70vh; /* Removed 
+        background: #000;
+        /*min-height: 400px;*/ /* Added */
+        /*max-height: 300px;*/ /* Added */
+
+        display: flex !important; /* Added */
+        justify-content: center; /* Added */
+    }
+
+    .Modern-Slider .img-fill:before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.5);
+        position: absolute;
+    }
+
+    .Modern-Slider .img-fill img {
+        filter: blur(5px);
+    }
+
+    .Modern-Slider .img-fill .info {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        z-index: 3;
+        top: 30%;
+        padding: 0 20px;
+    }
+
+    .Gallery-Slider .Slick-Gallery:hover .NextArrow {
+        opacity: 1;
+    }
+
+    .Modern-Slider .img-fill h3 {
+        font: 22px/50px;
+        color: #fff;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        visibility: hidden;
+        text-transform: uppercase;
+    }
+
+    .Modern-Slider .img-fill p {
+        max-width: 650px;
+        margin: auto;
+        margin-top: 15px;
+        font: 14px/22px;
+        color: #fff;
+        height: 66px;
+        overflow: hidden;
+        visibility: hidden;
+        text-transform: capitalize;
+    }
+
+    .Modern-Slider .slick-active h3 {
+        animation: fadeInDown 1s both 0.5s;
+        visibility: visible;
+    }
+
+    .Modern-Slider .slick-active p {
+        animation: fadeInUp 1s both 1s;
+        visibility: visible;
+    }
+
+    .Modern-Slider .slick-dots {
+        position: absolute;
+        height: 50px;
+        bottom: 0px;
+        width: 100%;
+        left: 0px;
+        padding: 0px;
+        margin: 0px;
+        list-style-type: none;
+        text-align: center;
+    }
+
+        .Modern-Slider .slick-dots li {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background: Transparent;
+            -webkit-transition: all 0.5s;
+            transition: all 0.5s;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin: 0 2.5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+            .Modern-Slider .slick-dots li.slick-active {
+                background: #fff;
+                -webkit-box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.28);
+                box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.28);
+            }
+
+            .Modern-Slider .slick-dots li a {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                width: 120px;
+                height: 75px;
+                display: block;
+                visibility: hidden;
+                border: 4px solid rgba(0, 0, 0, 0.5);
+                margin-left: -60px;
+                margin-bottom: 15px;
+                -webkit-transition: visibility 0.5s linear 0.5s;
+                transition: visibility 0.5s linear 0.5s;
+                -webkit-animation: fadeOut 0.5s both;
+                animation: fadeOut 0.5s both;
+            }
+
+                .Modern-Slider .slick-dots li a:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    margin-left: -8px;
+                    top: 100%;
+                    width: 0;
+                    height: 0;
+                    border: 8px solid Transparent;
+                    border-top-color: rgba(0, 0, 0, 0.5);
+                    margin-top: 4px;
+                }
+
+            .Modern-Slider .slick-dots li:hover a {
+                visibility: visible;
+                -webkit-transition-delay: 0s;
+                transition-delay: 0s;
+                -webkit-animation: fadeIn 0.5s both;
+                animation: fadeIn 0.5s both;
+            }
+
+            .Modern-Slider .slick-dots li a img {
+                width: 100%;
+                height: 100%;
+            }
+
+    /* ==== Slick Slider Css Ruls === */
+    .slick-slider {
+        position: relative;
+        display: block;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -khtml-user-select: none;
+        -ms-touch-action: pan-y;
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .slick-list {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+        .slick-list:focus {
+            outline: none;
+        }
+
+        .slick-list.dragging {
+            cursor: hand;
+        }
+
+    .slick-slider .slick-track,
+    .slick-slider .slick-list {
+        -webkit-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    .slick-track {
+        position: relative;
+        top: 0;
+        left: 0;
+        display: block;
+    }
+
+        .slick-track:before,
+        .slick-track:after {
+            display: table;
+            content: "";
+        }
+
+        .slick-track:after {
+            clear: both;
+        }
+
+    .slick-loading .slick-track {
+        visibility: hidden;
+    }
+
+    .slick-slide {
+        display: none;
+        float: left /* If RTL Make This Right */;
+        height: 100%;
+        min-height: 1px;
+    }
+
+        .slick-slide.dragging img {
+            pointer-events: none;
+        }
+
+    .slick-initialized .slick-slide {
+        display: block;
+    }
+
+    .slick-loading .slick-slide {
+        visibility: hidden;
+    }
+
+    .slick-vertical .slick-slide {
+        display: block;
+        height: auto;
+        border: 1px solid transparent;
+    }
+
+
+    /*Banner Css ends*/
+
+
+
+
+
+
     button:focus {
         outline: none !important;
     }
@@ -20,6 +537,24 @@
         padding: 10px;
         border-bottom: 1px solid var(--bg);
         cursor: pointer;
+    }
+
+    .search-box {
+        padding: 0 2px;
+    }
+
+    .search-box .bootstrap-select {
+        border: 1px solid var(--bg);
+        width: 100% !important;
+        color: var(--bg);
+    }
+
+        .search-box .bootstrap-select .dropdown-toggle {
+            color: var(--bg);
+        }
+
+    .bootstrap-select .dropdown-toggle .filter-option {
+        font-size: 12px;
     }
 
     .dropdown-options {
@@ -60,72 +595,9 @@
         z-index: 100;
     }
 
-    .slider {
-        position: relative;
-        overflow: hidden;
-        height: 100vh;
-        width: 100vw;
-    }
-
     .buttons-container button:focus {
         outline: none;
     }
-
-    .slide {
-        background-position: center center;
-        background-size: cover;
-        position: absolute;
-        top: 0;
-        left: 100%;
-        height: 100%;
-        width: 100%;
-    }
-
-        .slide.active {
-            transform: translateX(-100%);
-        }
-
-        .slide .info {
-            color: var(--text);
-            padding: 20px 15px;
-            position: absolute;
-            opacity: 0.1;
-            top: 40%;
-            left: 20%;
-            text-align: left;
-            width: 60%;
-            max-width: 100%;
-        }
-
-        .slide.active .info {
-            opacity: 1;
-            transform: translateY(-40px);
-            transition: all 0.5s ease-in-out 0.8s;
-        }
-
-        .slide .info h1 {
-            margin: 10px 0;
-            border-bottom: 2px solid var(--text);
-            font-size: 4rem;
-        }
-
-        .slide .info h4 {
-            font-size: 2rem;
-        }
-
-        .slide .info h5 {
-            font-size: 1.5rem;
-        }
-
-
-
-        .slide .info p {
-            letter-spacing: 1px;
-        }
-
-        .slide .info a {
-            color: var(--lgold);
-        }
 
     .eraser {
         background: #f5f5f5;
@@ -166,34 +638,7 @@
             }
 
 
-    @@media (max-width: 500px) {
-        .slide .info {
-            left: 10%;
-            width: 80%;
-            top: 25%;
-        }
-
-            .slide .info h1 {
-                font-size: 3rem;
-            }
-
-            .slide .info h4 {
-                font-size: 1.5rem;
-            }
-
-            .slide .info h5 {
-                font-size: 1rem;
-            }
-
-            .slide .info p {
-                font-size: 0.8rem;
-            }
-
-            .slide .info a {
-                font-size: 0.8rem;
-            }
-    }
-
+   
 
     .banner-box {
         position: relative;
@@ -210,15 +655,16 @@
 
         .overlap-form h6 {
             padding-left: 3px;
+            color: var(--bg);
         }
 
         .overlap-form select {
             width: 100%;
-            border: 0;
+            border: 1px solid var(--bg);
             color: var(--bg);
             background-color: var(--text);
             border-bottom: 1px solid var(--bg);
-            padding: 8px 0;
+            padding: 8px 2px;
         }
 
     .form_book {
@@ -255,60 +701,45 @@
     .subhead-home {
         text-align: center;
     }
+
+    .search-text {
+        background-color: var(--text);
+        padding: 6px 2px;
+        border: 1px solid var(--bg);
+        color: var(--bg);
+        width: 100%
+    }
+
+    @@media (max-width: 500px) {
+        .overlap-form {
+            position: static;
+            width: 100%;
+        }
+
+        .search-container{
+            padding:0;
+        }
+
+        .form_book {
+            border-radius: 0;
+        }
+        .search-box {
+            padding-bottom: 1rem;
+        }
+    }
+
 </style>
 
 <div class="banner-box">
-    <!-- <h5 class="title">Based on Florin-pop's tutorial https://www.florin-pop.com/blog/2019/03/full-page-slider/</h5> -->
-    <div class="slider">
-        <div class="slider-container">
-            <div class="slide active" style="background-image: url('../../content/images/b4.png');">
-                <div class="info">
-                    <h4>THE</h4>
-                    <h1>DUTCHES</h1>
-                    <h5>Downtown, UAE</h5>
-                    <p>
-                        Dubai’s most Exclusive Duplex  Penthous
-                        e available for sale at
-                        88 Mill aed in Downtown.
-                    </p>
-                    <a>View now <i class="bi bi-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="slide" style="background-image: url('../../content/images/b2.png');">
-                <div class="info">
-                    <h1>Grand bazaar</h1>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Amet, vero earum perspiciatis officia</p>
-                </div>
-            </div>
-            <div class="slide" style="background-image: url('../../content/images/b3.jpg');">
-                <div class="info">
-                    <h1>Turkish delight & confectionary</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt recusandae unde autem</p>
-                </div>
-            </div>
-            <div class="slide" style="background-image: url('../../content/images/b1.jpg');">
-                <div class="info">
-                    <h1>Grand bazaar</h1>
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Amet, vero earum perspiciatis officia</p>
-                </div>
-            </div>
-        </div>
-        <div class="eraser"></div>
-        <div class="buttons-container">
-            <button id="previous"><i class="fas fa-chevron-left"></i></i></button>
-            <button id="next"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </div>
-    <!-- end banner -->
     <!-- form_lebal -->
     <section class="overlap-form">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 search-container">
                 <form class="form_book">
                     <div class="row">
                         <div class="col-lg-2 col-md-2 col-12 search-box">
                             <h6 class="date">Category</h6>
-                            <select name="Category" id="Category" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Category" id="Category" class="selectpicker">
                                 <option value="Air hose"> Air hose</option>
                                 <option value="Air hose"> Air hose</option>
                                 <option value="Air hose"> Air hose</option>
@@ -317,7 +748,7 @@
                         </div>
                         <div class="col-lg-2 col-md-2 col-12 search-box">
                             <h6 class="date">Make</h6>
-                            <select name="Make" id="Make" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Make" id="Make" class="selectpicker">
                                 <option value="Air hose"> Alfa Romeo</option>
                                 <option value="Air hose"> Audi</option>
                                 <option value="Air hose"> Aston Martin</option>
@@ -327,7 +758,7 @@
 
                         <div class="col-lg-1 col-md-1 col-12 search-box">
                             <h6 class="date">Model</h6>
-                            <select name="Make" id="Make" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Make" id="Make" class="selectpicker">
                                 <option value="Air hose"> RSX-TYPE-S</option>
                                 <option value="Air hose"> RL</option>
                                 <option value="Air hose"> TSX</option>
@@ -337,7 +768,7 @@
 
                         <div class="col-lg-1 col-md-1 col-12 search-box">
                             <h6 class="date">Years</h6>
-                            <select name="Years" id="Years" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Years" id="Years" class="selectpicker">
                                 <option value="Air hose"> 2020</option>
                                 <option value="Air hose"> 2021</option>
                                 <option value="Air hose"> 2022</option>
@@ -348,7 +779,7 @@
 
                         <div class="col-lg-1 col-md-1 col-12 search-box">
                             <h6 class="date">Engine</h6>
-                            <select name="Engine" id="Engine" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Engine" id="Engine" class="selectpicker">
                                 <option value="Air hose"> K24W7</option>
                                 <option value="Air hose"> K44W8</option>
                                 <option value="Air hose"> L24W7</option>
@@ -359,7 +790,7 @@
 
                         <div class="col-lg-1 col-md-1 col-12 search-box">
                             <h6 class="date">Liters</h6>
-                            <select name="Liters" id="Liters" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Liters" id="Liters" class="selectpicker">
                                 <option value="Air hose">  2.4L</option>
                                 <option value="Air hose">  3.4L</option>
                                 <option value="Air hose">  1.4L</option>
@@ -371,7 +802,7 @@
 
                         <div class="col-lg-1 col-md-1 col-12 search-box">
                             <h6 class="date">Chassis</h6>
-                            <select name="Chassis" id="Chassis" class="selectpicker" data-show-subtext="false" data-live-search="true">
+                            <select name="Chassis" id="Chassis" class="selectpicker">
                                 <option value="Air hose"> DE2F</option>
                                 <option value="Air hose"> 4D2F</option>
                                 <option value="Air hose"> PE2F</option>
@@ -382,7 +813,7 @@
 
                         <div class="col-lg-2 col-md-2 col-12 search-box">
                             <h6 class="date">Search</h6>
-                            <input type="text" class="form-control" id="">
+                            <input class="search-text" type="text" class="form-control" id="">
                         </div>
 
                         <div class="col-lg-1 col-md-1 col-12 boo-btn search-box">
@@ -394,5 +825,92 @@
         </div>
     </section>
     <!-- end form_lebal -->
+
+    <div class="Modern-Slider">
+        <div class="Gallery-Slider">
+            <!-- The Slider --->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b1.jpg" />
+                    <div class="info">
+                        <h3>Seed money rockstar beta</h3>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b2.png" />
+                    <div class="info">
+                        <h3>Seed money rockstar beta</h3>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b3.jpg" />
+                    <div class="info">
+                        <h3>Seed money rockstar beta</h3>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b4.png" />
+                    <div class="info">
+                        <h3>Seed money rockstar beta</h3>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+        </div>
+        <div class="Slick-Navigation">
+        </div>
+    </div>
+    <!-- end banner -->
     <!-- end form_lebal -->
 </div>
+
+<script>
+    $(document).ready(function () {
+
+        $(".Gallery-Slider").slick({
+            autoplay: true,
+            autoplaySpeed: 9000,
+            speed: 700,
+            mobileFirst: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            pauseOnHover: false,
+            dots: true,
+
+            respondTo: 'min',
+            cssEase: 'linear',
+            prevArrow: '<button class="PrevArrow"></button>',
+            nextArrow: '<button class="NextArrow"></button>',
+        })
+
+        $(function () {
+            $('.selectpicker').selectpicker();
+        });
+
+    })
+</script>
