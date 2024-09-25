@@ -20,18 +20,40 @@ namespace sumarauto.web.Controllers
         {
             return View();
         }
+        #region AutoParts
+        public ActionResult AutoPart()
+        {
+            return View();
+        }
+        public ActionResult AutoPartAction(int Id = 0)
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult AutoPartAction(Category category)
+        {
+            return View();
+        }
+        public ActionResult AutoPartStatus()
+        {
+            return View();
+        }
+        #endregion
 
+        #region Components
         #region Category
-        public ActionResult Category() {
+        public ActionResult Category()
+        {
             List<Category> categories = new List<Category>();
             try
             {
-                using(var connection = new SqlConnection(connectionString))
+                using (var connection = new SqlConnection(connectionString))
                 {
                     var command = new SqlCommand("GetCategoryList", connection);
                     connection.Open();
-                    using (var reader = command.ExecuteReader()) {
-                        while (reader.Read()) 
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
                         {
                             Category category = new Category
                             {
@@ -53,9 +75,9 @@ namespace sumarauto.web.Controllers
             {
                 throw;
             }
-            return View(categories);  
+            return View(categories);
         }
-        public ActionResult CategoryAction(int Id=0)
+        public ActionResult CategoryAction(int Id = 0)
         {
             var data = new Category();
             try
@@ -98,8 +120,9 @@ namespace sumarauto.web.Controllers
             }
             try
             {
-                using (var connection = new SqlConnection(connectionString)) {
-                    using(var command = new SqlCommand("CategoryAction", connection))
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    using (var command = new SqlCommand("CategoryAction", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("@Id", category.Id);
@@ -108,50 +131,48 @@ namespace sumarauto.web.Controllers
                         command.Parameters.AddWithValue("@Image", (object)category.Image ?? DBNull.Value);
                         command.Parameters.AddWithValue("@CreatedBy", "Admin");
                         command.Parameters.AddWithValue("@HostAddress", Request.UserHostAddress);
-                        command.Parameters.AddWithValue("@DisplayOrder", (object)category.DisplayOrder ?? "0");
+                        command.Parameters.AddWithValue("@DisplayOrder", (object)category.DisplayOrder ?? 0); // Ensure integer type
+
+                        // Output parameters
                         var requestparam = new SqlParameter("@Result", SqlDbType.Int)
                         {
                             Direction = ParameterDirection.Output
                         };
+                        var requestparam1 = new SqlParameter("@IsCatExist", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+
                         command.Parameters.Add(requestparam);
+                        command.Parameters.Add(requestparam1);
+
                         connection.Open();
                         command.ExecuteNonQuery();
-                        int result = (int)requestparam.Value;
-                        return Json(new { Success = result > 0 ? true : false, Message = message }, JsonRequestBehavior.AllowGet);
+
+                        // Safely handle output parameter values
+                        int result = requestparam.Value != DBNull.Value ? (int)requestparam.Value : 0;
+                        int result1 = requestparam1.Value != DBNull.Value ? (int)requestparam1.Value : 0;
+
+                        if (result1 == 1)
+                        {
+                            result = 0;
+                            message = "Category with same name already exists in database.";
+                        }
+
+                        return Json(new { Success = result > 0, Message = message }, JsonRequestBehavior.AllowGet);
                     }
                 }
             }
             catch (Exception)
             {
-                return Json(new { Success = false, Message = "" }, JsonRequestBehavior.AllowGet); ;
+                return Json(new { Success = false, Message = "Something went wrong!" }, JsonRequestBehavior.AllowGet);
             }
         }
-        public ActionResult CategoryStatus()
-        {
-            return View();
-        }
         #endregion
+        #region Model
 
-        #region AutoParts
-        public ActionResult AutoPart()
-        {
-            return View();
-        }
-        public ActionResult AutoPartAction(int Id = 0)
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult AutoPartAction(Category category)
-        {
-            return View();
-        }
-        public ActionResult AutoPartStatus()
-        {
-            return View();
-        }
         #endregion
-
+        #endregion
         #region Change Password
         public ActionResult ChangePassword()
         {

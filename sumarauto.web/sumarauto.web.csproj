@@ -240,6 +240,10 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\sumarauto.database\sumarauto.database.csproj">
+      <Project>{5b7c037c-a77d-402c-8a9e-d11fdff256d2}</Project>
+      <Name>sumarauto.database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\sumarauto.DataModel\sumarauto.DataModel.csproj">
       <Project>{b67adee0-345b-40b1-829f-d198861e8787}</Project>
       <Name>sumarauto.DataModel</Name>

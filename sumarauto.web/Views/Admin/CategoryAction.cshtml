@@ -23,11 +23,11 @@
         <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
             <!-- Page header -->
             <div class="mb-4">
-                <h4 class="mb-0">@(Model != null && Model.Id > 0 ? "Edit Category" : "Add - Category")</h4>
+                <h4 class="mb-0">@(Model != null && Model.Id > 0 ? "Edit - Category" : "Add - Category")</h4>
             </div>
             <div>
                 <p class="m-0">
-                    <a class="text-danger" href="/admin/DownloadList">Back to List</a>
+                    <a class="text-danger" href="/admin/Category">Back to List</a>
                 </p>
             </div>
         </div>
@@ -36,8 +36,7 @@
         <form id="Create">
             <input type="text" class="d-none" id="Id" value="@Model.Id" name="Id" />
             <input type="text" class="d-none" name="CreatedBy" value="@Model.CreatedBy" />
-            <input type="text" class="d-none" name="CreatedOn" value="@Model.CreatedOn" />
-            <input type="text" class="d-none" name="Image" value="@Model.Image" />
+            <input type="text" class="d-none" name="Image" value="@Model.Image" id="OldImage"/>
             <input type="text" class="d-none" name="NewImage" id="NewImage" value="" />
             <div class="row">
                 <div class="col-lg-8 col-12">
@@ -59,9 +58,14 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Image Upload</label>
+                                    <br />
+                                    @if (!string.IsNullOrEmpty(Model.Image))
+                                    {
+                                        <img src="@Model.Image" alt="Image" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
+                                    }
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" onchange="previewImage(this)">
                                             <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                                         </div>
                                     </div>
@@ -127,8 +131,9 @@
         }
     });
     const CreateBtn = document.getElementById("CreateBtn");
+    const EditBtn = document.getElementById("EditBtn");
     if (CreateBtn) {
-            CreateBtn.addEventListener("click", function () {
+        CreateBtn.addEventListener("click", function () {
             const spinnerborder = document.querySelector(".spinner-border");
             spinnerborder.classList.remove("d-none");
             CreateBtn.setAttribute("disabled", true);
@@ -160,7 +165,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
-                            text: 'Something went wrong!',
+                            text: response.Message,
                         })
                     }
                 },
@@ -183,7 +188,62 @@
         }
         });
     }
+    if (EditBtn) {
+        EditBtn.addEventListener("click", function () {
+            const spinnerborder = document.querySelector(".spinner-border");
+            spinnerborder.classList.remove("d-none");
+            EditBtn.setAttribute("disabled", true);
 
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
+
+            var formData = $("#Create").serialize();
+            if ($("#Create").valid()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CategoryAction")',
+                data: formData,
+                success: function (response) {
+                    if (response.Success == true) {
+                        if (response.Message != null && response.Message.length > 0 && uploadedFile.length > 0) {
+                            SaveImgOnServer(response.Message);
+                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Category update successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/Category";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.Message,
+                        })
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                },
+                complete: function (response) {
+                    spinnerborder.classList.add("d-none");
+                    EditBtn.removeAttribute("disabled");
+                },
+            });
+        }
+        else {
+            spinnerborder.classList.add("d-none");
+            EditBtn.removeAttribute("disabled");
+        }
+        });
+    }
     //File upload
     const uploadedFile = [];
     document.getElementById('inputGroupFile04').addEventListener('change', function (e) {
@@ -221,8 +281,10 @@
     function SaveImgOnServer(prefix) {
         const formData = new FormData(document.getElementById('Create'));
         if (uploadedFile.length > 0) {
+            let OldImage = $("#OldImage").val();
             formData.append('Files', uploadedFile[0].file);
-                    formData.append('Prefix', prefix);
+            formData.append('Prefix', prefix);
+            formData.append('OldImage', OldImage);
          $.ajax({
              type: 'POST',
              url: '@Url.Action("UploadComponent", "Image")',
@@ -251,5 +313,16 @@
          });
         }
         return;
+    }
+    function previewImage(input) {
+        var fileInput = input.files[0];
+        var preview = document.querySelector('.img-fluid');
+        if (fileInput) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput);
+        }
     }
 </script>

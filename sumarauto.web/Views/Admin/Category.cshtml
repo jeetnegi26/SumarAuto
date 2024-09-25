@@ -39,7 +39,7 @@
                             <td style="text-align: center;" data-id="@item.Id">@count</td>
                             <td>@item.Title</td>
                             <td>
-                                @if (item.Status == true)
+                                @*@if (item.Status == true)
                                 {
                                     <a href="/Admin/BannerAction?Id=@item.Status">
                                         <i class="ti ti-checkbox" style="font-size: x-large; color: darkseagreen;"></i>
@@ -48,9 +48,12 @@
                                 else
                                 {
                                     <a href="/Admin/BannerAction?Id=@item.Id">
-                                        <i class="ti ti-square-rounded-letter-x" style="font-size: x-large; color: darkseagreen;"></i>
+                                        <i class="" style="font-size: x-large; color: darkseagreen;"></i>
                                     </a>
-                                }
+                                }*@
+                                <button class="statusBtn border-0 bg-transparent" data-class="@(item.Status == true ? false:true)" data-id="@item.Id">
+                                    <i class=" @(item.Status == true ? "ti ti-checkbox" : "ti ti-square-rounded-letter-x text-danger")" style="font-size: x-large; color: darkseagreen;"></i>
+                                </button>
                             </td>
                             <td>
                                 <a href="/Admin/CategoryAction?Id=@item.Id">
@@ -69,13 +72,53 @@
         </div>
     </div>
 </div>
-
 <script>
     $(document).ready(function () {
         var table = $('#DTable').DataTable({
             responsive: true
         });
     });
-
+    const statusBtns = document.querySelectorAll(".statusBtn");
+    statusBtns.forEach(statusBtn => {
+        statusBtn.addEventListener("click", function () {
+            var Value = this.getAttribute("data-class");
+            var id = this.getAttribute("data-id");
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("StatusChange","Helper")',
+                 data: {
+                    value: Value,
+                    Id : id,
+                    Type:"Category"
+                },
+                success: function (response) {
+                    if (response.Result = true) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Category status update successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/Category";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                }
+            })
+        });
+    });
 
 </script>
