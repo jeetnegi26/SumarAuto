@@ -285,7 +285,7 @@
     }
 
     .Modern-Slider .Gallery-Slider .img-fill {
-         height: 70vh; /* Removed 
+         height: 70vh; /* Removed
         background: #000;
         /*min-height: 400px;*/ /* Added */
         /*max-height: 300px;*/ /* Added */
@@ -638,7 +638,7 @@
             }
 
 
-   
+
 
     .banner-box {
         position: relative;
@@ -710,6 +710,12 @@
         width: 100%
     }
 
+    @@media (min-width: 1200px) {
+        .category-item h4 {
+            font-size: 1.2rem;
+        }
+}
+
     @@media (max-width: 500px) {
         .overlap-form {
             position: static;
@@ -726,6 +732,56 @@
         .search-box {
             padding-bottom: 1rem;
         }
+    }
+
+    .caregory {
+        margin-top: 5rem;
+        padding: 3rem 0;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
+
+    .category-list{
+        padding: 3rem 0;
+    }
+
+    .category-box {
+    }
+
+    .category-item {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        height: 100%;
+        border: 1px solid var(--secondary);
+        border-radius: 15px;
+        transition: 0.3s;
+    }
+
+        .category-item:hover {
+            -webkit-box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
+            -moz-box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
+            box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
+        }
+
+    .category-item button {
+        margin: auto auto 0;
+        width: fit-content;
+    }
+
+    .category-item img {
+        width: 70%;
+        margin: 0 auto;
+        padding-bottom: 1rem;
+    }
+
+    .category-item p  {
+        font-size: 13px;
+    }
+
+    .category-container{
+        padding-top : 5rem;
     }
 
 </style>
@@ -887,6 +943,80 @@
     </div>
     <!-- end banner -->
     <!-- end form_lebal -->
+</div>
+
+<div class="caregory">
+    <div class="category-container">
+        <div class="heading-home text-center container">
+            <h2>OUR CATEGORIES</h2>
+            <p>
+                Sumar Auto uses a special formula for manufacturing rubber parts.
+                We also use durable materials and employ powder coating in place
+                of traditional painting for our metal parts. As a result,
+                they feature high resistances to heat, rapid friction, oxidation,
+                and aging.
+            </p>
+        </div>
+
+        <div class="category-list">
+            <div class="row">
+                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>CV Boots</h4>
+                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Strut Mounts</h4>
+                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Engine Mounts</h4>
+                        <p>Hydraulic Design, Premium Rubber Material, Dampening vibration and noise to the vehicle by Tenacity mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Bushings</h4>
+                        <p>Tenacity ‘s premium rubber material (NR+BR) ensures longer life and performance, enhancing the ride quality of the automobiles.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>CV Boots</h4>
+                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Strut Mounts</h4>
+                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

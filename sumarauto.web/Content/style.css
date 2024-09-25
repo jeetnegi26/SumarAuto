@@ -15,11 +15,12 @@ body {
 
 :root {
     /*theme color*/
-    --text: #242024;
-    --bg: #f3f4f5;
-    --dgold: #bf0000;
-    --lgold: #e30220;
-    --light: #dddddd;
+    --text: #242024; /*almost black grey*/
+    --bg: #f3f4f5; /*whitish grey*/
+    --lightbg: #FFD5DB; /*light red*/
+    --primary: #bf0000; /*dark red*/
+    --secondary: #e30220; /*medium red*/
+    --light: #dddddd; /*light grey*/
     --error: red;
     /*grediant (webgradiant.com) color */
     --sky: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
@@ -57,6 +58,21 @@ a {
 
 .row {
     margin: 0 !important;
+}
+
+.btn-primary {
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 7px 14px;
+    border-radius: 40px;
+    transition: 0.5s;
+    font-size:15px;
+}
+
+.btn-primary:hover {
+    color: var(--bg);
+    background-color : var(--primary);
 }
 
 /*-----------------layout--------------------*/
@@ -113,7 +129,7 @@ a {
 .navbar-icon span {
     width: 36px;
     height: 3px;
-    background-color: var(--dgold);
+    background-color: var(--primary);
     display: block;
     position: relative;
     transition: 0.3s;
@@ -125,7 +141,7 @@ a {
         height: 3px;
         position: absolute;
         top: 9px;
-        background-color: var(--dgold);
+        background-color: var(--primary);
         transition: 0.3s;
     }
 
@@ -135,7 +151,7 @@ a {
         height: 3px;
         position: absolute;
         bottom: 9px;
-        background-color: var(--dgold);
+        background-color: var(--primary);
         transition: 0.3s;
     }
 
@@ -146,12 +162,12 @@ a {
     .navbar-icon.active span:before {
         transform: rotate(45deg);
         bottom: 0;
-        background-color: var(--dgold);
+        background-color: var(--primary);
     }
 
     .navbar-icon.active span:after {
         transform: rotate(-45deg);
-        background-color: var(--dgold);
+        background-color: var(--primary);
         top: 0;
     }
 
@@ -308,7 +324,7 @@ footer {
     right: 20px;
     padding: 10px 15px;
     background-color: transparent;
-    color: var(--dgold);
+    color: var(--primary);
     border-radius: 5px;
     cursor: pointer;
     font-size: 1.5rem;
@@ -318,7 +334,7 @@ footer {
 }
 
     .fixed-button:hover {
-        color: var(--lgold);
+        color: var(--secondary);
     }
 
 
