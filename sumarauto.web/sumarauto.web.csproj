@@ -154,9 +154,14 @@
     <Content Include="Content\Images\b3.jpg" />
     <Content Include="Content\Images\b4.png" />
     <Content Include="Content\Images\backgrounds\rocket.png" />
+    <Content Include="Content\Images\logoHONDA.png" />
+    <Content Include="Content\Images\logoMAZDA.png" />
+    <Content Include="Content\Images\logoMITSUBISHI.png" />
+    <Content Include="Content\Images\logoNISSAN.png" />
     <Content Include="Content\Images\logos\dark-logo.svg" />
     <Content Include="Content\Images\logos\favicon.png" />
     <Content Include="Content\Images\logos\logo.png" />
+    <Content Include="Content\Images\logoTOYOTA.png" />
     <Content Include="Content\Images\pl_boot.png" />
     <Content Include="Content\Images\profile\user-1.jpg" />
     <Content Include="Content\jquery-ui.min.css" />

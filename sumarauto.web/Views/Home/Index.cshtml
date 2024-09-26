@@ -520,9 +520,14 @@
     /*Banner Css ends*/
 
 
+    .dark{
+        background-color: var(--text);
+        color: white;
+    }
 
-
-
+    .heading-home{
+        padding: 2rem 0;
+    }
 
     button:focus {
         outline: none !important;
@@ -737,15 +742,14 @@
     .caregory {
         margin-top: 5rem;
         padding: 3rem 0;
-        max-width: 1440px;
-        margin: 0 auto;
     }
 
-    .category-list{
+    .div-box{
         padding: 3rem 0;
     }
 
     .category-box {
+        padding: 2rem 3rem;
     }
 
     .category-item {
@@ -754,9 +758,13 @@
         text-align: center;
         padding: 1.5rem 1rem;
         height: 100%;
-        border: 1px solid var(--secondary);
-        border-radius: 15px;
+        border-radius: 7px;
         transition: 0.3s;
+        background: white;
+        border-top: 7px solid var(--primary);
+        -webkit-box-shadow: 0px 0px 19px -12px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 0px 19px -12px rgba(0,0,0,0.75);
+        box-shadow: 0px 0px 19px -12px rgba(0,0,0,0.75);
     }
 
         .category-item:hover {
@@ -771,9 +779,12 @@
     }
 
     .category-item img {
-        width: 70%;
+        width: 61%;
         margin: 0 auto;
-        padding-bottom: 1rem;
+        padding: 1rem;
+        border: 8px solid var(--text);
+        border-radius: 50%;
+        margin-bottom: 2rem;
     }
 
     .category-item p  {
@@ -783,6 +794,32 @@
     .category-container{
         padding-top : 5rem;
     }
+
+    @@media (min-width: 1000px){
+        .custom-col {
+            width: 20%; /* Custom width for 5 columns */
+        }
+    }
+
+    .clients {
+        padding: 5rem 0;
+    }
+
+    .clients-list {
+        text-align: center;
+    }
+
+    .clients-list img {
+        width: 30%;
+        display:flex;
+        margin:auto;
+        padding-bottom:15px;
+    }
+
+    .client-item {
+        padding: 1.5rem 0;
+    }
+
 
 </style>
 
@@ -946,8 +983,8 @@
 </div>
 
 <div class="caregory">
-    <div class="category-container">
-        <div class="heading-home text-center container">
+    <div class="container container">
+        <div class="text-center">
             <h2>OUR CATEGORIES</h2>
             <p>
                 Sumar Auto uses a special formula for manufacturing rubber parts.
@@ -960,7 +997,7 @@
 
         <div class="category-list">
             <div class="row">
-                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
                     <div class="category-item">
                         <img src="~/Content/Images/pl_boot.png" />
                         <h4>CV Boots</h4>
@@ -969,7 +1006,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
                     <div class="category-item">
                         <img src="~/Content/Images/pl_boot.png" />
                         <h4>Strut Mounts</h4>
@@ -978,7 +1015,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
                     <div class="category-item">
                         <img src="~/Content/Images/pl_boot.png" />
                         <h4>Engine Mounts</h4>
@@ -987,7 +1024,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
                     <div class="category-item">
                         <img src="~/Content/Images/pl_boot.png" />
                         <h4>Bushings</h4>
@@ -996,7 +1033,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
                     <div class="category-item">
                         <img src="~/Content/Images/pl_boot.png" />
                         <h4>CV Boots</h4>
@@ -1005,7 +1042,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 col-lg-4 col-6 category-box">
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
                     <div class="category-item">
                         <img src="~/Content/Images/pl_boot.png" />
                         <h4>Strut Mounts</h4>
@@ -1017,6 +1054,83 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="clients dark">
+    <div class="container">
+        <div class="heading-home text-center">
+            <h2>PRODUCTS BY BRAND</h2>
+            <p>
+                Browse through our selection by brand to find the right parts for your vehicle.
+            </p>
+        </div>
+
+        <div class="clients-list">
+            <div class="row">
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoHONDA.png" />
+                        <h4>Honda</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMAZDA.png" />
+                        <h4>Mazda</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMITSUBISHI.png" />
+                        <h4>Mitsubushi</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoNISSAN.png" />
+                        <h4>Nissan</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoTOYOTA.png" />
+                        <h4>Toyota</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoNISSAN.png" />
+                        <h4>Nissan</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMAZDA.png" />
+                        <h4>Mazda</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoTOYOTA.png" />
+                        <h4>Toyota</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMITSUBISHI.png" />
+                        <h4>Mitsubushi</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoHONDA.png" />
+                        <h4>Honda</h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
