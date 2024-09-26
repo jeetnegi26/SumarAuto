@@ -4,10 +4,12 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Services.Description;
 using Model;
+using sumarauto.database;
 using sumarauto.DataModel;
 
 namespace sumarauto.web.Controllers
@@ -76,7 +78,9 @@ namespace sumarauto.web.Controllers
             {
                 throw;
             }
-            return View(categories);
+            return View(categories.OrderBy(x => x.DisplayOrder)
+                      .ThenBy(x => x.CreatedOn)
+                      .ToList());
         }
         public ActionResult CategoryAction(int Id = 0)
         {
@@ -170,41 +174,192 @@ namespace sumarauto.web.Controllers
             }
         }
         #endregion
-        #region Make
+        #region Make 
         public ActionResult Make()
         {
-            List<Make> makes = new List<Make>();
             try
             {
-                using (var connection = new SqlConnection(connectionString))
+                using(var db = new AppDbContext())
                 {
-                    var command = new SqlCommand("GetMakeList", connection);
-                    connection.Open();
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Make make = new Make
-                            {
-                                MakeId = (int)reader["Id"],
-                                Title = Convert.ToString(reader["Title"]),
-                                Image = Convert.ToString(reader["Image"]),
-                                Description = Convert.ToString(reader["Description"]),
-                                Status = (bool)reader["Status"],
-                                CreatedOn = (DateTime)reader["CreatedOn"],
-                                CreatedOnString = ((DateTime)reader["CreatedOn"]).ToString("dd MMM yyyy"),
-                                EditedOnString = ((DateTime)reader["EditedOn"]).ToString("dd MMM yyyy"),
-                            };
-                            makes.Add(make);
-                        }
-                    }
+                    var data = db.Make.OrderBy(x => x.DisplayOrder).ThenBy(x => x.CreatedOn).ToList();
+                    return View(data);
                 }
             }
             catch (Exception)
             {
                 throw;
             }
-            return View(categories);
+        }
+        public ActionResult MakeAction(int Id = 0)
+        {
+            var data = new Make();
+            try
+            {
+                if (Id > 0)
+                {
+                    using(var db = new AppDbContext())
+                    {
+                        data = db.Make.FirstOrDefault(x=>x.MakeId == Id);
+                    }
+                    return View(data);
+                }
+                return View(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult MakeAction(Make make)
+        {
+            string message = DateTime.Now.ToString("yyyyMMddHHmmss");
+            if (make.NewImage != null && make.NewImage != "" && make.NewImage.Length > 0)
+            {
+                make.Image = "/Content/Component/" + message + make.NewImage;
+            }
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    using (var command = new SqlCommand("MakeAction", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@Id", make.MakeId);
+                        command.Parameters.AddWithValue("@Title", make.Title);
+                        command.Parameters.AddWithValue("@Description", (object)make.Description ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@Image", (object)make.Image ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CreatedBy", "Admin");
+                        command.Parameters.AddWithValue("@HostAddress", Request.UserHostAddress);
+                        command.Parameters.AddWithValue("@DisplayOrder", (object)make.DisplayOrder ?? 0); // Ensure integer type
+
+                        // Output parameters
+                        var requestparam = new SqlParameter("@Result", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        var requestparam1 = new SqlParameter("@IsMakeExist", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+
+                        command.Parameters.Add(requestparam);
+                        command.Parameters.Add(requestparam1);
+
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Safely handle output parameter values
+                        int result = requestparam.Value != DBNull.Value ? (int)requestparam.Value : 0;
+                        int result1 = requestparam1.Value != DBNull.Value ? (int)requestparam1.Value : 0;
+
+                        if (result1 == 1)
+                        {
+                            result = 0;
+                            message = "Make with same name already exists in database.";
+                        }
+
+                        return Json(new { Success = result > 0, Message = message }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new { Success = false, Message = "Something went wrong!" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+        #region MModel
+        public ActionResult MModel()
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    var data = db.MModel.AsNoTracking()
+                      .OrderBy(x => x.DisplayOrder)
+                      .ThenBy(x => x.CreatedOn)
+                      .ToList();
+                    return View(data);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public ActionResult MModelAction(int Id = 0)
+        {
+            var data = new MModel();
+            try
+            {
+                if (Id > 0)
+                {
+                    using (var db = new AppDbContext())
+                    {
+                        data = db.MModel.FirstOrDefault(x => x.Id == Id);
+                    }
+                    return View(data);
+                }
+                return View(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult MModelAction(MModel mModel)
+        {
+            string message = string.Empty;
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    using (var command = new SqlCommand("ModelAction", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@Id", mModel.Id);
+                        command.Parameters.AddWithValue("@Title", mModel.Title);
+                        command.Parameters.AddWithValue("@Description", (object)mModel.Description ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CreatedBy", "Admin");
+                        command.Parameters.AddWithValue("@HostAddress", Request.UserHostAddress);
+                        command.Parameters.AddWithValue("@DisplayOrder", (object)mModel.DisplayOrder ?? 0); // Ensure integer type
+
+                        // Output parameters
+                        var requestparam = new SqlParameter("@Result", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        var requestparam1 = new SqlParameter("@IsModelExist", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+
+                        command.Parameters.Add(requestparam);
+                        command.Parameters.Add(requestparam1);
+
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Safely handle output parameter values
+                        int result = requestparam.Value != DBNull.Value ? (int)requestparam.Value : 0;
+                        int result1 = requestparam1.Value != DBNull.Value ? (int)requestparam1.Value : 0;
+
+                        if (result1 == 1)
+                        {
+                            result = 0;
+                            message = "Model with same name already exists in database.";
+                        }
+
+                        return Json(new { Success = result > 0, Message = message }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new { Success = false, Message = "Something went wrong!" }, JsonRequestBehavior.AllowGet);
+            }
         }
         #endregion
         #endregion

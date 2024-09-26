@@ -1,0 +1,228 @@
+﻿@using DataModel
+@model Model.MModel
+@{
+    ViewBag.Title = "MModelAction";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<style>
+    .ql-toolbar.ql-snow {
+        background-color: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem .5rem 0 0;
+        padding: 8px;
+    }
+
+    .ql-container.ql-snow {
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 .5rem .5rem;
+    }
+</style>
+<div class="product-container py-2 dow_page_con">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
+            <!-- Page header -->
+            <div class="mb-4">
+                <h4 class="mb-0">@(Model != null && Model.Id > 0 ? "Edit - Model" : "Add - Model")</h4>
+            </div>
+            <div>
+                <p class="m-0">
+                    <a class="text-danger" href="/admin/MModel">Back to List</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div>
+        <form id="Create">
+            <input type="text" class="d-none" id="Id" value="@Model.Id" name="Id" />
+            <input type="text" class="d-none" name="CreatedBy" value="@Model.CreatedBy" />
+            <div class="row">
+                <div class="col-lg-8 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" value="@Model.Title" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="hidden" id="editor-content" name="Description" value="@Model.Description" />
+                                    <label class="form-label"> Overview</label>
+                                    <div class="pb-8" id="editor"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Order</label>
+                                    <input type="text" value="@Model.DisplayOrder" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                </div>
+                                <div class="d-grid">
+                                    @if (Model.Id > 0)
+                                    {
+                                        <button id="EditBtn" type="button" class="btn btn-primary w-100 p-2">
+                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                            Save
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button id="CreateBtn" type="button" class="btn btn-primary w-100 p-2">
+                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                            Save
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var quill;
+    var Description = @Html.Raw(Json.Encode(Model.Description));
+    if ($("#editor").length) {
+        quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ['link', 'image'],
+                ]
+            }
+        });
+        if (Description != null && Description.length > 2) {
+            quill.clipboard.dangerouslyPasteHTML(Description);
+        }
+    }
+
+    $("#Create").validate({
+        rules: {
+            Title: {
+                required: true,
+            },
+        },
+        messages: {
+            Title: {
+                required: '*Title is required',
+            },
+        }
+    });
+    const CreateBtn = document.getElementById("CreateBtn");
+    const EditBtn = document.getElementById("EditBtn");
+    if (CreateBtn) {
+        CreateBtn.addEventListener("click", function () {
+            const spinnerborder = document.querySelector(".spinner-border");
+            spinnerborder.classList.remove("d-none");
+            CreateBtn.setAttribute("disabled", true);
+
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
+
+            var formData = $("#Create").serialize();
+            if ($("#Create").valid()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("MModelAction")',
+                data: formData,
+                success: function (response) {
+                    if (response.Success == true) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Model details saved successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/MModel";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.Message,
+                        })
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                },
+                complete: function (response) {
+                    spinnerborder.classList.add("d-none");
+                    CreateBtn.removeAttribute("disabled");
+                },
+            });
+        }
+        else {
+            spinnerborder.classList.add("d-none");
+            CreateBtn.removeAttribute("disabled");
+        }
+        });
+    }
+    if (EditBtn) {
+        EditBtn.addEventListener("click", function () {
+            const spinnerborder = document.querySelector(".spinner-border");
+            spinnerborder.classList.remove("d-none");
+            EditBtn.setAttribute("disabled", true);
+
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
+
+            var formData = $("#Create").serialize();
+            if ($("#Create").valid()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("MModelAction")',
+                data: formData,
+                success: function (response) {
+                    if (response.Success == true) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Model details update successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/MModel";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.Message,
+                        })
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                },
+                complete: function (response) {
+                    spinnerborder.classList.add("d-none");
+                    EditBtn.removeAttribute("disabled");
+                },
+            });
+        }
+        else {
+            spinnerborder.classList.add("d-none");
+            EditBtn.removeAttribute("disabled");
+        }
+        });
+    }
+</script>
+
+
+

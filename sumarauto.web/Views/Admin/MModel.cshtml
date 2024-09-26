@@ -1,6 +1,6 @@
-﻿@model IEnumerable<Model.Make>
+﻿@model IEnumerable<Model.MModel>
 @{
-    ViewBag.Title = "Make";
+    ViewBag.Title = "MModel";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
     int count = 0;
 }
@@ -8,11 +8,11 @@
     <div class="card my-2">
         <div class="card-body d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="card-title fw-semibold mb-0 pb-0">Manage Make</h5>
+                <h5 class="card-title fw-semibold mb-0 pb-0">Manage Model</h5>
             </div>
             <div class="d-flex">
                 <div style="margin-right:10px;">
-                    <a href="@Url.Action("MakeAction","Admin")" class="btn btn-primary">Add New</a>
+                    <a href="@Url.Action("MModelAction","Admin")" class="btn btn-primary">Add New</a>
                 </div>
             </div>
         </div>
@@ -32,16 +32,16 @@
                     @foreach (var item in Model)
                     {
                         count = count + 1;
-                        <tr data-id="@item.MakeId">
-                            <td style="text-align: center;" data-id="@item.MakeId">@count</td>
+                        <tr data-id="@item.Id">
+                            <td style="text-align: center;" data-id="@item.Id">@count</td>
                             <td>@item.Title</td>
                             <td>
-                                <button class="statusBtn border-0 bg-transparent" data-class="@(item.Status == true ? false:true)" data-id="@item.MakeId">
+                                <button class="statusBtn border-0 bg-transparent" data-class="@(item.Status == true ? false:true)" data-id="@item.Id">
                                     <i class=" @(item.Status == true ? "ti ti-checkbox" : "ti ti-square-rounded-letter-x text-danger")" style="font-size: x-large; color: darkseagreen;"></i>
                                 </button>
                             </td>
                             <td>
-                                <a href="/Admin/MakeAction?Id=@item.MakeId">
+                                <a href="/Admin/MModelAction?Id=@item.Id">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-pencil" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
@@ -74,16 +74,16 @@
                  data: {
                     value: Value,
                     Id : id,
-                    Type:"Make"
+                    Type:"MModel"
                 },
                 success: function (response) {
                     if (response.Result = true) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Make status update successfully',
+                            title: 'Model status update successfully',
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "/admin/Make";
+                                window.location.href = "/admin/MModel";
                             }
                         });
                     }

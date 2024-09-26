@@ -52,6 +52,24 @@ namespace sumarauto.web.Controllers
                             }
                             result = true;
                             break;
+                        case "Make":
+                            var Make = db.Make.Find(Id);
+                            if (Make != null)
+                            {
+                                Make.Status = value;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "MModel":
+                            var MModel = db.MModel.Find(Id);
+                            if (MModel != null)
+                            {
+                                MModel.Status = value;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
                         default:
                             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
                     }
