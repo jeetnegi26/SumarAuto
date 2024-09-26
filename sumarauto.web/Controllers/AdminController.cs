@@ -62,6 +62,7 @@ namespace sumarauto.web.Controllers
                                 Image = Convert.ToString(reader["Image"]),
                                 Description = Convert.ToString(reader["Description"]),
                                 Status = (bool)reader["Status"],
+                                IsFeatured = (bool)reader["IsFeatured"],
                                 CreatedOn = (DateTime)reader["CreatedOn"],
                                 CreatedOnString = ((DateTime)reader["CreatedOn"]).ToString("dd MMM yyyy"),
                                 EditedOnString = ((DateTime)reader["EditedOn"]).ToString("dd MMM yyyy"),
@@ -169,8 +170,42 @@ namespace sumarauto.web.Controllers
             }
         }
         #endregion
-        #region Model
-
+        #region Make
+        public ActionResult Make()
+        {
+            List<Make> makes = new List<Make>();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetMakeList", connection);
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Make make = new Make
+                            {
+                                MakeId = (int)reader["Id"],
+                                Title = Convert.ToString(reader["Title"]),
+                                Image = Convert.ToString(reader["Image"]),
+                                Description = Convert.ToString(reader["Description"]),
+                                Status = (bool)reader["Status"],
+                                CreatedOn = (DateTime)reader["CreatedOn"],
+                                CreatedOnString = ((DateTime)reader["CreatedOn"]).ToString("dd MMM yyyy"),
+                                EditedOnString = ((DateTime)reader["EditedOn"]).ToString("dd MMM yyyy"),
+                            };
+                            makes.Add(make);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View(categories);
+        }
         #endregion
         #endregion
         #region Change Password

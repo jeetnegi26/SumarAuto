@@ -22,6 +22,7 @@ namespace Model
         public int EngineId { get; set; }
         public int LiterId { get; set; }
         public int ChassisId { get; set; }
+        public bool IsFeatured { get; set; }
 
     }
 }

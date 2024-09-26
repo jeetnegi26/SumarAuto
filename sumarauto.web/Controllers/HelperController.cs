@@ -12,7 +12,29 @@ namespace sumarauto.web.Controllers
     {
         #region Helper
         [HttpPost]
-        public ActionResult StatusChange(bool value,int Id,string Type)
+        public ActionResult FeaturedChange(bool value,int Id)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    var Category = db.Category.Find(Id);
+                    if (Category != null)
+                    {
+                        Category.IsFeatured = value;
+                        db.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            return Json(new{ Result = result }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult StatusChange(bool value, int Id, string Type)
         {
             bool result = false;
             try
@@ -40,9 +62,8 @@ namespace sumarauto.web.Controllers
             {
                 result = false;
             }
-            return Json(new{ Result = result }, JsonRequestBehavior.AllowGet);
+            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
         }
-
         public ActionResult GetSelectListCat()
         {
             List<SelectListItem> items = new List<SelectListItem>();

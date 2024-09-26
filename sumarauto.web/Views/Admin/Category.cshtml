@@ -27,6 +27,7 @@
                     <tr>
                         <th style="width:10%;">#</th>
                         <th>Title</th>
+                        <th style="width:20%;">Featured</th>
                         <th style="width:20%;">Status</th>
                         <th style="width:10%;">Edit</th>
                     </tr>
@@ -39,18 +40,11 @@
                             <td style="text-align: center;" data-id="@item.Id">@count</td>
                             <td>@item.Title</td>
                             <td>
-                                @*@if (item.Status == true)
-                                {
-                                    <a href="/Admin/BannerAction?Id=@item.Status">
-                                        <i class="ti ti-checkbox" style="font-size: x-large; color: darkseagreen;"></i>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a href="/Admin/BannerAction?Id=@item.Id">
-                                        <i class="" style="font-size: x-large; color: darkseagreen;"></i>
-                                    </a>
-                                }*@
+                                <button class="featuredBtn border-0 bg-transparent" data-class="@(item.IsFeatured == true ? false:true)" data-id="@item.Id">
+                                    <i class=" @(item.IsFeatured == true ? "ti ti-thumb-up" : "ti ti-thumb-down text-danger")" style="font-size: x-large; color: darkseagreen;"></i>
+                                </button>
+                            </td>
+                            <td>
                                 <button class="statusBtn border-0 bg-transparent" data-class="@(item.Status == true ? false:true)" data-id="@item.Id">
                                     <i class=" @(item.Status == true ? "ti ti-checkbox" : "ti ti-square-rounded-letter-x text-danger")" style="font-size: x-large; color: darkseagreen;"></i>
                                 </button>
@@ -78,6 +72,7 @@
             responsive: true
         });
     });
+    const featuredBtns = document.querySelectorAll(".featuredBtn");
     const statusBtns = document.querySelectorAll(".statusBtn");
     statusBtns.forEach(statusBtn => {
         statusBtn.addEventListener("click", function () {
@@ -120,5 +115,44 @@
             })
         });
     });
-
+    featuredBtns.forEach(featuredBtn => {
+        featuredBtn.addEventListener("click", function () {
+            var Value = this.getAttribute("data-class");
+            var id = this.getAttribute("data-id");
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("FeaturedChange","Helper")',
+                 data: {
+                    value: Value,
+                    Id : id,
+                },
+                success: function (response) {
+                    if (response.Result = true) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Feature status update successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/Category";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                }
+            })
+        });
+    });
 </script>
