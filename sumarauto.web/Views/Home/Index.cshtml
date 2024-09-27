@@ -8,6 +8,7 @@
 
 <style>
 
+
     /*banner css starts*/
 
     /* Arrows */
@@ -285,7 +286,7 @@
     }
 
     .Modern-Slider .Gallery-Slider .img-fill {
-         height: 70vh; /* Removed
+        height: 70vh; /* Removed
         background: #000;
         /*min-height: 400px;*/ /* Added */
         /*max-height: 300px;*/ /* Added */
@@ -520,12 +521,12 @@
     /*Banner Css ends*/
 
 
-    .dark{
+    .dark {
         background-color: var(--text);
         color: white;
     }
 
-    .heading-home{
+    .heading-home {
         padding: 2rem 0;
     }
 
@@ -548,15 +549,15 @@
         padding: 0 2px;
     }
 
-    .search-box .bootstrap-select {
-        border: 1px solid var(--bg);
-        width: 100% !important;
-        color: var(--bg);
-    }
-
-        .search-box .bootstrap-select .dropdown-toggle {
+        .search-box .bootstrap-select {
+            border: 1px solid var(--bg);
+            width: 100% !important;
             color: var(--bg);
         }
+
+            .search-box .bootstrap-select .dropdown-toggle {
+                color: var(--bg);
+            }
 
     .bootstrap-select .dropdown-toggle .filter-option {
         font-size: 12px;
@@ -719,7 +720,7 @@
         .category-item h4 {
             font-size: 1.2rem;
         }
-}
+    }
 
     @@media (max-width: 500px) {
         .overlap-form {
@@ -727,13 +728,14 @@
             width: 100%;
         }
 
-        .search-container{
-            padding:0;
+        .search-container {
+            padding: 0;
         }
 
         .form_book {
             border-radius: 0;
         }
+
         .search-box {
             padding-bottom: 1rem;
         }
@@ -744,7 +746,7 @@
         padding: 3rem 0;
     }
 
-    .div-box{
+    .div-box {
         padding: 3rem 0;
     }
 
@@ -773,29 +775,29 @@
             box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
         }
 
-    .category-item button {
-        margin: auto auto 0;
-        width: fit-content;
+        .category-item button {
+            margin: auto auto 0;
+            width: fit-content;
+        }
+
+        .category-item img {
+            width: 61%;
+            margin: 0 auto;
+            padding: 1rem;
+            border: 8px solid var(--text);
+            border-radius: 50%;
+            margin-bottom: 2rem;
+        }
+
+        .category-item p {
+            font-size: 13px;
+        }
+
+    .category-container {
+        padding-top: 5rem;
     }
 
-    .category-item img {
-        width: 61%;
-        margin: 0 auto;
-        padding: 1rem;
-        border: 8px solid var(--text);
-        border-radius: 50%;
-        margin-bottom: 2rem;
-    }
-
-    .category-item p  {
-        font-size: 13px;
-    }
-
-    .category-container{
-        padding-top : 5rem;
-    }
-
-    @@media (min-width: 1000px){
+    @@media (min-width: 1000px) {
         .custom-col {
             width: 20%; /* Custom width for 5 columns */
         }
@@ -809,18 +811,16 @@
         text-align: center;
     }
 
-    .clients-list img {
-        width: 30%;
-        display:flex;
-        margin:auto;
-        padding-bottom:15px;
-    }
+        .clients-list img {
+            width: 30%;
+            display: flex;
+            margin: auto;
+            padding-bottom: 15px;
+        }
 
     .client-item {
         padding: 1.5rem 0;
     }
-
-
 </style>
 
 <div class="banner-box">
@@ -1133,6 +1133,11 @@
 
 </div>
 
+@Html.Partial("_AboutPartial")
+
+@Html.Partial("_BlogsPartial")
+
+
 <script>
     $(document).ready(function () {
 
@@ -1156,5 +1161,22 @@
             $('.selectpicker').selectpicker();
         });
 
+    })
+
+    $('.owl-carousel').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: true,
+        responsive: {
+            0: {
+                items: 1
+            },
+            600: {
+                items: 3
+            },
+            1000: {
+                items: 5
+            }
+        }
     })
 </script>

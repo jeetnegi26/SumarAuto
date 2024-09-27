@@ -149,11 +149,14 @@
     <Content Include="Content\fonts.css" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.svg" />
     <Content Include="Content\icons\tabler-icons\tabler-icons.css" />
+    <Content Include="Content\Images\about-bg.png" />
+    <Content Include="Content\Images\abt-right.png" />
     <Content Include="Content\Images\b1.jpg" />
     <Content Include="Content\Images\b2.png" />
     <Content Include="Content\Images\b3.jpg" />
     <Content Include="Content\Images\b4.png" />
     <Content Include="Content\Images\backgrounds\rocket.png" />
+    <Content Include="Content\Images\blog-1.jpg" />
     <Content Include="Content\Images\logoHONDA.png" />
     <Content Include="Content\Images\logoMAZDA.png" />
     <Content Include="Content\Images\logoMITSUBISHI.png" />
@@ -184,6 +187,7 @@
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff2" />
     <Content Include="Scripts\bootstrap-select.min.js.map" />
+    <Content Include="Content\Fonts\Oswald-VariableFont_wght.ttf" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -218,6 +222,8 @@
     <Content Include="Views\Shared\_AdminNavbar.cshtml" />
     <Content Include="Views\Shared\_AdminSidebar.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Home\_AboutPartial.cshtml" />
+    <Content Include="Views\Home\_BlogsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
