@@ -3,6 +3,251 @@
     ViewBag.Title = "AutoPartAction";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<style>
+    .ql-toolbar.ql-snow {
+        background-color: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem .5rem 0 0;
+        padding: 8px;
+    }
 
-<h2>AutoPartAction</h2>
+    .ql-container.ql-snow {
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 .5rem .5rem;
+    }
+    @@media(max-width:999px){
+        .autopartmakelabel{
+            display:none;
+        }
+        .autopartmakeinput input{
+            margin-bottom:10px;
+        }
+    }
+</style>
+<div class="product-container py-2 dow_page_con">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
+            <!-- Page header -->
+            <div class="mb-4">
+                <h4 class="mb-0">Add - Auto Part @*@(Model != null && Model.Id > 0 ? "Edit - Category" : "Add - Category")*@</h4>
+            </div>
+            <div>
+                <p class="m-0">
+                    <a class="text-danger" href="/admin/Category">Back to List</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div>
+        <form id="Create">
+            <input type="text" class="d-none" id="Id" value="@*@Model.Id*@" name="Id" />
+            <input type="text" class="d-none" name="CreatedBy" value="@*@Model.CreatedBy*@" />
+            <input type="text" class="d-none" name="Image" value="@*@Model.Image*@" id="OldImage" />
+            <input type="text" class="d-none" name="NewImage" id="NewImage" value="" />
+            <div class="row">
+                <div class="col-lg-8 col-md-7 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" value="@*@Model.Title*@" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
 
+                                <div class="mb-3">
+                                    <input type="hidden" id="editor-content" name="Description" value="@*@Model.Description*@" />
+                                    <label class="form-label"> Overview</label>
+                                    <div class="pb-8" id="editor"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Image Upload</label>
+                                    <br />
+                                    @*@if (!string.IsNullOrEmpty(Model.Image))
+                                        {
+                                            <img src="@Model.Image" alt="Image" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
+                                        }*@
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" onchange="previewImage(this)">
+                                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-5 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" aria-label="Default select example">
+                                        <option selected>Open this select menu</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Order</label>
+                                    <input type="text" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Extra</label>
+                                    <input type="text" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="border col-11 p-3" style=" border-radius: 10px;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Make</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Open this select menu</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-11 mb-2 px-3 autopartmakelabel">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label>Model</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Year</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Engine</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Liter</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Chassi</label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="bg-secondary-subtle m-0 p-2 row autopartmakeinput" style="align-items: center; border-radius: 7px;">
+                                        <div class="col-11">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-6 col-12">
+                                                    <div class="ui-widget">
+                                                        <input id="models" class="form-control" placeholder="Model">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-12">
+                                                    <div class="ui-widget">
+                                                        <input id="years" class="form-control" placeholder="e.g : 06-12 (2006 - 2012)">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-12">
+                                                    <div class="ui-widget">
+                                                        <input id="engines" class="form-control" placeholder="Engine">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-12">
+                                                    <div class="ui-widget">
+                                                        <input id="liter" class="form-control" placeholder="Liter">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-md-6 col-12">
+                                                    <div class="ui-widget">
+                                                        <input id="chassiss" class="form-control" placeholder="Chassis">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-1" style=" text-align: -webkit-right;">
+                                            <button id="newMakeItem" class="border-0 bg-transparent">
+                                                <i class="ti ti-square-plus" style=" font-size: 35px; color: red;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-1" style="align-content: center;">
+                                    <button id="newMakeItem" class="border-0 bg-transparent">
+                                        <i class="ti ti-square-plus" style=" font-size: 35px; color: #13deb9;"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid">
+                <button id="CreateBtn" type="button" class="btn btn-primary w-100 p-2">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        var availableTags = [
+            "ActionScript",
+            "AppleScript",
+            "Asp",
+            "BASIC",
+            "C",
+            "C++",
+            "Clojure",
+            "COBOL",
+            "ColdFusion",
+            "Erlang",
+            "Fortran",
+            "Groovy",
+            "Haskell",
+            "Java",
+            "JavaScript",
+            "Lisp",
+            "Perl",
+            "PHP",
+            "Python",
+            "Ruby",
+            "Scala",
+            "Scheme"
+        ];
+        $("#models").autocomplete({
+            source: availableTags
+        });
+    });
+    var quill;
+    if ($("#editor").length) {
+        quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ['link', 'image'],
+                ]
+            }
+        });
+        if (Description != null && Description.length > 2) {
+            quill.clipboard.dangerouslyPasteHTML(Description);
+        }
+    }
+</script>
