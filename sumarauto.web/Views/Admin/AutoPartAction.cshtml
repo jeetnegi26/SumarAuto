@@ -3,6 +3,412 @@
     ViewBag.Title = "AutoPartAction";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
 
-<h2>AutoPartAction</h2>
+<style>
+    .ql-toolbar.ql-snow {
+        background-color: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem .5rem 0 0;
+        padding: 8px;
+    }
 
+    .ql-container.ql-snow {
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 .5rem .5rem;
+    }
+
+    .cancel-item-btn {
+        position: absolute;
+        top: 5px;
+        right: -15px;
+        width: auto;
+    }
+
+        .cancel-item-btn .ti {
+            font-size: 30px;
+            color: red;
+        }
+
+    .autoPartItem_container {
+        position: relative;
+    }
+
+    @@media(max-width:999px) {
+        .autopartmakelabel {
+            display: none;
+        }
+
+        .autopartmakeinput input {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+<div class="product-container py-2 dow_page_con">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
+            <!-- Page header -->
+            <div class="mb-4">
+                <h4 class="mb-0">Add - Auto Part @*@(Model != null && Model.Id > 0 ? "Edit - Category" : "Add - Category")*@</h4>
+            </div>
+            <div>
+                <p class="m-0">
+                    <a class="text-danger" href="/admin/AutoPart">Back to List</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div>
+        <form id="Create">
+            <div class="row" id="itemBasicDetail">
+                <div class="col-lg-8 col-md-7 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" value="" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
+
+                                <div class="mb-3">
+                                    <input type="hidden" id="editor-content" name="Description" value="@*@Model.Description*@" />
+                                    <label class="form-label"> Overview</label>
+                                    <div class="pb-8" id="editor"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Image Upload</label>
+                                    <br />
+                                    @*@if (!string.IsNullOrEmpty(Model.Image))
+                                        {
+                                            <img src="@Model.Image" alt="Image" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
+                                        }*@
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" onchange="previewImage(this)">
+                                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-5 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" aria-label="Default select example" id="categoryList" name="categoryId" >
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Order</label>
+                                    <input type="text" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Extra</label>
+                                    <input type="text" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-body" style=" position: relative; ">
+                            <div class="row">
+                                <div class="border col-12 p-3 mb-4" style=" border-radius: 10px;">
+                                    <div class="col-12 mb-2 autopartmakelabel">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <label>Make</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Model</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Year</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Engine</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Liter</label>
+                                            </div>
+                                            <div class="col-2">
+                                                <label>Chassi</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="container_box" class="multipleDetails">
+                                        <div class="row autoPartItem_container">
+                                            <div class="col-2">
+                                                <div class="mb-3">
+                                                    <select class="form-select makeSelected" aria-label="Default select example">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="mb-3">
+                                                    <div class="ui-widget">
+                                                        <input id="models" class="form-control" placeholder="Model">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="mb-3">
+                                                    <div class="ui-widget">
+                                                        <input id="years" class="form-control" placeholder="e.g : 06-12 (2006 - 2012)">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="mb-3">
+                                                    <div class="ui-widget">
+                                                        <input id="engines" class="form-control" placeholder="Engine">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="mb-3">
+                                                    <div class="ui-widget">
+                                                        <input id="liter" class="form-control" placeholder="Liter">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="mb-3">
+                                                    <div class="ui-widget">
+                                                        <input id="chassiss" class="form-control" placeholder="Chassis">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12" style="text-align: -webkit-right;">
+                                        <button type="button" class="border-0 bg-transparent newMakeItem">
+                                            <i class="ti ti-square-plus" style=" font-size: 35px; color: #13deb9;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid">
+                <button id="CreateBtn" type="button" class="btn btn-primary w-100 p-2">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        getCatListData();
+        getMakeListData();
+    });
+    var lastSelected = "";
+    $(function () {
+        var availableTags = [
+            "ActionScript",
+            "AppleScript",
+            "Asp",
+            "BASIC",
+            "C",
+            "C++",
+            "Clojure",
+            "COBOL",
+            "ColdFusion",
+            "Erlang",
+            "Fortran",
+            "Groovy",
+            "Haskell",
+            "Java",
+            "JavaScript",
+            "Lisp",
+            "Perl",
+            "PHP",
+            "Python",
+            "Ruby",
+            "Scala",
+            "Scheme"
+        ];
+        $("#models").autocomplete({
+            source: availableTags
+        });
+    });
+    var quill;
+    if ($("#editor").length) {
+        quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ['link', 'image'],
+                ]
+            }
+        });
+        //if (Description != null && Description.length > 2) {
+        //    quill.clipboard.dangerouslyPasteHTML(Description);
+        //}
+    }
+
+    //Replicate AutoPartItem --------------Start
+    const container_box = document.getElementById("container_box");
+    const autoPartItem_Container = document.querySelector(".autoPartItem_container");
+    const newMakeItems = document.querySelectorAll(".newMakeItem");
+    newMakeItems.forEach(newMakeItem => {
+        newMakeItem.addEventListener("click", function () {
+            const clonedContainer = autoPartItem_Container.cloneNode(true);
+            //const inputs = clonedContainer.querySelectorAll("input");
+            //inputs.forEach(input => input.value = "");
+            // Add a Cancel button
+            const cancelButton = document.createElement("button");
+            cancelButton.innerText = "Cancel";
+            cancelButton.type = "button";
+            cancelButton.classList = "border-0 bg-transparent cancel-item-btn";
+            cancelButton.innerHTML = '<i class="ti ti-circle-x"></i>';
+            clonedContainer.appendChild(cancelButton);
+
+            $(clonedContainer).css("display", "none");
+            container_box.appendChild(clonedContainer);
+            $(clonedContainer).slideDown("slow", function () {
+                clonedContainer.scrollIntoView({ behavior: 'smooth' });
+            });
+            cancelButton.addEventListener("click", function () {
+                $(clonedContainer).slideUp("slow", function () {
+                    clonedContainer.remove(); // Remove the container after slide-up
+                });
+            });
+            const clonedDropdown = clonedContainer.querySelector(".makeSelected");
+
+            if (lastSelected !== "" && clonedDropdown) {
+                const optionToSelect = clonedDropdown.querySelector(`option[value="${lastSelected}"]`);
+                if (optionToSelect) {
+                    optionToSelect.selected = true;  // Set the last selected value as the default
+                }
+            }
+
+            if (clonedDropdown) {
+                clonedDropdown.addEventListener("change", function () {
+                    lastSelected = this.value;
+                });
+            }
+        });
+    });
+    const makeSelects = document.querySelectorAll(".makeSelected");
+    makeSelects.forEach(makeSelect => {
+        makeSelect.addEventListener("change", function () {
+            lastSelected = this.value;
+        });
+    });
+    //Replicate AutoPartItem ----------------END
+
+    //Select Item Dropdown ------------------Start
+    async function getCatListData() {
+        var response = await fetch("/Admin/GetDropdownCatList");
+        var result = await response.json();
+        let htmlString = '';
+        const catSelect = document.getElementById("categoryList");
+        if (result != null && catSelect) {
+            for (var i = 0; i < result.length; i++) {
+                htmlString += `<option value="${result[i].Value}">${result[i].Text}</option>`;
+            }
+            catSelect.innerHTML = htmlString;
+            $('.selectpicker').selectpicker('refresh');
+        }
+    }
+    async function getMakeListData() {
+        var response = await fetch("/Admin/GetMakedownList");
+        var result = await response.json();
+        let htmlString = '';
+        const makeSelectList = document.querySelector(".makeSelected");
+        if (result != null && makeSelectList) {
+            for (var i = 0; i < result.length; i++) {
+                htmlString += `<option value="${result[i].Value}">${result[i].Text}</option>`;
+            }
+            makeSelectList.innerHTML = htmlString;
+            $('.selectpicker').selectpicker('refresh');
+        }
+    }
+    //Select Item Dropdown ------------------End
+
+    $("#Create").validate({
+        rules: {
+            Title: {
+                required: true,
+            },
+        },
+        messages: {
+            Title: {
+                required: '*Title is required',
+            },
+        }
+    });
+    const CreateBtn = document.getElementById("CreateBtn");
+    if (CreateBtn) {
+        CreateBtn.addEventListener("click", function () {
+          const spinnerborder = document.querySelector(".spinner-border");
+          spinnerborder.classList.remove("d-none");
+          CreateBtn.setAttribute("disabled", true);
+
+          //var editorData = CKEDITOR.instances.editor1.getData();
+          //$("#LongDesc").val(editorData);
+
+          var formData = $("#Create").serialize();
+          if ($("#Create").valid()) {
+          @*$.ajax({
+              type: "POST",
+              url: '@Url.Action("PageAction")',
+              data: formData,
+              success: function (response) {
+                  if (response.Success == true) {
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Page details saved successfully',
+                      }).then((result) => {
+                          if (result.isConfirmed) {
+                              window.location.href = "/admin/PageList";
+                          }
+                      });
+                  }
+                  else {
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Oops...',
+                          text: 'Something went wrong!',
+                      })
+                  }
+              },
+              error: function (response) {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'Something went wrong!',
+                  })
+              },
+              complete: function (response) {
+                  spinnerborder.classList.add("d-none");
+                  CreateBtn.removeAttribute("disabled");
+              },
+          });*@
+      }
+      else {
+          spinnerborder.classList.add("d-none");
+          CreateBtn.removeAttribute("disabled");
+      }
+      });
+    }
+</script>

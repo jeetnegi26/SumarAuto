@@ -68,6 +68,10 @@
     <Compile Include="Migrations\202409260836380_IsFeatured.Designer.cs">
       <DependentUpon>202409260836380_IsFeatured.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202409280849283_AutoPartmake.cs" />
+    <Compile Include="Migrations\202409280849283_AutoPartmake.Designer.cs">
+      <DependentUpon>202409280849283_AutoPartmake.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -93,6 +97,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409260836380_IsFeatured.resx">
       <DependentUpon>202409260836380_IsFeatured.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409280849283_AutoPartmake.resx">
+      <DependentUpon>202409280849283_AutoPartmake.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

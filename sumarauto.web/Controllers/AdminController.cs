@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -406,6 +407,58 @@ namespace sumarauto.web.Controllers
                 throw;
             }
             return Json(new { Success = success, Message = message }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Helper
+        public async Task<ActionResult> GetDropdownCatList()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetCategoryList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    var rows = await command.ExecuteReaderAsync();
+                    var result = new List<SelectListItem>();
+                    while (rows.Read())
+                    {
+                        var data = new SelectListItem();
+                        data.Text = rows["Title"].ToString();
+                        data.Value = rows["Id"].ToString();
+                        result.Add(data);
+                    }
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<ActionResult> GetMakedownList()
+        {
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    var dataList = await db.Make.AsNoTracking().ToListAsync();
+                    var result = new List<SelectListItem>();
+                    foreach (var item in dataList)
+                    {
+                        var data = new SelectListItem();
+                        data.Text = item.Title;
+                        data.Value = item.MakeId.ToString();
+                        result.Add(data); 
+                    }
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         #endregion
     }

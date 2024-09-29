@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="AutoPart.cs" />
     <Compile Include="AutoPartImages.cs" />
+    <Compile Include="AutoPartMake.cs" />
     <Compile Include="Banner.cs" />
     <Compile Include="BannerImages.cs" />
     <Compile Include="Base.cs" />
