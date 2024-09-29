@@ -181,6 +181,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\app.min.js" />
+    <Content Include="Scripts\bootstrap-select.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -191,6 +192,7 @@
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.ttf" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff2" />
+    <Content Include="Scripts\bootstrap-select.min.js.map" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -198,11 +200,14 @@
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\owl.carousel.js" />
+    <Content Include="Scripts\owl.carousel.min.js" />
     <Content Include="Scripts\sidebarmenu.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
