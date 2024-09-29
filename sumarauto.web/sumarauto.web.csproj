@@ -197,6 +197,7 @@
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff2" />
     <Content Include="Scripts\bootstrap-select.min.js.map" />
+    <Content Include="Content\Fonts\Oswald-VariableFont_wght.ttf" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
