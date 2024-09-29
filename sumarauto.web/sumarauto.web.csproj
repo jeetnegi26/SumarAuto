@@ -128,6 +128,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\adminstyle.min.css" />
+    <Content Include="Content\all.css" />
+    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -136,6 +138,7 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap-reboot.rtl.css" />
     <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-select.min.css" />
     <Content Include="Content\bootstrap-utilities.css" />
     <Content Include="Content\bootstrap-utilities.min.css" />
     <Content Include="Content\bootstrap-utilities.rtl.css" />
@@ -144,6 +147,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\fonts.css" />
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.svg" />
     <Content Include="Content\icons\tabler-icons\tabler-icons.css" />
     <Content Include="Content\images\about-bg.png" />
@@ -169,6 +173,10 @@
     <Content Include="Content\images\logoTOYOTA.png" />
     <Content Include="Content\images\pl_boot.png" />
     <Content Include="Content\images\profile\user-1.jpg" />
+    <Content Include="Content\jquery-ui.min.css" />
+    <Content Include="Content\owl.carousel.css" />
+    <Content Include="Content\owl.carousel.min.css" />
+    <Content Include="Content\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
