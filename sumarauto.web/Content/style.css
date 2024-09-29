@@ -287,7 +287,13 @@ a {
 
 footer {
     text-align: center;
-    color: var(--text) !important
+    color: var(--bg) !important;
+    background-color: var(--text);
+}
+
+.foot-q-link{
+    color:var(--bg);
+    padding:1rem;
 }
 
 .footer-icons {

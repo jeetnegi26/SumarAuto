@@ -1,0 +1,328 @@
+﻿
+@{
+    ViewBag.Title = "Product";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+
+<style>
+/*USE CSS for Slider*/
+
+.vehicle-detail-banner .car-slider-desc {
+    max-width: 180px;
+    margin: 0 auto;
+}
+.banner-slider .slider.slider-for {
+    max-width: 84%;
+    padding-right: 35px;
+}
+.banner-slider .slider.slider-nav {
+    max-width: 16%;
+}
+.banner-slider .slider.slider-for,
+.banner-slider .slider.slider-nav {
+    width: 100%;
+    float: left;
+}
+.banner-slider .slider.slider-nav {
+    /*height: 610px;*/
+    overflow: hidden;
+
+}
+/*.slider-banner-image {
+    height: 610px;
+}*/
+.banner-slider .slider.slider-nav {
+    padding: 20px 0 0;
+}
+.slider-nav .slick-slide.thumbnail-image .thumbImg{
+    max-width: 178px;
+    height: 110px;
+    margin: 0 auto;
+    border: 1px solid #EBEBEB;
+}
+.slider-banner-image img,
+.slider-nav .slick-slide.thumbnail-image .thumbImg img {
+    height: 100%;
+    width:100%;
+    object-fit: cover;
+}
+.slick-vertical .slick-slide:active,
+.slick-vertical .slick-slide:focus,
+.slick-arrow:hover,
+.slick-arrow:focus {
+    border: 0;
+    outline: 0;
+}
+.slider-nav .slick-slide.slick-current.thumbnail-image .thumbImg {
+    border: 2px solid #196DB6;
+}
+.slider-nav .slick-slide.slick-current span {
+    color: #196DB6;
+}
+.slider-nav .slick-slide {
+    text-align: center;
+}
+.slider-nav .slick-slide span {
+    font-size: 14px;
+    display: block;
+    padding: 5px 0 15px;
+}
+.slick-arrow {
+    width: 100%;
+    background-color: transparent;
+    border: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-size: 0;
+    height: 18px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+.slick-prev {
+   top: 0;
+}
+.slick-next {
+   bottom: 0;
+   background-color: #fff;
+}
+.slick-prev.slick-arrow {
+    background-image: url(../images/black-up-arrow.png);
+}
+.slick-next.slick-arrow {
+    background-image: url(../images/black-down-arrow.png);
+}
+/*End USE CSS for Slider*/
+
+@@media screen and (max-width : 991px) {
+
+	.banner-slider .slider.slider-for,
+	.banner-slider .slider.slider-nav {
+	    max-width: 100%;
+	    float: none;
+	}
+	.banner-slider .slider.slider-for {
+		padding-right: 0;
+	}
+	.banner-slider .slider.slider-nav {
+		height: auto;
+	}
+	/*.slider-banner-image {
+	    height: 500px;
+	}*/
+	.slider.slider-nav.thumb-image {
+        padding: 10px 30px 0;
+	}
+	.slider-nav .slick-slide span {
+		padding: 5px 0;
+	}
+	.slick-arrow {
+		padding: 0;
+	    width: 30px;
+	    height: 30px;
+	    top: 50%;
+	    bottom: 0;
+	    -webkit-transform: translateY(-50%) rotate(-90deg);
+	    -moz-transform: translateY(-50%) rotate(-90deg);
+	    -ms-transform: translateY(-50%) rotate(-90deg);
+	    transform: translateY(-50%) rotate(-90deg);
+	}
+	.slick-prev {
+	    left: 0;
+	    right: unset;
+	}
+	.slick-next {
+	    left: unset;
+	    right: 0;
+   		background-color: transparent;
+	}
+	.vehicle-detail-banner .car-slider-desc {
+    	max-width: 340px;
+	}
+	.bid-tag {
+    	padding: 10px 0 15px;
+	}
+	.slider.slider-nav.thumb-image {
+	   white-space: nowrap;
+	}
+	.thumbnail-image.slick-slide {
+		padding: 0px 5px;
+		min-width: 75px;
+		display: inline-block;
+		float: none;
+	}
+}
+
+@@media screen and (max-width : 767px) {
+	/*.slider-banner-image {
+	    height: 400px;
+	}*/
+	.slider.slider-nav.thumb-image {
+    	padding: 0px 20px 0;
+    	margin: 10px 0px 0;
+	}
+	.slider-nav .slick-slide.thumbnail-image .thumbImg {
+		max-width: 140px;
+		height: 80px;
+	}
+	.slick-prev.slick-arrow {
+    	background-position: center 10px;
+	}
+	.slick-next.slick-arrow {
+    	background-position: center 10px, center;
+	}
+	.slider-nav .slick-slide span {
+	    font-size: 12px;
+	    white-space: normal;
+	}
+}
+
+@@media screen and (max-width: 580px) {
+	/*.slider-banner-image {
+	    height:340px;
+	}*/
+}
+
+@@media screen and (max-width : 480px) {
+	/*.slider-banner-image {
+	    height:280px;
+	}*/
+}
+
+    .slick-vertical {
+        height: 35vh;
+    }
+
+    .product-descr h2{
+        text-transform: uppercase;
+    }
+</style>
+
+
+
+<div class="product-gallery container">
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-12">
+            <!-- IMPORTANT NOTE: Make sure your youtube video URL includes this string: &enablejsapi=1
+    Otherwise, the pause fuction will not work -->
+            <section class="banner-section">
+                <div class="container">
+                    <div class="vehicle-detail-banner banner-content clearfix">
+                        <div class="banner-slider">
+                            <div class="slider slider-for">
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/p1.png" alt="name" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/p1.png" alt="name" />
+                                </div>
+                            </div>
+                            <div class="slider slider-nav thumb-image">
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.png" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/p1.png" alt="name" />
+                                    </div>
+                                    <span>White Pearl Crystal Shine3</span>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.png" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/p1.png" alt="name" />
+                                    </div>
+                                    <span>White Pearl Crystal Shine3</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End User this HTML for Slider -->
+        </div>
+        <div class="col-lg-6 col-md-4 col-12 product-descr">
+            <h2>ACVAL1002 / Boot, CV joint, NBR</h2>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.slider-for').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: false,
+        fade: true,
+        asNavFor: '.slider-nav'
+    });
+    $('.slider-nav').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        vertical: true,
+        asNavFor: '.slider-for',
+        dots: false,
+        focusOnSelect: true,
+        verticalSwiping: true,
+        responsive: [
+            {
+                breakpoint: 992,
+                settings: {
+                    vertical: false,
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    vertical: false,
+                }
+            },
+            {
+                breakpoint: 580,
+                settings: {
+                    vertical: false,
+                    slidesToShow: 3,
+                }
+            },
+            {
+                breakpoint: 380,
+                settings: {
+                    vertical: false,
+                    slidesToShow: 2,
+                }
+            }
+        ]
+    });
+</script>

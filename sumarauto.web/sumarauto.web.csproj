@@ -121,6 +121,7 @@
     <Compile Include="Controllers\HelperController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -173,9 +174,12 @@
     <Content Include="Content\images\logoTOYOTA.png" />
     <Content Include="Content\images\pl_boot.png" />
     <Content Include="Content\images\profile\user-1.jpg" />
+    <Content Include="Content\Products\simg_83.png" />
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\owl.carousel.css" />
     <Content Include="Content\owl.carousel.min.css" />
+    <Content Include="Content\Products\p1.png" />
+    <Content Include="Content\Products\simg_83.jpg" />
     <Content Include="Content\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -236,6 +240,8 @@
     <Content Include="Views\Admin\MakeAction.cshtml" />
     <Content Include="Views\Admin\MModel.cshtml" />
     <Content Include="Views\Admin\MModelAction.cshtml" />
+    <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\Products\Product.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
