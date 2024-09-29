@@ -1,39 +1,103 @@
-﻿<!DOCTYPE html>
+﻿@{
+
+    string webname = "sumarauto.com";
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="morya, luxury, living" />
+    <meta name="description" content="Morya Luxury Living Real Estate is a full-service, real estate brokerage representing clients in Dubai and worldwide in a broad spectrum of classes, i
+          ncluding single-family residential, new development, commercial, and residential leasing." />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:url" content="@webname" />
+    <meta property="og:description" content="" />
+    <meta property="og:image" content="@(webname + "/Content/Images/logo.png")"   />
+
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/all.css" rel="stylesheet" />
+    <link href="~/Content/owl.carousel.css" rel="stylesheet" />
+
+
+    <link href="~/Content/animate.css" rel="stylesheet" />
+
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/owl.carousel.js"></script>
+
+
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
+    <div class="navbar">
+        <div class="container nav-boxx">
+            <div class="row">
+                <div class="col-lg-12 col-md-8 col-8 navbar-logo"><a href="/Home/Index"><img src="~/Content/Images/logo.png" alt="logo" /></a></div>
+                <div style="z-index: 2;" class="col-lg-12 col-md-4 col-4 navbar-menu">
+                    <nav>
+                        <ul>
+                            <li><a href="/">HOME</a></li>
+                            <li><a href="/Property/PropertyList">PROPERTY GALORE</a></li>
+                            <li><a href="/Home/Services">SERVICES</a></li>
+                            <li><a href="/Home/About">ABOUT US</a></li>
+                            <li><a href="/Home/Contact">CONTACT</a></li>
+                        </ul>
+                    </nav>
+                    <div class="navbar-icon">
+                        <span></span>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    <div class="body">
+        @RenderBody()
+    </div>
+
+    <footer class="">
+        <div class="footer-logo">
+            <a href="/Home/Index"><img style="width: 20%;" src="~/Content/Images/logo.png" /></a>
+        </div>
+        <div class="d-lg-flex d-md-flex d-block justify-content-center">
+            <div><a class="foot-q-link" href="/">HOME</a></div>
+            <div><a class="foot-q-link" href="/Property/PropertyList">PROPERTY GALORE</a></div>
+            <div><a class="foot-q-link" href="/Home/Services">SERVICES</a></div>
+            <div><a class="foot-q-link" href="/Home/About">ABOUT US</a></div>
+            <div><a class="foot-q-link" href="/Home/Contact">CONTACT</a></div>
+        </div>
+        <div class="footer-icons">
+            <a class="pr-1" href="" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a class="pr-1" href="" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a class="pr-1" href="" target="_blank"><i class="bi bi-instagram"></i></a>
+        </div>
+        <div class="footer-copy">
+            <p>
+                © Copyright Sumaru Auto 2024
+            </p>
+        </div>
+        <div class="foot-bottom-img">
+            <img style="width: 40%;" src="~/Content/Images/foot-img.png" />
+        </div>
+    </footer>
+
+    <div class="sticky-button">
+        <a href="https://wa.me/919004755779text=Hey%21+I+came+across+Sumaru+Auto+Parts+website.+Liked+some+of+the+products.+can+we+connect+regarding+this.%0D%0AThank+you." class="fixed-button"><i class="bi bi-whatsapp"></i></a>
+    </div>
+
+    <script>
+        $('.navbar-icon').click(function () {
+            $(this).toggleClass("active");
+            $(".navbar-menu nav").toggleClass("active");
+        });
+    </script>
 </body>
 </html>
