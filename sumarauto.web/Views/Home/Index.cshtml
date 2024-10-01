@@ -2,32 +2,1166 @@
     ViewBag.Title = "Home Page";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+
+<style>
+
+
+    /*banner css starts*/
+
+    /* Arrows */
+    .slick-prev,
+    .slick-next {
+        font-size: 0;
+        line-height: 0;
+        position: absolute;
+        top: 50%;
+        display: block;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        -webkit-transform: translate(0, -50%);
+        -ms-transform: translate(0, -50%);
+        transform: translate(0, -50%);
+        cursor: pointer;
+        color: transparent;
+        border: none;
+        outline: none;
+        background: transparent;
+    }
+
+        .slick-prev:hover,
+        .slick-prev:focus,
+        .slick-next:hover,
+        .slick-next:focus {
+            color: transparent;
+            outline: none;
+            background: transparent;
+        }
+
+            .slick-prev:hover:before,
+            .slick-prev:focus:before,
+            .slick-next:hover:before,
+            .slick-next:focus:before {
+                opacity: 1;
+            }
+
+        .slick-prev.slick-disabled:before,
+        .slick-next.slick-disabled:before {
+            opacity: 0.25;
+        }
+
+        .slick-prev:before,
+        .slick-next:before {
+            font-family: "slick";
+            font-size: 20px;
+            line-height: 1;
+            opacity: 0.75;
+            color: white;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+    .slick-prev {
+        left: -25px;
+    }
+
+    [dir="rtl"] .slick-prev {
+        right: -25px;
+        left: auto;
+    }
+
+    .slick-prev:before {
+        content: "←";
+    }
+
+    [dir="rtl"] .slick-prev:before {
+        content: "→";
+    }
+
+    .slick-next {
+        right: -25px;
+    }
+
+    [dir="rtl"] .slick-next {
+        right: auto;
+        left: -25px;
+    }
+
+    .slick-next:before {
+        content: "→";
+    }
+
+    [dir="rtl"] .slick-next:before {
+        content: "←";
+    }
+
+    /* Dots */
+    .slick-dotted.slick-slider {
+        margin-bottom: 30px;
+    }
+
+    .slick-dots {
+        position: absolute;
+        bottom: -25px;
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        text-align: center;
+    }
+
+        .slick-dots li {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+            .slick-dots li button {
+                font-size: 0;
+                line-height: 0;
+                display: block;
+                width: 20px;
+                height: 20px;
+                padding: 5px;
+                cursor: pointer;
+                color: transparent;
+                border: 0;
+                outline: none;
+                background: transparent;
+            }
+
+                .slick-dots li button:hover,
+                .slick-dots li button:focus {
+                    outline: none;
+                }
+
+                    .slick-dots li button:hover:before,
+                    .slick-dots li button:focus:before {
+                        opacity: 1;
+                    }
+
+                .slick-dots li button:before {
+                    font-family: "slick";
+                    font-size: 6px;
+                    line-height: 20px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 20px;
+                    height: 20px;
+                    content: "•";
+                    text-align: center;
+                    opacity: 0.25;
+                    color: black;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+
+            .slick-dots li.slick-active button:before {
+                opacity: 0.75;
+                color: black;
+            }
+
+    * Slick Slider */
+    /* ==== Main CSS === */
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    .img-fill {
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        position: relative;
+        text-align: center;
+    }
+
+        .img-fill img {
+            height: 100%;
+            min-width: 100%;
+            position: relative;
+            display: inline-block;
+            max-width: none;
+        }
+
+    *,
+    *:before,
+    *:after {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.04);
+    }
+
+    .Grid1k {
+        padding: 0 15px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .blocks-box,
+    .slick-slider {
+        margin: 0 0;
+        padding: 0 !important;
+    }
+
+    .slick-slide {
+        float: left /* If RTL Make This Right */;
+        padding: 0px;
+    }
+
+    /* ==== Slider Style === */
+    .Modern-Slider {
+        position: relative;
+    }
+
+    .Gallery-Slider {
+        position: relative;
+        overflow: hidden;
+        background: red;
+    }
+
+    .Modern-Slider .Gallery-Slider {
+        background: #000;
+    }
+
+    .Modern-Slider .NextArrow {
+        position: absolute;
+        top: 50%;
+        right: 0px;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 0 none;
+        margin-top: -22.5px;
+        text-align: center;
+        font: 20px/45px FontAwesome;
+        color: #fff;
+        z-index: 5;
+        transition: all 1s;
+        opacity: 0;
+    }
+
+        .Modern-Slider .NextArrow:before {
+            content: "\f105";
+        }
+
+    .Modern-Slider .PrevArrow {
+        position: absolute;
+        top: 50%;
+        left: 0px;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 0 none;
+        margin-top: -22.5px;
+        text-align: center;
+        font: 20px/45px FontAwesome;
+        color: #fff;
+        z-index: 5;
+        opacity: 0;
+        transition: all 1s;
+    }
+
+        .Modern-Slider .PrevArrow:before {
+            content: "\f104";
+        }
+
+    .Modern-Slider .Gallery-Slider:hover .PrevArrow {
+        opacity: 1;
+    }
+
+    .Modern-Slider .Gallery-Slider:hover .NextArrow {
+        opacity: 1;
+    }
+
+    .Modern-Slider .Gallery-Slider .img-fill {
+        height: 70vh; /* Removed
+        background: #000;
+        /*min-height: 400px;*/ /* Added */
+        /*max-height: 300px;*/ /* Added */
+
+        display: flex !important; /* Added */
+        justify-content: center; /* Added */
+    }
+
+    .Modern-Slider .img-fill:before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.5);
+        position: absolute;
+    }
+
+    .Modern-Slider .img-fill img {
+        filter: blur(5px);
+    }
+
+    .Modern-Slider .img-fill .info {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        z-index: 3;
+        top: 30%;
+        padding: 0 20px;
+    }
+
+    .Gallery-Slider .Slick-Gallery:hover .NextArrow {
+        opacity: 1;
+    }
+
+    .Modern-Slider .img-fill h3 {
+        font: 22px/50px;
+        color: #fff;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        visibility: hidden;
+        text-transform: uppercase;
+    }
+
+    .Modern-Slider .img-fill p {
+        max-width: 650px;
+        margin: auto;
+        margin-top: 15px;
+        font: 14px/22px;
+        color: #fff;
+        height: 66px;
+        overflow: hidden;
+        visibility: hidden;
+        text-transform: capitalize;
+    }
+
+    .Modern-Slider .slick-active h3 {
+        animation: fadeInDown 1s both 0.5s;
+        visibility: visible;
+    }
+
+    .Modern-Slider .slick-active p {
+        animation: fadeInUp 1s both 1s;
+        visibility: visible;
+    }
+
+    .Modern-Slider .slick-dots {
+        position: absolute;
+        height: 50px;
+        bottom: 0px;
+        width: 100%;
+        left: 0px;
+        padding: 0px;
+        margin: 0px;
+        list-style-type: none;
+        text-align: center;
+    }
+
+        .Modern-Slider .slick-dots li {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            background: Transparent;
+            -webkit-transition: all 0.5s;
+            transition: all 0.5s;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin: 0 2.5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+            .Modern-Slider .slick-dots li.slick-active {
+                background: #fff;
+                -webkit-box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.28);
+                box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.28);
+            }
+
+            .Modern-Slider .slick-dots li a {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                width: 120px;
+                height: 75px;
+                display: block;
+                visibility: hidden;
+                border: 4px solid rgba(0, 0, 0, 0.5);
+                margin-left: -60px;
+                margin-bottom: 15px;
+                -webkit-transition: visibility 0.5s linear 0.5s;
+                transition: visibility 0.5s linear 0.5s;
+                -webkit-animation: fadeOut 0.5s both;
+                animation: fadeOut 0.5s both;
+            }
+
+                .Modern-Slider .slick-dots li a:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    margin-left: -8px;
+                    top: 100%;
+                    width: 0;
+                    height: 0;
+                    border: 8px solid Transparent;
+                    border-top-color: rgba(0, 0, 0, 0.5);
+                    margin-top: 4px;
+                }
+
+            .Modern-Slider .slick-dots li:hover a {
+                visibility: visible;
+                -webkit-transition-delay: 0s;
+                transition-delay: 0s;
+                -webkit-animation: fadeIn 0.5s both;
+                animation: fadeIn 0.5s both;
+            }
+
+            .Modern-Slider .slick-dots li a img {
+                width: 100%;
+                height: 100%;
+            }
+
+    /* ==== Slick Slider Css Ruls === */
+    .slick-slider {
+        position: relative;
+        display: block;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -khtml-user-select: none;
+        -ms-touch-action: pan-y;
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .slick-list {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+        .slick-list:focus {
+            outline: none;
+        }
+
+        .slick-list.dragging {
+            cursor: hand;
+        }
+
+    .slick-slider .slick-track,
+    .slick-slider .slick-list {
+        -webkit-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    .slick-track {
+        position: relative;
+        top: 0;
+        left: 0;
+        display: block;
+    }
+
+        .slick-track:before,
+        .slick-track:after {
+            display: table;
+            content: "";
+        }
+
+        .slick-track:after {
+            clear: both;
+        }
+
+    .slick-loading .slick-track {
+        visibility: hidden;
+    }
+
+    .slick-slide {
+        display: none;
+        float: left /* If RTL Make This Right */;
+        height: 100%;
+        min-height: 1px;
+    }
+
+        .slick-slide.dragging img {
+            pointer-events: none;
+        }
+
+    .slick-initialized .slick-slide {
+        display: block;
+    }
+
+    .slick-loading .slick-slide {
+        visibility: hidden;
+    }
+
+    .slick-vertical .slick-slide {
+        display: block;
+        height: auto;
+        border: 1px solid transparent;
+    }
+
+
+    /*Banner Css ends*/
+
+
+    .dark {
+        background-color: var(--text);
+        color: white;
+    }
+
+    .heading-home {
+        padding: 2rem 0;
+    }
+
+    button:focus {
+        outline: none !important;
+    }
+
+    .custom-dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .selected-option {
+        padding: 10px;
+        border-bottom: 1px solid var(--bg);
+        cursor: pointer;
+    }
+
+    .search-box {
+        padding: 0 2px;
+    }
+
+        .search-box .bootstrap-select {
+            border: 1px solid var(--bg);
+            width: 100% !important;
+            color: var(--bg);
+        }
+
+            .search-box .bootstrap-select .dropdown-toggle {
+                color: var(--bg);
+            }
+
+    .bootstrap-select .dropdown-toggle .filter-option {
+        font-size: 12px;
+    }
+
+    .dropdown-options {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: var(--text);
+        border: 0;
+        width: 100%;
+    }
+
+    .custom-dropdown.open .dropdown-options {
+        display: block;
+    }
+
+    .custom-dropdown label {
+        display: block;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .custom-dropdown label:hover {
+            background-color: #f0f0f0;
+        }
+
+
+
+    .title {
+        background: rgba(255, 255, 255, 0.7);
+        color: #333;
+        position: fixed;
+        text-align: right;
+        top: 0;
+        right: 0;
+        padding: 10px 15px;
+        margin: 0;
+        z-index: 100;
+    }
+
+    .buttons-container button:focus {
+        outline: none;
+    }
+
+    .eraser {
+        background: #f5f5f5;
+        position: absolute;
+        transition: transform 0.5s ease-in-out;
+        opacity: 0.95;
+        top: 0;
+        left: 100%;
+        height: 100%;
+        width: 100%;
+        z-index: 100;
+    }
+
+        .eraser.active {
+            transform: translateX(-100%);
+        }
+
+    .buttons-container {
+        position: absolute;
+        bottom: 10%;
+        right: 60px;
+        /*   display: flex; */
+    }
+
+        .buttons-container button {
+            border: 2px solid #fff;
+            background-color: transparent;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 30px;
+            margin-right: 10px;
+        }
+
+            .buttons-container button:hover {
+                background-color: #fff;
+                color: #A9A9A9;
+                opacity: 0.9;
+            }
+
+
+
+
+    .banner-box {
+        position: relative;
+    }
+
+    .overlap-form {
+        position: absolute;
+        bottom: -6%;
+        left: 2%;
+        z-index: 1;
+        color: #1e1e1e;
+        width: 95vw;
+    }
+
+        .overlap-form h6 {
+            padding-left: 3px;
+            color: var(--bg);
+        }
+
+        .overlap-form select {
+            width: 100%;
+            border: 1px solid var(--bg);
+            color: var(--bg);
+            background-color: var(--text);
+            border-bottom: 1px solid var(--bg);
+            padding: 8px 2px;
+        }
+
+    .form_book {
+        background: var(--text);
+        padding: 20px 33px;
+        border-radius: 50px;
+    }
+
+    .boo-btn {
+        align-self: center;
+        text-align: center;
+    }
+
+        .boo-btn button {
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+    .prop-feat-head {
+        text-align: center;
+        padding: 8rem 0 4rem;
+    }
+
+    .head-home {
+        display: inline-block;
+        border-bottom: 2px solid #FDE9A9;
+        margin-bottom: 5px;
+        padding: 4px 25px;
+    }
+
+    .subhead-home {
+        text-align: center;
+    }
+
+    .search-text {
+        background-color: var(--text);
+        padding: 6px 2px;
+        border: 1px solid var(--bg);
+        color: var(--bg);
+        width: 100%
+    }
+
+    @@media (min-width: 1200px) {
+        .category-item h4 {
+            font-size: 1.2rem;
+        }
+    }
+
+    @@media (max-width: 500px) {
+        .overlap-form {
+            position: static;
+            width: 100%;
+        }
+
+        .search-container {
+            padding: 0;
+        }
+
+        .form_book {
+            border-radius: 0;
+        }
+
+        .search-box {
+            padding-bottom: 1rem;
+        }
+    }
+
+    .caregory {
+        margin-top: 5rem;
+        padding: 3rem 0;
+    }
+
+    .div-box {
+        padding: 3rem 0;
+    }
+
+    .category-box {
+        padding: 2rem 3rem;
+    }
+
+    .category-item {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        height: 100%;
+        border-radius: 7px;
+        transition: 0.3s;
+        background: white;
+        border-top: 7px solid var(--primary);
+        -webkit-box-shadow: 0px 0px 19px -12px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 0px 19px -12px rgba(0,0,0,0.75);
+        box-shadow: 0px 0px 19px -12px rgba(0,0,0,0.75);
+    }
+
+        .category-item:hover {
+            -webkit-box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
+            -moz-box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
+            box-shadow: -1px 1px 20px -5px rgba(153,153,153,1);
+        }
+
+        .category-item button {
+            margin: auto auto 0;
+            width: fit-content;
+        }
+
+        .category-item img {
+            width: 61%;
+            margin: 0 auto;
+            padding: 1rem;
+            border: 8px solid var(--text);
+            border-radius: 50%;
+            margin-bottom: 2rem;
+        }
+
+        .category-item p {
+            font-size: 13px;
+        }
+
+    .category-container {
+        padding-top: 5rem;
+    }
+
+    @@media (min-width: 1000px) {
+        .custom-col {
+            width: 20%; /* Custom width for 5 columns */
+        }
+    }
+
+    .clients {
+        padding: 5rem 0;
+    }
+
+    .clients-list {
+        text-align: center;
+    }
+
+        .clients-list img {
+            width: 30%;
+            display: flex;
+            margin: auto;
+            padding-bottom: 15px;
+        }
+
+    .client-item {
+        padding: 1.5rem 0;
+    }
+</style>
+
+<div class="banner-box">
+    <!-- form_lebal -->
+    <section class="overlap-form">
+        <div class="row">
+            <div class="col-md-12 search-container">
+                <form class="form_book">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-2 col-12 search-box">
+                            <h6 class="date">Category</h6>
+                            <select name="Category" id="Category" class="selectpicker">
+                                <option value="Air hose"> Air hose</option>
+                                <option value="Air hose"> Air hose</option>
+                                <option value="Air hose"> Air hose</option>
+                                <option value="Air hose"> Air hose</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12 search-box">
+                            <h6 class="date">Make</h6>
+                            <select name="Make" id="Make" class="selectpicker">
+                                <option value="Air hose"> Alfa Romeo</option>
+                                <option value="Air hose"> Audi</option>
+                                <option value="Air hose"> Aston Martin</option>
+                                <option value="Air hose"> Mazda Japan Ford</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Model</h6>
+                            <select name="Make" id="Make" class="selectpicker">
+                                <option value="Air hose"> RSX-TYPE-S</option>
+                                <option value="Air hose"> RL</option>
+                                <option value="Air hose"> TSX</option>
+                                <option value="Air hose"> TS215</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Years</h6>
+                            <select name="Years" id="Years" class="selectpicker">
+                                <option value="Air hose"> 2020</option>
+                                <option value="Air hose"> 2021</option>
+                                <option value="Air hose"> 2022</option>
+                                <option value="Air hose"> 2023</option>
+                                <option value="Air hose"> 2024</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Engine</h6>
+                            <select name="Engine" id="Engine" class="selectpicker">
+                                <option value="Air hose"> K24W7</option>
+                                <option value="Air hose"> K44W8</option>
+                                <option value="Air hose"> L24W7</option>
+                                <option value="Air hose"> A24W7</option>
+                                <option value="Air hose"> G24W7</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Liters</h6>
+                            <select name="Liters" id="Liters" class="selectpicker">
+                                <option value="Air hose">  2.4L</option>
+                                <option value="Air hose">  3.4L</option>
+                                <option value="Air hose">  1.4L</option>
+                                <option value="Air hose">  2.5L</option>
+                                <option value="Air hose">  3.4L</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-lg-1 col-md-1 col-12 search-box">
+                            <h6 class="date">Chassis</h6>
+                            <select name="Chassis" id="Chassis" @*class="selectpicker"*@>
+                                <option value="Air hose"> DE2F</option>
+                                <option value="Air hose"> 4D2F</option>
+                                <option value="Air hose"> PE2F</option>
+                                <option value="Air hose"> DL2F</option>
+                                <option value="Air hose"> DE4O</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-12 search-box">
+                            <h6 class="date">Search</h6>
+                            <input class="search-text form-control" type="text" id="">
+                        </div>
+
+                        <div class="col-lg-1 col-md-1 col-12 boo-btn search-box">
+                            <button class="book_btn" type="button"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- end form_lebal -->
+
+    <div class="Modern-Slider">
+        <div class="Gallery-Slider">
+            <!-- The Slider --->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b1.jpg" />
+                    <div class="info">
+                        <h2>Seed money rockstar beta</h2>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b2.png" />
+                    <div class="info">
+                        <h2>Seed money rockstar beta</h2>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b3.jpg" />
+                    <div class="info">
+                        <h2>Seed money rockstar beta</h2>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+            <!-- Item -->
+            <div class="item">
+                <div class="img-fill">
+                    <img src="~/Content/Images/b4.png" />
+                    <div class="info">
+                        <h2>Seed money rockstar beta</h2>
+                        <p>
+                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- // Item -->
+        </div>
+        <div class="Slick-Navigation">
+        </div>
     </div>
-</main>
+    <!-- end banner -->
+    <!-- end form_lebal -->
+</div>
+
+<div class="caregory">
+    <div class="container">
+        <div class="text-center">
+            <h2>OUR CATEGORIES</h2>
+            <p>
+                Sumar Auto uses a special formula for manufacturing rubber parts.
+                We also use durable materials and employ powder coating in place
+                of traditional painting for our metal parts. As a result,
+                they feature high resistances to heat, rapid friction, oxidation,
+                and aging.
+            </p>
+        </div>
+
+        <div class="category-list">
+            <div class="row">
+                <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>CV Boots</h4>
+                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Strut Mounts</h4>
+                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Engine Mounts</h4>
+                        <p>Hydraulic Design, Premium Rubber Material, Dampening vibration and noise to the vehicle by Tenacity mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Bushings</h4>
+                        <p>Tenacity ‘s premium rubber material (NR+BR) ensures longer life and performance, enhancing the ride quality of the automobiles.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>CV Boots</h4>
+                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Strut Mounts</h4>
+                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clients dark">
+    <div class="container">
+        <div class="heading-home text-center">
+            <h2>PRODUCTS BY BRAND</h2>
+            <p>
+                Browse through our selection by brand to find the right parts for your vehicle.
+            </p>
+        </div>
+
+        <div class="clients-list">
+            <div class="row">
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoHONDA.png" />
+                        <h4>Honda</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMAZDA.png" />
+                        <h4>Mazda</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMITSUBISHI.png" />
+                        <h4>Mitsubushi</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoNISSAN.png" />
+                        <h4>Nissan</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoTOYOTA.png" />
+                        <h4>Toyota</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoNISSAN.png" />
+                        <h4>Nissan</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMAZDA.png" />
+                        <h4>Mazda</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoTOYOTA.png" />
+                        <h4>Toyota</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoMITSUBISHI.png" />
+                        <h4>Mitsubushi</h4>
+                    </a>
+                </div>
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="~/Content/Images/logoHONDA.png" />
+                        <h4>Honda</h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@Html.Partial("_AboutPartial")
+
+@Html.Partial("_BlogsPartial")
+
+
+<script>
+    $(document).ready(function () {
+
+        $(".Gallery-Slider").slick({
+            autoplay: true,
+            autoplaySpeed: 9000,
+            speed: 700,
+            mobileFirst: true,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            pauseOnHover: false,
+            dots: true,
+
+            respondTo: 'min',
+            cssEase: 'linear',
+            prevArrow: '<button class="PrevArrow"></button>',
+            nextArrow: '<button class="NextArrow"></button>',
+        })
+
+        $(function () {
+            $('.selectpicker').selectpicker();
+        });
+
+    })
+
+
+</script>

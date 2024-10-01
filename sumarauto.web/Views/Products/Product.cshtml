@@ -1,0 +1,602 @@
+﻿
+@{
+    ViewBag.Title = "Product";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+
+<style>
+    .product-gallery {
+        padding: 5rem 0;
+    }
+
+/*USE CSS for Slider*/
+
+.vehicle-detail-banner .car-slider-desc {
+    max-width: 180px;
+    margin: 0 auto;
+}
+.banner-slider .slider.slider-for {
+    max-width: 84%;
+    padding-right: 35px;
+}
+.banner-slider .slider.slider-nav {
+    max-width: 16%;
+}
+.banner-slider .slider.slider-for,
+.banner-slider .slider.slider-nav {
+    width: 100%;
+    float: left;
+}
+.banner-slider .slider.slider-nav {
+    /*height: 610px;*/
+    overflow: hidden;
+
+}
+/*.slider-banner-image {
+    height: 610px;
+}*/
+.banner-slider .slider.slider-nav {
+    padding: 20px 0 0;
+}
+.slider-nav .slick-slide.thumbnail-image .thumbImg{
+    max-width: 178px;
+    height: 110px;
+    margin: 0 auto;
+    border: 1px solid #EBEBEB;
+}
+.slider-banner-image img,
+.slider-nav .slick-slide.thumbnail-image .thumbImg img {
+    height: 100%;
+    width:100%;
+    object-fit: cover;
+}
+.slick-vertical .slick-slide:active,
+.slick-vertical .slick-slide:focus,
+.slick-arrow:hover,
+.slick-arrow:focus {
+    border: 0;
+    outline: 0;
+}
+.slider-nav .slick-slide.slick-current.thumbnail-image .thumbImg {
+    border: 2px solid #196DB6;
+}
+.slider-nav .slick-slide.slick-current span {
+    color: #196DB6;
+}
+.slider-nav .slick-slide {
+    text-align: center;
+}
+.slider-nav .slick-slide span {
+    font-size: 14px;
+    display: block;
+    padding: 5px 0 15px;
+}
+.slick-arrow {
+    width: 100%;
+    background-color: transparent;
+    border: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-size: 0;
+    height: 18px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+.slick-prev {
+   top: 0;
+}
+.slick-next {
+   bottom: 0;
+   background-color: #fff;
+}
+.slick-prev.slick-arrow {
+    content: '<i class="bi bi-chevron-left"><i>'
+}
+.slick-next.slick-arrow {
+    background-image: url(../images/black-down-arrow.png);
+}
+/*End USE CSS for Slider*/
+
+@@media screen and (max-width : 991px) {
+
+	.banner-slider .slider.slider-for,
+	.banner-slider .slider.slider-nav {
+	    max-width: 100%;
+	    float: none;
+	}
+	.banner-slider .slider.slider-for {
+		padding-right: 0;
+	}
+	.banner-slider .slider.slider-nav {
+		height: auto;
+	}
+	/*.slider-banner-image {
+	    height: 500px;
+	}*/
+	.slider.slider-nav.thumb-image {
+        padding: 10px 30px 0;
+	}
+	.slider-nav .slick-slide span {
+		padding: 5px 0;
+	}
+	.slick-arrow {
+		padding: 0;
+	    width: 30px;
+	    height: 30px;
+	    top: 50%;
+	    bottom: 0;
+	    -webkit-transform: translateY(-50%) rotate(-90deg);
+	    -moz-transform: translateY(-50%) rotate(-90deg);
+	    -ms-transform: translateY(-50%) rotate(-90deg);
+	    transform: translateY(-50%) rotate(-90deg);
+	}
+	.slick-prev {
+	    left: 0;
+	    right: unset;
+	}
+	.slick-next {
+	    left: unset;
+	    right: 0;
+   		background-color: transparent;
+	}
+	.vehicle-detail-banner .car-slider-desc {
+    	max-width: 340px;
+	}
+	.bid-tag {
+    	padding: 10px 0 15px;
+	}
+	.slider.slider-nav.thumb-image {
+	   white-space: nowrap;
+	}
+	.thumbnail-image.slick-slide {
+		padding: 0px 5px;
+		min-width: 75px;
+		display: inline-block;
+		float: none;
+	}
+}
+
+@@media screen and (max-width : 767px) {
+	/*.slider-banner-image {
+	    height: 400px;
+	}*/
+	.slider.slider-nav.thumb-image {
+    	padding: 0px 20px 0;
+    	margin: 10px 0px 0;
+	}
+	.slider-nav .slick-slide.thumbnail-image .thumbImg {
+		max-width: 140px;
+		height: 80px;
+	}
+	.slick-prev.slick-arrow {
+    	background-position: center 10px;
+	}
+	.slick-next.slick-arrow {
+    	background-position: center 10px, center;
+	}
+	.slider-nav .slick-slide span {
+	    font-size: 12px;
+	    white-space: normal;
+	}
+}
+
+@@media screen and (max-width: 580px) {
+	/*.slider-banner-image {
+	    height:340px;
+	}*/
+}
+
+@@media screen and (max-width : 480px) {
+	/*.slider-banner-image {
+	    height:280px;
+	}*/
+}
+
+    .slick-vertical {
+        height: 35vh;
+    }
+
+    .product-descr h2{
+        text-transform: uppercase;
+    }
+
+    .tile {
+        width: 80%;
+        margin: 0 auto 40px;;
+    }
+
+    #tile-1 .tab-pane {
+
+    }
+
+    #tile-1 .nav-tabs {
+        position: relative;
+        border: none !important;
+        background-color: #fff;
+        /*   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2); */
+        border-radius: 6px;
+    }
+
+        #tile-1 .nav-tabs li {
+            margin: 0px !important;
+        }
+
+            #tile-1 .nav-tabs li a {
+                position: relative;
+                margin-right: 0px !important;
+                padding: 20px 40px !important;
+                font-size: 16px;
+                border: none !important;
+                color: #333;
+            }
+
+        #tile-1 .nav-tabs a:hover {
+            background-color: #fff !important;
+            border: none;
+        }
+
+    #tile-1 .slider {
+        display: inline-block;
+        width: 30px;
+        height: 4px;
+        border-radius: 3px;
+        background-color: var(--primary);
+        position: absolute;
+        z-index: 1200;
+        bottom: 0;
+        transition: all 0.4s linear;
+    }
+
+    #tile-1 .nav-tabs .active {
+        background-color: transparent !important;
+        border: none !important;
+        color: var(--primary) !important;
+    }
+
+
+.cancelled {
+  color:red;
+  font-weight: bold;
+}
+        @@media (max-width: 575px) {
+
+            table thead {
+                display: none;
+            }
+
+            table tr {
+                display: flex;
+                flex-direction: column;
+                border: 3px solid white;
+                padding: 1px;
+            }
+
+
+            table td[data-label] {
+                display: flex;
+                font-weight: bold;
+            }
+
+            table td[data-label]::before {
+                content: attr(data-label);
+                color: lightgrey;
+                font-weight: 100;
+                width: 50%;
+            }
+
+
+        }
+
+    .product-link a{
+        color: var(--bg);
+    }
+
+    #profile .desc {
+        background-color: var(--text);
+        color: var(--bg);
+    }
+
+    #profile .desc p{
+        margin: 0;
+    }
+
+    .pro-parts {
+        padding: 3rem 0;
+    }
+
+    .product-box{
+        padding:1rem;
+    }
+
+    .product-thumbnail {
+        border: 3px solid var(--text);
+        padding: 1rem 0.5rem 0.5rem;
+        border-radius: 10px;
+    }
+
+    .product-description {
+        color: var(--text);
+    }
+</style>
+
+
+
+<div class="product-gallery container">
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-12">
+            <!-- IMPORTANT NOTE: Make sure your youtube video URL includes this string: &enablejsapi=1
+    Otherwise, the pause fuction will not work -->
+            <section class="banner-section">
+                <div class="container">
+                    <div class="vehicle-detail-banner banner-content clearfix">
+                        <div class="banner-slider">
+                            <div class="slider slider-for">
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/p1.png" alt="name" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="slider-banner-image">
+                                    <img src="~/Content/Products/p1.png" alt="name" />
+                                </div>
+                            </div>
+                            <div class="slider slider-nav thumb-image">
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/p1.png" alt="name" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.png" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.jpg" alt="name" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/simg_83.png" />
+                                    </div>
+                                </div>
+                                <div class="thumbnail-image">
+                                    <div class="thumbImg">
+                                        <img src="~/Content/Products/p1.png" alt="name" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End User this HTML for Slider -->
+        </div>
+        <div class="col-lg-6 col-md-4 col-12 product-descr">
+            <h2>ACVAL1002 / Boot, CV joint, NBR</h2>
+            <p>2/BOX,32/CTN</p>
+        </div>
+    </div>
+</div>
+
+<div class="tile" id="tile-1">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <div class="slider" id="slider"></div>
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-id="#home" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-gear"></i> Make</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-id="#profile" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-nut"></i> Parts for Same Model</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="table-responsive">
+                <table class="table table-dark table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Make</th>
+                            <th>Model</th>
+                            <th>Years</th>
+                            <th>Engine</th>
+                            <th>Chaissis</th>
+                            <th>Parts for same model</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Make">Lamborghini</td>
+                            <td data-label="Model">A457</td>
+                            <td data-label="Years">2024</td>
+                            <td data-label="Engine">A-459</td>
+                            <td data-label="Chaissis">E-Dght</td>
+                            <td class="product-link" data-label="Parts for same model"><a href="#"><i class="bi bi-link-45deg"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td data-label="Make">Lamborghini</td>
+                            <td data-label="Model">A457</td>
+                            <td data-label="Years">2024</td>
+                            <td data-label="Engine">A-459</td>
+                            <td data-label="Chaissis">E-Dght</td>
+                            <td class="product-link" data-label="Parts for same model"><a href="#"><i class="bi bi-link-45deg"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td data-label="Make">Lamborghini</td>
+                            <td data-label="Model">A457</td>
+                            <td data-label="Years">2024</td>
+                            <td data-label="Engine">A-459</td>
+                            <td data-label="Chaissis">E-Dght</td>
+                            <td class="product-link" data-label="Parts for same model"><a href="#"><i class="bi bi-link-45deg"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="desc d-flex justify-content-around py-3">
+                <p>Parts For</p>
+                <p>Make: <span>AUDI</span></p>
+                <p>Model: <span>A4</span></p>
+                <p>Engine: <span> ALT </span></p>
+                <p>Chaissis: <span> 8EC0BH </span></p>
+            </div>
+            <div class="row pro-parts">
+                <div class="col-lg-4 col-md-6 col-12 product-box">
+                    <div class="product-thumbnail">
+                        <a href="#" class="">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-4">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-8 product-description">
+                                    <h5>AAMAU1007 </h5>
+                                    <p>Bushing, Control arm, Front Low, Big</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-12 product-box">
+                    <div class="product-thumbnail">
+                        <a href="#" class="">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-4">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-8 product-description">
+                                    <h5>AAMAU1007 </h5>
+                                    <p>Bushing, Control arm, Front Low, Big</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-12 product-box">
+                    <div class="product-thumbnail">
+                        <a href="#" class="">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-4">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-8 product-description">
+                                    <h5>AAMAU1007 </h5>
+                                    <p>Bushing, Control arm, Front Low, Big</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-12 product-box">
+                    <div class="product-thumbnail">
+                        <a href="#" class="">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-4">
+                                    <img src="~/Content/Products/simg_83.png" />
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-8 product-description">
+                                    <h5>AAMAU1007 </h5>
+                                    <p>Bushing, Control arm, Front Low, Big</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    $("#tile-1 .nav-tabs a").click(function () {
+        var position = $(this).parent().position();
+        var width = $(this).parent().width();
+        $("#tile-1 .slider").css({ left: +position.left, width: width });
+        var Id = $(this).attr("data-id")
+        $(".tab-pane").removeClass("show");
+        $(".tab-pane").removeClass("active");
+        $(".tab-pane").removeClass("fade");
+        $(Id).addClass("show");
+        $(Id).addClass("fade");
+        $(Id).addClass("active");
+    });
+    
+
+    
+
+    $('.slider-for').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: false,
+        fade: true,
+        asNavFor: '.slider-nav'
+    });
+    $('.slider-nav').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        vertical: true,
+        asNavFor: '.slider-for',
+        dots: false,
+        focusOnSelect: true,
+        verticalSwiping: true,
+        responsive: [
+            {
+                breakpoint: 992,
+                settings: {
+                    vertical: false,
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    vertical: false,
+                }
+            },
+            {
+                breakpoint: 580,
+                settings: {
+                    vertical: false,
+                    slidesToShow: 3,
+                }
+            },
+            {
+                breakpoint: 380,
+                settings: {
+                    vertical: false,
+                    slidesToShow: 2,
+                }
+            }
+        ]
+    });
+
+</script>

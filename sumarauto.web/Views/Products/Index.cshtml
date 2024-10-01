@@ -1,0 +1,300 @@
+﻿@{
+    ViewBag.Title = "Products";
+}
+
+<style>
+    .search-container{
+        padding: 0;
+    }
+    .overlap-form {
+        color: #1e1e1e;
+    }
+
+        .overlap-form h6 {
+            padding-left: 3px;
+            color: var(--bg);
+        }
+
+        .overlap-form select {
+            width: 100%;
+            border: 1px solid var(--bg);
+            color: var(--bg);
+            background-color: var(--text);
+            border-bottom: 1px solid var(--bg);
+            padding: 8px 2px;
+        }
+
+    .form_book {
+        background: var(--text);
+        padding: 20px 33px;
+    }
+
+    .boo-btn {
+        align-self: center;
+        text-align: center;
+    }
+
+        .boo-btn button {
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+        .search-text {
+        background-color: var(--text);
+        padding: 6px 2px;
+        border: 1px solid var(--bg);
+        color: var(--bg);
+        width: 100%
+        }
+
+    .products-container{
+        padding:5rem 0;
+    }
+
+    .product-card, .product-box {
+        padding:2rem;
+    }
+
+    .product-desc {
+        padding-top : 1.3rem;
+    }
+
+    .product-box {
+        border-radius: 10px;
+        -webkit-box-shadow: 0px 0px 19px -12px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 0px 19px -12px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 0px 19px -12px rgba(0, 0, 0, 0.75);
+        background-color: white;
+    }
+
+    .product-desc{
+        color: var(--text);
+    }
+
+    .product-desc H4 {
+        text-transform: uppercase;
+    }
+
+    .product-spec h6 {
+        color: var(--primary);
+        text-transform: uppercase;
+    }
+
+    .product-box img{
+        border: 5px solid var(--text);
+        border-radius:10px;
+    }
+
+</style>
+
+<div class="overlap-form search-form">
+    <div class="row">
+        <div class="col-md-12 search-container">
+            <form class="form_book">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-12 search-box">
+                        <h6 class="date">Category</h6>
+                        <select name="Category" id="Category" class="selectpicker">
+                            <option value="Air hose"> Air hose</option>
+                            <option value="Air hose"> Air hose</option>
+                            <option value="Air hose"> Air hose</option>
+                            <option value="Air hose"> Air hose</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12 search-box">
+                        <h6 class="date">Make</h6>
+                        <select name="Make" id="Make" class="selectpicker">
+                            <option value="Air hose"> Alfa Romeo</option>
+                            <option value="Air hose"> Audi</option>
+                            <option value="Air hose"> Aston Martin</option>
+                            <option value="Air hose"> Mazda Japan Ford</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-1 col-md-1 col-12 search-box">
+                        <h6 class="date">Model</h6>
+                        <select name="Make" id="Make" class="selectpicker">
+                            <option value="Air hose"> RSX-TYPE-S</option>
+                            <option value="Air hose"> RL</option>
+                            <option value="Air hose"> TSX</option>
+                            <option value="Air hose"> TS215</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-1 col-md-1 col-12 search-box">
+                        <h6 class="date">Years</h6>
+                        <select name="Years" id="Years" class="selectpicker">
+                            <option value="Air hose"> 2020</option>
+                            <option value="Air hose"> 2021</option>
+                            <option value="Air hose"> 2022</option>
+                            <option value="Air hose"> 2023</option>
+                            <option value="Air hose"> 2024</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-1 col-md-1 col-12 search-box">
+                        <h6 class="date">Engine</h6>
+                        <select name="Engine" id="Engine" class="selectpicker">
+                            <option value="Air hose"> K24W7</option>
+                            <option value="Air hose"> K44W8</option>
+                            <option value="Air hose"> L24W7</option>
+                            <option value="Air hose"> A24W7</option>
+                            <option value="Air hose"> G24W7</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-1 col-md-1 col-12 search-box">
+                        <h6 class="date">Liters</h6>
+                        <select name="Liters" id="Liters" class="selectpicker">
+                            <option value="Air hose">  2.4L</option>
+                            <option value="Air hose">  3.4L</option>
+                            <option value="Air hose">  1.4L</option>
+                            <option value="Air hose">  2.5L</option>
+                            <option value="Air hose">  3.4L</option>
+                        </select>
+                    </div>
+
+
+                    <div class="col-lg-1 col-md-1 col-12 search-box">
+                        <h6 class="date">Chassis</h6>
+                        <select name="Chassis" id="Chassis" @*class="selectpicker"*@>
+                            <option value="Air hose"> DE2F</option>
+                            <option value="Air hose"> 4D2F</option>
+                            <option value="Air hose"> PE2F</option>
+                            <option value="Air hose"> DL2F</option>
+                            <option value="Air hose"> DE4O</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-12 search-box">
+                        <h6 class="date">Search</h6>
+                        <input class="search-text" type="text" class="form-control" id="">
+                    </div>
+
+                    <div class="col-lg-1 col-md-1 col-12 boo-btn search-box">
+                        <button class="book_btn" type="button"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="products-container container">
+    <div class="row">
+        <div class="col-lg-4 col-md-6 col-12 product-card">
+            <a href="#">
+                <div class="product-box">
+                    <img src="~/Content/Products/simg_83.jpg" />
+                    <div class="product-desc">
+                        <H4>Acval 1002</H4>
+                        <div class="d-flex justify-content-between">
+                            <p>Boot, CV joint, NBR</p>
+                            <small class="mb-3">1/BAG,8/CTN</small>
+                        </div>
+                        <div class="d-flex justify-content-between product-spec">
+                            <div class="make">
+                                <h6>Make</h6>
+                                <small>All</small>
+                            </div>
+                            <div class="model">
+                                <h6>Model</h6>
+                                <small>For All Models</small>
+                            </div>
+                            <div class="year">
+                                <h6>Year</h6>
+                                <small>11996</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-12 product-card">
+            <div class="product-box">
+                <img src="~/Content/Products/simg_83.png" />
+                <div class="product-desc">
+                    <H4>Acval 1002</H4>
+                    <div class="d-flex justify-content-between">
+                        <p>Boot, CV joint, NBR</p>
+                        <small class="mb-3">1/BAG,8/CTN</small>
+                    </div>
+                    <div class="d-flex justify-content-between product-spec">
+                        <div class="make">
+                            <h6>Make</h6>
+                            <small>All</small>
+                        </div>
+                        <div class="make">
+                            <h6>Model</h6>
+                            <small>For All Models</small>
+                        </div>
+                        <div class="year">
+                            <h6>Year</h6>
+                            <small>11996</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-12 product-card">
+            <div class="product-box">
+                <img src="~/Content/Products/simg_83.png" />
+                <div class="product-desc">
+                    <H4>Acval 1002</H4>
+                    <div class="d-flex justify-content-between">
+                        <p>Boot, CV joint, NBR</p>
+                        <small class="mb-3">1/BAG,8/CTN</small>
+                    </div>
+                    <div class="d-flex justify-content-between product-spec">
+                        <div class="make">
+                            <h6>Make</h6>
+                            <small>All</small>
+                        </div>
+                        <div class="make">
+                            <h6>Model</h6>
+                            <small>For All Models</small>
+                        </div>
+                        <div class="year">
+                            <h6>Year</h6>
+                            <small>11996</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-12 product-card">
+            <div class="product-box">
+                <img src="~/Content/Products/p1.png" />
+                <div class="product-desc">
+                    <H4>Acval 1002</H4>
+                    <div class="d-flex justify-content-between">
+                        <p>Boot, CV joint, NBR</p>
+                        <small class="mb-3">1/BAG,8/CTN</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between product-spec">
+                        <div class="make">
+                            <h6>Make</h6>
+                            <small>All</small>
+                        </div>
+                        <div class="make">
+                            <h6>Model</h6>
+                            <small>For All Models</small>
+                        </div>
+                        <div class="year">
+                            <h6>Year</h6>
+                            <small>11996</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
