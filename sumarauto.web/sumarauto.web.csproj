@@ -241,14 +241,11 @@
     <Content Include="Views\Admin\MakeAction.cshtml" />
     <Content Include="Views\Admin\MModel.cshtml" />
     <Content Include="Views\Admin\MModelAction.cshtml" />
-<<<<<<< HEAD
-    <Content Include="Views\Admin\MakeList.cshtml" />
-=======
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Products\Product.cshtml" />
     <Content Include="Views\Home\Blogs.cshtml" />
     <Content Include="Views\Home\Blog.cshtml" />
->>>>>>> bf12062e6284cf59cd66a6cf747ab3d3948e016a
+    <Content Include="Views\Admin\MakeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
