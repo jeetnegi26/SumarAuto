@@ -12,6 +12,7 @@ namespace Model
         public int Id { get; set; }
         public string Image { get; set; }
         public string Title { get; set; }
+        public bool Default { get; set; }
         public int AutoPartId { get; set; }
         [ForeignKey("AutoPartId")]
         public AutoPart AutoPart { get; set; }

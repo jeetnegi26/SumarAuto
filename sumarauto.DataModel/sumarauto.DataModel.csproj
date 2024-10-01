@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoPartDataModel.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="LoginDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

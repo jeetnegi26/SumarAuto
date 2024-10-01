@@ -30,16 +30,121 @@ namespace sumarauto.web.Controllers
         }
         public ActionResult AutoPartAction(int Id = 0)
         {
+            int width = Convert.ToInt32(ConfigurationManager.AppSettings["Width"]);
+            int height = Convert.ToInt32(ConfigurationManager.AppSettings["Height"]);
+            ViewBag.Width = width;
+            ViewBag.Height = height;
             return View();
         }
         [HttpPost]
-        public ActionResult AutoPartAction(Category category)
+        public ActionResult saveOrUpdateAutoParts(AutoPartDataModel model)
         {
-            return View();
+            bool result = false;
+            string Message = "Something went wrong!";
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // Handle the form submission here
+                    return Json(new { success = result,message = "Please fill the required fields." });
+                }
+
+                int itemId = model.Id;  // If this is an update, it will have an ID, else it will be 0
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand("saveOrUpdateAutoParts", connection)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    // Main item details
+                    cmd.Parameters.AddWithValue("@ItemId", itemId == 0 ? (object)DBNull.Value : itemId);
+                    cmd.Parameters.AddWithValue("@Title", model.Title);
+                    cmd.Parameters.AddWithValue("@Description", model.Description);
+                    cmd.Parameters.AddWithValue("@CategoryId", model.CategoryId);
+                    cmd.Parameters.AddWithValue("@DisplayOrder", model.DisplayOrder);
+                    cmd.Parameters.AddWithValue("@CreatedBy", "ADMIN");
+                    cmd.Parameters.AddWithValue("@UserHostAddress", Request.UserHostAddress);
+
+                    // Table-valued parameter for multiple details
+                    var table = new DataTable();
+                    table.Columns.Add("Make", typeof(string));
+                    table.Columns.Add("Model", typeof(string));
+                    table.Columns.Add("Year", typeof(string));
+                    table.Columns.Add("Engine", typeof(string));
+                    table.Columns.Add("Liter", typeof(string));
+                    table.Columns.Add("Chassis", typeof(string));
+
+                    foreach (var detail in model.MultipleDetails)
+                    {
+                        if (!string.IsNullOrEmpty(detail.Make))
+                        {
+                            table.Rows.Add(detail.Make, detail.Model, detail.Year, detail.Engine, detail.Liter, detail.Chassis);
+                        }
+                    }
+
+                    var detailsParam = new SqlParameter("@MultipleDetails", SqlDbType.Structured)
+                    {
+                        TypeName = "dbo.MultipleDetailType",
+                        Value = table
+                    };
+
+                    cmd.Parameters.Add(detailsParam);
+
+                    connection.Open();
+                    itemId = (int)cmd.ExecuteScalar();
+                    result = true;
+                }
+                return Json(new { success = result, message = itemId.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = result, message = Message + " "+ ex.Message});
+            }
+
         }
-        public ActionResult AutoPartStatus()
+
+        //Make
+        public ActionResult MakeList(string Id)
         {
-            return View();
+            List<MakeDetail> makeDetails = new List<MakeDetail>();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetMakeList", connection);
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MakeDetail makeDetail = new MakeDetail
+                            {
+                                Id = (int)reader["Id"],
+                                AutoPartSId = Id,
+                                Make = Convert.ToString(reader["Make"]),
+                                Chassis = Convert.ToString(reader["Chassis"]),
+                                Engine = Convert.ToString(reader["Engine"]),
+                                Liter = Convert.ToString(reader["Liter"]),
+                                Model = Convert.ToString(reader["Model"]),
+                                Year = Convert.ToString(reader["Year"]),
+                                DisplayOrder = !string.IsNullOrEmpty(Convert.ToString(reader["DisplayOrder"]))
+                                ? Convert.ToInt32(Convert.ToString(reader["DisplayOrder"])): 0,
+                            };
+                            makeDetails.Add(makeDetail);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View(makeDetails.OrderBy(x => x.DisplayOrder)
+                      .ToList());
         }
         #endregion
 
@@ -53,6 +158,7 @@ namespace sumarauto.web.Controllers
                 using (var connection = new SqlConnection(connectionString))
                 {
                     var command = new SqlCommand("GetCategoryList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
                     connection.Open();
                     using (var reader = command.ExecuteReader())
                     {
@@ -411,55 +517,7 @@ namespace sumarauto.web.Controllers
         #endregion
 
         #region Helper
-        public async Task<ActionResult> GetDropdownCatList()
-        {
-            try
-            {
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    var command = new SqlCommand("GetCategoryList", connection);
-                    command.CommandType = CommandType.StoredProcedure;
-                    connection.Open();
-                    var rows = await command.ExecuteReaderAsync();
-                    var result = new List<SelectListItem>();
-                    while (rows.Read())
-                    {
-                        var data = new SelectListItem();
-                        data.Text = rows["Title"].ToString();
-                        data.Value = rows["Id"].ToString();
-                        result.Add(data);
-                    }
-                    return Json(result, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<ActionResult> GetMakedownList()
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    var dataList = await db.Make.AsNoTracking().ToListAsync();
-                    var result = new List<SelectListItem>();
-                    foreach (var item in dataList)
-                    {
-                        var data = new SelectListItem();
-                        data.Text = item.Title;
-                        data.Value = item.MakeId.ToString();
-                        result.Add(data); 
-                    }
-                    return Json(result, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+
         #endregion
     }
 }

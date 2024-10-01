@@ -72,6 +72,14 @@
     <Compile Include="Migrations\202409280849283_AutoPartmake.Designer.cs">
       <DependentUpon>202409280849283_AutoPartmake.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202409290618564_DefaultAdd.cs" />
+    <Compile Include="Migrations\202409290618564_DefaultAdd.Designer.cs">
+      <DependentUpon>202409290618564_DefaultAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202409290732281_AutoPartSId.cs" />
+    <Compile Include="Migrations\202409290732281_AutoPartSId.Designer.cs">
+      <DependentUpon>202409290732281_AutoPartSId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -100,6 +108,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409280849283_AutoPartmake.resx">
       <DependentUpon>202409280849283_AutoPartmake.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409290618564_DefaultAdd.resx">
+      <DependentUpon>202409290618564_DefaultAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409290732281_AutoPartSId.resx">
+      <DependentUpon>202409290732281_AutoPartSId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

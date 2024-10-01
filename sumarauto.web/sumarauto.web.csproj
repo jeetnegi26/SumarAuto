@@ -205,9 +205,11 @@
     <Content Include="Views\Admin\MakeAction.cshtml" />
     <Content Include="Views\Admin\MModel.cshtml" />
     <Content Include="Views\Admin\MModelAction.cshtml" />
+    <Content Include="Views\Admin\MakeList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\AutoPartImages\" />
     <Folder Include="Content\Banner\" />
     <Folder Include="Content\Component\" />
     <Folder Include="Content\Gallery\" />
