@@ -1,19 +1,307 @@
 ﻿@{
     ViewBag.Title = "Contact";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+<style>
+    .intro_text a {
+        color: var(--primary);
+    }
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
-</main>
+    .intro_form_container {
+    width: 100%;
+    background: #FFFFFF;
+    padding:63px 33px;
+}
+
+.intro_form_title {
+    position: absolute;
+    top: -23px;
+    left: -48px;
+    width: 336px;
+    height: 80px;
+    background: #57ccc3;
+    line-height: 80px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.intro_form {
+    width: 100%;
+}
+
+.intro_box {
+    width: calc((100% - 15px) / 2);
+}
+
+.intro_box_full {
+    width: calc(100% - 10px)
+}
+
+.intro_input {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: solid 2px #e6ebf1;
+    margin-bottom: 18px;
+    padding-left: 25px;
+    padding-right: 15px;
+    outline: none;
+    font-size: 15px;
+    color: #404040;
+    font-weight: 500;
+    -webkit-transition: all 200ms ease;
+    -moz-transition: all 200ms ease;
+    -ms-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease;
+    border-radius: 10PX;
+}
+
+.intro_input_full {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: solid 2px #e6ebf1;
+    margin-bottom: 18px;
+    padding-left: 25px;
+    padding-right: 15px;
+    outline: none;
+    font-size: 15px;
+    color: #404040;
+    font-weight: 500;
+    -webkit-transition: all 200ms ease;
+    -moz-transition: all 200ms ease;
+    -ms-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease;
+    border-radius: 10PX
+}
+
+.intro_select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+    -webkit-user-select: none;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: italic;
+    color: #a09f9f !important;
+    cursor: pointer;
+}
+
+    .intro_select.selected {
+        font-size: 15px !important;
+        color: #404040 !important;
+        font-weight: 500 !important;
+        font-style: normal !important;
+    }
+
+    .intro_select option {
+        color: #404040;
+    }
+
+.intro_input:focus,
+.intro_input:hover {
+    border: solid 2px #57ccc3;
+}
+
+.intro_input::-webkit-input-placeholder {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: italic;
+    color: #a09f9f !important;
+}
+
+.intro_input:-moz-placeholder {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: italic;
+    color: #a09f9f !important;
+}
+
+.intro_input::-moz-placeholder {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: italic;
+    color: #a09f9f !important;
+}
+
+.intro_input:-ms-input-placeholder {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: italic;
+    color: #a09f9f !important;
+}
+
+.intro_input::input-placeholder {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: italic;
+    color: #a09f9f !important;
+}
+
+    .intro_button {
+        width: 100%;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        border: solid 2px var(--primary);
+        cursor: pointer;
+        background-color: white;
+        transition:0.3s;
+    }
+
+    .intro_button:hover {
+        background: var(--primary);
+        border: solid 2px transparent;
+        color: #FFFFFF;
+    }
+
+@@media (max-width: 500px){
+    .intro_box {
+        width: 100%;
+    }
+}
+
+    .gmap-iframe {
+        height: 51.5vh;
+    }
+
+    .cont-box{
+        padding:2rem;
+    }
+
+    .contact-info p {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .contact-info i {
+        color: var(--primary);
+    }
+
+    .contact-info a {
+        color: var(--text);
+    }
+
+
+    .cont-bento-box {
+        padding-top: 1.5rem;
+    }
+
+    .cont-bento {
+        height: 100%;
+        padding: 2rem 3rem;
+        border:3px solid #e7e7e7;
+        border-radius:12px;
+        background-color: white;
+    }
+
+    .cont-bento h2{
+        font-size:1.8rem;
+        padding-bottom:1rem;
+    }
+
+    .contact-info p {
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+    .cont-right{
+        padding-left:0;
+    }
+</style>
+
+<div class="row cont-box">
+    <div class="col-xl-8 col-lg-7 col-md-6 col-12">
+        <div class="row h-100">
+            <div class="col-xl-7 col-lg-7 col-md-7 col-12 cont-bento-box">
+                <div class="contact-head cont-bento">
+                    <h2>CONTACT US</h2>
+                    <p>
+                        "Get in Touch with Sumar Auto – Your Trusted Partner
+                        for Quality Auto Parts. Whether you have questions,
+                        need support, or want to place an order, our team is
+                        here to assist you every step of the way. Contact us today!"
+                    </p>
+                </div>
+            </div>
+            <div class="col-xl-5 col-lg-5 col-md-5 col-12 contact-info-box cont-bento-box">
+                <div class="contact-info cont-bento">
+                    <h2>REACH OUT TO US</h2>
+                    <p><i class="bi bi-telephone"></i>&nbsp +971 4 2279873</p>
+                    <p><i class="bi bi-telephone-plus"></i>&nbsp 0504641283</p>
+                    <p><i class="bi bi-printer"></i>&nbsp +971 4 2279874</p>
+                    <p><a href="mailto:info@sumarauto.com"><i class="bi bi-envelope"></i>&nbsp info@sumarauto.com</a></p>
+                </div>
+
+            </div>
+
+            <div class="col-12 cont-bento-box">
+                <div class="coltact-map cont-bento">
+                    <h2>LOCATION</h2>
+                    <iframe class="gmap-iframe" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14431.9602180237!2d55.310273!3d25.27092!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f434bb5a92f3f%3A0x29aedfade9b86a7!2sSumar%20Auto%20Spare%20Parts%20Trading%20LLC!5e0!3m2!1sen!2sus!4v1727865986386!5m2!1sen!2sus" width="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-5 col-md-6 col-12 cont-right">
+        <div class="contact-form cont-bento-box">
+            <div class="intro_form_container cont-bento">
+                <h2>GET IN TOUCH WITH US</h2>
+                <form action="#" class="intro_form" id="intro_form">
+                    <div class="d-flex flex-row align-items-start justify-content-between flex-wrap">
+                        <div class="intro_box">
+                            <small>Name *</small>
+                            <input type="text" class="intro_input" placeholder="Your Name" required="required">
+                        </div>
+                        <div class="intro_box">
+                            <small>Phone No *</small>
+                            <input type="tel" class="intro_input" placeholder="Your Phone" required="required">
+                        </div>
+                        <div class="w-100">
+                            <small>Company Name </small>
+                            <input type="text" class="intro_input" placeholder="Your Company Name" required="required">
+                        </div>
+                        <div class="w-100">
+                            <small>Email *</small>
+                            <input type="email" class="intro_input" placeholder="Your E-mail" required="required">
+                        </div>
+                        
+                        <div class="intro_box">
+                            <small>Country</small>
+                            <input type="text" class="intro_input" placeholder="Your Country" required="required">
+                        </div>
+                        <div class="intro_box">
+                            <small>City </small>
+                            <input type="email" class="intro_input" placeholder="Your City" required="required">
+                        </div>
+                        <div class="w-100">
+                            <small>Message </small>
+                            <textarea type="text" style="height:100px;" class="intro_input" placeholder="Type your message here" required="required"></textarea>
+                        </div>
+
+
+                    </div>
+                    <button style="width: max-content; padding:8px 20px" class="button button_1 intro_button trans_200">make an appointment</button>
+                </form>
+            </div>
+        </div>
+        <div class="address cont-bento-box">
+            <div class="contact-address cont-bento">
+                <h2>ADDRESS</h2>
+                <p>
+                    Sumar Auto Spare Parts Trd. (L.L.C)<br />
+                    PO Box 42616<br />
+                    Dubai, U.A.E.<br />
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

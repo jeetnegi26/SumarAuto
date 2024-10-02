@@ -164,6 +164,20 @@
     <Content Include="Content\images\blow.png" />
     <Content Include="Content\images\DeWatermark.ai_1727511178586.png" />
     <Content Include="Content\images\female-mechanic-holding-spare-parts-car.jpg" />
+    <Content Include="Content\images\g1.jpg" />
+    <Content Include="Content\images\g2.jpg" />
+    <Content Include="Content\images\g3.jpg" />
+    <Content Include="Content\images\g4.jpg" />
+    <Content Include="Content\images\g5.jpg" />
+    <Content Include="Content\images\l1.png" />
+    <Content Include="Content\images\l2.png" />
+    <Content Include="Content\images\l3.png" />
+    <Content Include="Content\images\l4.png" />
+    <Content Include="Content\images\l5.png" />
+    <Content Include="Content\images\l6.png" />
+    <Content Include="Content\images\l7.png" />
+    <Content Include="Content\images\l8.png" />
+    <Content Include="Content\images\l9.png" />
     <Content Include="Content\images\logoHONDA.png" />
     <Content Include="Content\images\logoMAZDA.png" />
     <Content Include="Content\images\logoMITSUBISHI.png" />
@@ -172,6 +186,10 @@
     <Content Include="Content\images\logos\favicon.png" />
     <Content Include="Content\images\logos\logo.png" />
     <Content Include="Content\images\logoTOYOTA.png" />
+    <Content Include="Content\images\mis_cus.png" />
+    <Content Include="Content\images\mis_gra.png" />
+    <Content Include="Content\images\mis_shake.png" />
+    <Content Include="Content\images\mis_upg.png" />
     <Content Include="Content\images\pl_boot.png" />
     <Content Include="Content\images\profile\user-1.jpg" />
     <Content Include="Content\Products\simg_83.png" />
@@ -245,6 +263,9 @@
     <Content Include="Views\Products\Product.cshtml" />
     <Content Include="Views\Home\Blogs.cshtml" />
     <Content Include="Views\Home\Blog.cshtml" />
+    <Content Include="Views\Home\Categories.cshtml" />
+    <Content Include="Views\Shared\_Search.cshtml" />
+    <Content Include="Views\Home\_ServiceForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
