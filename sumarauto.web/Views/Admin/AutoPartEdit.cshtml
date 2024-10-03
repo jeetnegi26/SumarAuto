@@ -241,7 +241,7 @@
                           title: 'Auto part data have been successfully edit.',
                       }).then((result) => {
                           if (result.isConfirmed) {
-                              window.location.href = "/admin/AutoPart";
+                              window.location.href = "/admin";
                           }
                       });
                   }
@@ -274,12 +274,6 @@
     }
 
     //Upload multiple image of product
-    const trgWidth = @ViewBag.Width;
-    const trgHeight = @ViewBag.Height;
-    const imgs = document.getElementById("img-size-desc");
-    if (imgs) {
-        imgs.innerHTML = "(Image size should be " + trgWidth + " x " + trgHeight + ")";
-    }
     //DropZone Image Editor
     const uploadedFiles = [];
     Dropzone.autoDiscover = false;

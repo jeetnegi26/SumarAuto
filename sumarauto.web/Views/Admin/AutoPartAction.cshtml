@@ -251,7 +251,6 @@
     const newMakeItems = document.querySelectorAll(".newMakeItem");
     newMakeItems.forEach(newMakeItem => {
         newMakeItem.addEventListener("click", function () {
-            debugger
             autoPartItem_Container = document.querySelectorAll(".autoPartItem_container");
             const clonedContainer = autoPartItem_Container[autoPartItem_Container.length - 1].cloneNode(true);
             const currentIndex = container_box.children.length;
@@ -414,12 +413,6 @@
     }
 
     //Upload multiple image of product
-    const trgWidth = @ViewBag.Width;
-    const trgHeight = @ViewBag.Height;
-    const imgs = document.getElementById("img-size-desc");
-    if (imgs) {
-        imgs.innerHTML = "(Image size should be " + trgWidth + " x " + trgHeight + ")";
-    }
     //DropZone Image Editor
     const uploadedFiles = [];
     Dropzone.autoDiscover = false;
@@ -558,15 +551,7 @@
             })
                 .done(function (response) {
                     if (response.Success == true) {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'Auto part data have been successfully saved.',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = "/admin/AutoPartAction";
-                            }
-                        });
+                        return;
                     }
                     else {
                         Swal.fire({
