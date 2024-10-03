@@ -8,6 +8,7 @@ using System.Data.Entity;
 using Model;
 using System.Data;
 using System.Reflection;
+using sumarauto.Model;
 
 namespace sumarauto.database
 {
@@ -38,6 +39,7 @@ namespace sumarauto.database
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Blogs> Blogs { get; set; }
         public DbSet<Key> Keys { get; set; }
+        public DbSet<ContactForm> ContactForm { get; set; }
 
     }
 }

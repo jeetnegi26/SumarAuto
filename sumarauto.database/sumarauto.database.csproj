@@ -76,6 +76,10 @@
     <Compile Include="Migrations\202410030155303_Key.Designer.cs">
       <DependentUpon>202410030155303_Key.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202410030217271_ContactFormAdd.cs" />
+    <Compile Include="Migrations\202410030217271_ContactFormAdd.Designer.cs">
+      <DependentUpon>202410030217271_ContactFormAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -107,6 +111,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202410030155303_Key.resx">
       <DependentUpon>202410030155303_Key.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202410030217271_ContactFormAdd.resx">
+      <DependentUpon>202410030217271_ContactFormAdd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

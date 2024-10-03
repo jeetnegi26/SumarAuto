@@ -71,6 +71,7 @@
     <Compile Include="Blogs.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Chassis.cs" />
+    <Compile Include="ContactForm.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Gallery.cs" />
     <Compile Include="GalleryImage.cs" />
