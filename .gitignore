@@ -362,3 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /sumarauto.web/Content/Component
+/sumarauto.web/Web.config
+/sumarauto.database/Migrations
+/sumarauto.database/sumarauto.database.csproj
+/sumarauto.web/Web.config
+/sumarauto.web/sumarauto.web.csproj
