@@ -98,12 +98,27 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Display Order</label>
-                                    <input type="text" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                    <label class="form-label">Display Order <strong class="text-danger"> (*required)</strong></label>
+                                    <input type="text" id="DisplayOrder" name="DisplayOrder" value="0" class="form-control" placeholder="Enter Display Order" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Featured</label>
+                                    <select name="IsFeatured" class="form-select" aria-label="Default select example">
+                                        <option value="true">Yes</option>
+                                        <option value="false" selected>No</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Published</label>
+                                    <select name="Status" class="form-select" aria-label="Default select example">
+                                        <option value="true" selected>Published</option>
+                                        <option value="false">UnPublished</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label">Extra</label>
-                                    <input type="text" name="Title" class="form-control" placeholder="Enter Title">
+                                    <input type="text" name="ExtraField" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -353,10 +368,16 @@
             Title: {
                 required: true,
             },
+            DisplayOrder: {
+                required: true,
+            },
         },
         messages: {
             Title: {
                 required: '*Title is required',
+            },
+            DisplayOrder: {
+                required: '*Display Order is required',
             },
         }
     });
@@ -367,7 +388,9 @@
           spinnerborder.classList.remove("d-none");
           CreateBtn.setAttribute("disabled", true);
           //var editorData = CKEDITOR.instances.editor1.getData();
-          //$("#LongDesc").val(editorData);
+            //$("#LongDesc").val(editorData);
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
           const formData = new FormData(document.getElementById("Create"));
           if ($("#Create").valid()) {
           $.ajax({
@@ -377,6 +400,7 @@
               processData: false,
               contentType: false,
               success: function (response) {
+                  debugger
                   if (response.success == true) {
                       if (response.message != "" && uploadedFiles != null && uploadedFiles.length > 0) {
                           SaveImgsOnServer(response.message);
@@ -394,7 +418,7 @@
                       Swal.fire({
                           icon: 'error',
                           title: 'Oops...',
-                          text: response.messages,
+                          text: response.message,
                       })
                   }
               },

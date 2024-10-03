@@ -52,33 +52,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDbContext.cs" />
-    <Compile Include="Migrations\202409221224289_Initial.cs" />
-    <Compile Include="Migrations\202409221224289_Initial.Designer.cs">
-      <DependentUpon>202409221224289_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202410011330214_Initial.cs" />
+    <Compile Include="Migrations\202410011330214_Initial.Designer.cs">
+      <DependentUpon>202410011330214_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202409221558512_addimageincategory.cs" />
-    <Compile Include="Migrations\202409221558512_addimageincategory.Designer.cs">
-      <DependentUpon>202409221558512_addimageincategory.cs</DependentUpon>
+    <Compile Include="Migrations\202410020320254_DOINT.cs" />
+    <Compile Include="Migrations\202410020320254_DOINT.Designer.cs">
+      <DependentUpon>202410020320254_DOINT.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202409231507429_DisplayOrder.cs" />
-    <Compile Include="Migrations\202409231507429_DisplayOrder.Designer.cs">
-      <DependentUpon>202409231507429_DisplayOrder.cs</DependentUpon>
+    <Compile Include="Migrations\202410021633424_Blogs.cs" />
+    <Compile Include="Migrations\202410021633424_Blogs.Designer.cs">
+      <DependentUpon>202410021633424_Blogs.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202409260836380_IsFeatured.cs" />
-    <Compile Include="Migrations\202409260836380_IsFeatured.Designer.cs">
-      <DependentUpon>202409260836380_IsFeatured.cs</DependentUpon>
+    <Compile Include="Migrations\202410021647298_BlogsDate.cs" />
+    <Compile Include="Migrations\202410021647298_BlogsDate.Designer.cs">
+      <DependentUpon>202410021647298_BlogsDate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202409280849283_AutoPartmake.cs" />
-    <Compile Include="Migrations\202409280849283_AutoPartmake.Designer.cs">
-      <DependentUpon>202409280849283_AutoPartmake.cs</DependentUpon>
+    <Compile Include="Migrations\202410021855398_removeBI.cs" />
+    <Compile Include="Migrations\202410021855398_removeBI.Designer.cs">
+      <DependentUpon>202410021855398_removeBI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202409290618564_DefaultAdd.cs" />
-    <Compile Include="Migrations\202409290618564_DefaultAdd.Designer.cs">
-      <DependentUpon>202409290618564_DefaultAdd.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202409290732281_AutoPartSId.cs" />
-    <Compile Include="Migrations\202409290732281_AutoPartSId.Designer.cs">
-      <DependentUpon>202409290732281_AutoPartSId.cs</DependentUpon>
+    <Compile Include="Migrations\202410030155303_Key.cs" />
+    <Compile Include="Migrations\202410030155303_Key.Designer.cs">
+      <DependentUpon>202410030155303_Key.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,26 +90,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202409221224289_Initial.resx">
-      <DependentUpon>202409221224289_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410011330214_Initial.resx">
+      <DependentUpon>202410011330214_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202409221558512_addimageincategory.resx">
-      <DependentUpon>202409221558512_addimageincategory.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410020320254_DOINT.resx">
+      <DependentUpon>202410020320254_DOINT.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202409231507429_DisplayOrder.resx">
-      <DependentUpon>202409231507429_DisplayOrder.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410021633424_Blogs.resx">
+      <DependentUpon>202410021633424_Blogs.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202409260836380_IsFeatured.resx">
-      <DependentUpon>202409260836380_IsFeatured.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410021647298_BlogsDate.resx">
+      <DependentUpon>202410021647298_BlogsDate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202409280849283_AutoPartmake.resx">
-      <DependentUpon>202409280849283_AutoPartmake.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410021855398_removeBI.resx">
+      <DependentUpon>202410021855398_removeBI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202409290618564_DefaultAdd.resx">
-      <DependentUpon>202409290618564_DefaultAdd.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202409290732281_AutoPartSId.resx">
-      <DependentUpon>202409290732281_AutoPartSId.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410030155303_Key.resx">
+      <DependentUpon>202410030155303_Key.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -44,6 +44,31 @@ namespace sumarauto.web.Controllers
             return result;
         }
         [HttpPost]
+        public async Task<JsonResult> UploadBlog(IEnumerable<HttpPostedFileBase> Files, string prefix,string OldImage)
+        {
+            JsonResult result = new JsonResult();
+            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            try
+            {
+                foreach (var file in Files)
+                {
+                    var fileName = prefix + file.FileName;
+                    var path = Path.Combine(Server.MapPath("~/Content/Blog/"), fileName);
+                    await Task.Run(() => file.SaveAs(path));
+                }
+                if (!string.IsNullOrEmpty(OldImage))
+                {
+                    DeleteImg(OldImage);
+                }
+                result.Data = new { Success = true, Message = "Images have been saved on the server successfully." };
+            }
+            catch (Exception ex)
+            {
+                result.Data = new { Success = false, Message = "Oops! The images could not be saved on the server. " + ex.Message };
+            }
+            return result;
+        }
+        [HttpPost]
         public JsonResult DeleteImg(string img)
         {
             try
@@ -159,6 +184,57 @@ namespace sumarauto.web.Controllers
             }
 
             return destImage;
+        }
+
+        [HttpPost]
+        public JsonResult DeletAutoPartImg(string img)
+        {
+            try
+            {
+                if (img.Length > 0)
+                {
+                    string removeimagepath = System.Web.Hosting.HostingEnvironment.MapPath(img);
+                    if (System.IO.File.Exists(removeimagepath))
+                    {
+                        System.IO.File.Delete(removeimagepath);
+                        using (var db = new AppDbContext())
+                        {
+                            var data = db.AutoPartImages.FirstOrDefault(x => x.Image == img);
+                            if (data != null)
+                            {
+                                db.AutoPartImages.Remove(data);
+                                db.SaveChanges();
+                            }
+                        }
+                    }
+                    return Json(new { Success = true, Message = "Successfully remove image from server." });
+                }
+                return Json(new { Success = false, Message = "Oops! Image not found." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = "Oops! Something went wrong during removing the image from server. " + ex.Message });
+            }
+        }
+
+        public JsonResult UploadImage()
+        {
+            JsonResult result = new JsonResult();
+            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            try
+            {
+                var file = Request.Files[0];
+                var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                var path = Path.Combine(Server.MapPath("~/Content/images/"), fileName);
+                file.SaveAs(path);
+                result.Data = new { Success = true, ImageURL = string.Format("/Content/images/{0}", fileName) };
+
+            }
+            catch (Exception ex)
+            {
+                result.Data = new { Success = false, Message = ex.Message };
+            }
+            return result;
         }
     }
 }

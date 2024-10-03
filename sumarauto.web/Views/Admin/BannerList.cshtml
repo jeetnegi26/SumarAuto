@@ -1,0 +1,222 @@
+﻿@model IEnumerable<Model.Banner>
+@using DataModel;
+@{
+    ViewBag.Title = "BannerList";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    int count = 0;
+    var message = Convert.ToString(TempData["Message"]);
+}
+<style>
+    .cat-table {
+        width: max-content;
+    }
+
+    .card-body {
+        overflow: auto;
+    }
+</style>
+<div class="adminpage-head p-3">
+    <div>
+        <h4 class="m-0 mb-4">Banner</h4>
+    </div>
+    <div class="message-box p-3 m-1 mb-3 bg-success text-white border-left-primary" @(message != null && message != string.Empty ? "" : "hidden")>
+        <span class="message">@message</span>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex flex-row align-items-center justify-content-between">
+            <div>
+                <a type="button" class="btn btn-primary" id="add-category" href="/Admin/BannerAdd" title="Add Banner">
+                    <span class="glyphicon glyphicon-cog"><i class="bi bi-plus"></i> Add New</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="TravelTable" class="cat-table table table-bordered" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Image)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Type)
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Heading)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Subheading)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ButtonText)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.url)
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        count = count + 1;
+
+                        <tr>
+                            <td>@count</td>
+                            <td>
+                                <img src="@item.Image" alt="Image" style="width:120px;" />
+                            </td>
+                            <td>
+                                @(item.Type == "Home" ? "Slider" : item.Type + " " + "Image")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Type)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Heading)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Subheading)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ButtonText)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.url)
+                            </td>
+                            <td>
+                                <div class="form-check form-check-inline">
+                                    @{
+                                        var trueCheckedStatus = item.Status == true ? "Checked" : string.Empty;
+                                    }
+                                    <input type="hidden" name="IsActive" value='@item.Status' id="chkstatus" title="Status" />
+                                    <input class="form-check-input @("chkAvailability"+ item.Id)" data-id="@item.Id" id="chkstatus" type="checkbox" @trueCheckedStatus>
+                                </div>
+                            </td>
+                            <td>
+                                <a href=" @Url.Action("BannerEdit", new { id = item.Id })" class="text-primary" title="Edit">
+                                    <i class="ti ti-file-pencil" style="font-size:24px;"></i>
+                                </a>
+                                <a href=" @Url.Action("BannerDelete", new { id = item.Id })" @(item.Type == BannerConstant.Home ? "" : "hidden") onclick="return confirm('Are you sure wants to delete this ?');" class="text-danger ml-1" title="Delete">
+                                    <i class="ti ti-trash" style="font-size:24px;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="text-center">
+                        <td colspan="9">No Data available.</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('input[type="checkbox"]').on('change', function () {
+        if ($(this).prop("checked") == true) {
+            var Id = $(this).attr("data-id");
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Status',
+                    text: 'Changed',
+                    icon: 'success',
+                    showConfirmButton: false,
+                })
+                var Status = true;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("BannerStatus", "Admin")',
+                    data: {
+                        status: Status,
+                        id: Id
+                    }
+                })
+                    .done(function (response) {
+
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        $('.loadermodel').hide();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    });
+            }
+            else {
+                $(".chkAvailability" + Id).prop("checked", false);
+            }
+        })
+        }
+        else if ($(this).prop("checked") == false) {
+         Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Status',
+                    text: 'Changed',
+                    icon: 'success',
+                    showConfirmButton: false,
+                })
+                var Id = $(this).attr("data-id");
+                var Status = false;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("BannerStatus", "Admin")',
+                    data: {
+                        status: Status,
+                        id: Id
+                    }
+                })
+                    .done(function (response) {
+
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        $('.loadermodel').hide();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    });
+            }
+            else {
+                var Id = $(this).attr("data-id");
+                $(".chkAvailability" + Id).prop("checked", true);
+            }
+        })
+        }
+    });
+</script>
+

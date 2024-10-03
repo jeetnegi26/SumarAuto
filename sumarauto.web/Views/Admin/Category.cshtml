@@ -82,9 +82,8 @@
                 type: "POST",
                 url:'@Url.Action("StatusChange","Helper")',
                  data: {
-                    value: Value,
-                    Id : id,
-                    Type:"Category"
+                     Id: id,
+                     Type: 'Category'
                 },
                 success: function (response) {
                     if (response.Result = true) {
@@ -117,14 +116,13 @@
     });
     featuredBtns.forEach(featuredBtn => {
         featuredBtn.addEventListener("click", function () {
-            var Value = this.getAttribute("data-class");
             var id = this.getAttribute("data-id");
             $.ajax({
                 type: "POST",
-                url:'@Url.Action("FeaturedChange","Helper")',
+                url:'@Url.Action("FeaturedChange", "Helper")',
                  data: {
-                    value: Value,
-                    Id : id,
+                     Id: id,
+                     Type: "Category"
                 },
                 success: function (response) {
                     if (response.Result = true) {

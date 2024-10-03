@@ -11,37 +11,17 @@ using System.Web;
 using System.Web.Mvc;
 using System.Configuration;
 using sumarauto.DataModel;
+using Model;
+using DataModel;
 
 namespace sumarauto.web.Controllers
 {
     public class HelperController : Controller
     {
         string connectionString = ConfigurationManager.ConnectionStrings["sumarautoDb"].ConnectionString;
-        #region Helper
+        #region Helper  
         [HttpPost]
-        public ActionResult FeaturedChange(bool value,int Id)
-        {
-            bool result = false;
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    var Category = db.Category.Find(Id);
-                    if (Category != null)
-                    {
-                        Category.IsFeatured = value;
-                        db.SaveChanges();
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                result = false;
-            }
-            return Json(new{ Result = result }, JsonRequestBehavior.AllowGet);
-        }
-        [HttpPost]
-        public ActionResult StatusChange(bool value, int Id, string Type)
+        public ActionResult ChangeOrder(int Id, string Type, int displayOrder = 0)
         {
             bool result = false;
             try
@@ -54,25 +34,8 @@ namespace sumarauto.web.Controllers
                             var Category = db.Category.Find(Id);
                             if (Category != null)
                             {
-                                Category.Status = value;
-                                db.SaveChanges();
-                            }
-                            result = true;
-                            break;
-                        case "Make":
-                            var Make = db.Make.Find(Id);
-                            if (Make != null)
-                            {
-                                Make.Status = value;
-                                db.SaveChanges();
-                            }
-                            result = true;
-                            break;
-                        case "MModel":
-                            var MModel = db.MModel.Find(Id);
-                            if (MModel != null)
-                            {
-                                MModel.Status = value;
+                                bool value = Category.IsFeatured;
+                                Category.IsFeatured = value == true ? false : true;
                                 db.SaveChanges();
                             }
                             result = true;
@@ -81,7 +44,141 @@ namespace sumarauto.web.Controllers
                             var AuModel = db.AutoPart.Find(Id);
                             if (AuModel != null)
                             {
-                                AuModel.Status = value;
+                                AuModel.DisplayOrder = displayOrder;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "Blogs":
+                            var Blogs = db.Blogs.Find(Id);
+                            if (Blogs != null)
+                            {
+                                Blogs.DisplayOrder = displayOrder;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        default:
+                            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult FeaturedChange(int Id, string Type)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    switch (Type)
+                    {
+                        case "Category":
+                            var Category = db.Category.Find(Id);
+                            if (Category != null)
+                            {
+                                bool value = Category.IsFeatured;
+                                Category.IsFeatured = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "AutoPart":
+                            var AuModel = db.AutoPart.Find(Id);
+                            if (AuModel != null)
+                            {
+                                bool value = AuModel.IsFeatured;
+                                AuModel.IsFeatured = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "Blogs":
+                            var Blogs = db.Blogs.Find(Id);
+                            if (Blogs != null)
+                            {
+                                bool value = Blogs.IsFeatured;
+                                Blogs.IsFeatured = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        default:
+                            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult StatusChange(int Id, string Type)
+        {
+            bool result = false;
+            try
+            {
+                using (var db = new AppDbContext())
+                {
+                    switch (Type)
+                    {
+                        case "Category":
+                            var Category = db.Category.Find(Id);
+                            if (Category != null)
+                            {
+                                bool value = Category.Status;
+                                Category.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "Make":
+                            var Make = db.Make.Find(Id);
+                            if (Make != null)
+                            {
+                                bool value = Make.Status;
+                                Make.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "MModel":
+                            var MModel = db.MModel.Find(Id);
+                            if (MModel != null)
+                            {
+                                bool value = MModel.Status;
+                                MModel.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "AutoPart":
+                            var AuModel = db.AutoPart.Find(Id);
+                            if (AuModel != null)
+                            {
+                                bool value = AuModel.Status;
+                                AuModel.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "Blogs":
+                            var Blogs = db.Blogs.Find(Id);
+                            if (Blogs != null)
+                            {
+                                bool value = Blogs.Status;
+                                Blogs.Status = value == true ? false : true;
                                 db.SaveChanges();
                             }
                             result = true;
@@ -224,6 +321,7 @@ namespace sumarauto.web.Controllers
                                 Title = string.IsNullOrEmpty(reader["Title"].ToString()) ? "-" : reader["Title"].ToString(),
                                 Category = string.IsNullOrEmpty(reader["Category"].ToString()) ? "-" : reader["Category"].ToString(),
                                 Status = (bool)reader["Status"],
+                                IsFeatured = (bool)reader["IsFeatured"],
                                 DisplayOrder = (int)reader["DisplayOrder"],
                            };
                             AutoPartDataModels.Add(AutoPartDataModel);
@@ -246,6 +344,66 @@ namespace sumarauto.web.Controllers
                     }
                 }
                
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public ActionResult GetBlogList(int draw, int start, int length, int dropdownId)
+        {
+            try
+            {
+                var sortColumnIndex = Request.Form.GetValues("order[0][column]")?.FirstOrDefault();
+                var sortColumnDirection = Request.Form.GetValues("order[0][dir]")?.FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetBlogList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    // Adding parameters
+                    command.Parameters.AddWithValue("@Start", start);
+                    command.Parameters.AddWithValue("@Length", length);
+                    command.Parameters.AddWithValue("@dropdownId", dropdownId);
+                    command.Parameters.AddWithValue("@sortColumnIndex", sortColumnIndex);
+                    command.Parameters.AddWithValue("@sortColumnDirection", sortColumnDirection);
+                    command.Parameters.AddWithValue("@SearchValue", string.IsNullOrEmpty(searchValue) ? (object)DBNull.Value : searchValue);
+                    connection.Open();
+                    // Execute the command and read the results
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var Blogs = new List<Blogs>();
+                        while (reader.Read())
+                        {
+                            var Blog = new Blogs
+                            {
+                                Id = (int)reader["Id"],
+                                Title = string.IsNullOrEmpty(reader["Title"].ToString()) ? "-" : reader["Title"].ToString(),
+                                Status = (bool)reader["Status"],
+                                IsFeatured = (bool)reader["IsFeatured"],
+                                DisplayOrder = (int)reader["DisplayOrder"],
+                            };
+                            Blogs.Add(Blog);
+                        }
+                        // Move to the second result set to get the total count
+                        reader.NextResult();
+                        int totalRecords = 0;
+                        if (reader.Read())
+                        {
+                            totalRecords = reader.GetInt32(0);
+                        }
+                        var result = new
+                        {
+                            draw = draw,
+                            recordsTotal = totalRecords,
+                            recordsFiltered = totalRecords,
+                            data = Blogs.OrderByDescending(x => x.DisplayOrder)
+                        };
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
             }
             catch (Exception ex)
             {

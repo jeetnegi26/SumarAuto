@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Services.Description;
+using DataModel;
 using Model;
+using Service;
 using sumarauto.database;
-using sumarauto.DataModel;
 
 namespace sumarauto.web.Controllers
 {
@@ -37,13 +38,14 @@ namespace sumarauto.web.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult saveOrUpdateAutoParts(AutoPartDataModel model)
         {
             bool result = false;
             string Message = "Something went wrong!";
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     // Handle the form submission here
                     return Json(new { success = result,message = "Please fill the required fields." });
@@ -61,10 +63,14 @@ namespace sumarauto.web.Controllers
                     // Main item details
                     cmd.Parameters.AddWithValue("@ItemId", itemId == 0 ? (object)DBNull.Value : itemId);
                     cmd.Parameters.AddWithValue("@Title", model.Title);
+                    cmd.Parameters.AddWithValue("@ExtraField", string.IsNullOrEmpty(model.ExtraField) ? (object)DBNull.Value : model.ExtraField);
+                    cmd.Parameters.AddWithValue("@DefaultImage", string.IsNullOrEmpty(model.DefaultImage) ? (object)DBNull.Value : model.DefaultImage);
                     cmd.Parameters.AddWithValue("@Description", model.Description);
                     cmd.Parameters.AddWithValue("@CategoryId", model.CategoryId);
                     cmd.Parameters.AddWithValue("@DisplayOrder", model.DisplayOrder);
-                    cmd.Parameters.AddWithValue("@CreatedBy", "ADMIN");
+                    cmd.Parameters.AddWithValue("@IsFeatured", model.IsFeatured);
+                    cmd.Parameters.AddWithValue("@Status", model.Status);
+                    cmd.Parameters.AddWithValue("@CreatedBy", "Admin");
                     cmd.Parameters.AddWithValue("@UserHostAddress", Request.UserHostAddress);
 
                     // Table-valued parameter for multiple details
@@ -75,14 +81,20 @@ namespace sumarauto.web.Controllers
                     table.Columns.Add("Engine", typeof(string));
                     table.Columns.Add("Liter", typeof(string));
                     table.Columns.Add("Chassis", typeof(string));
-
-                    foreach (var detail in model.MultipleDetails)
+                    table.Columns.Add("DisplayOrder", typeof(int));
+                    int dOCount = 0;
+                    if (model.MultipleDetails != null)
                     {
-                        if (!string.IsNullOrEmpty(detail.Make))
+                        foreach (var detail in model.MultipleDetails)
                         {
-                            table.Rows.Add(detail.Make, detail.Model, detail.Year, detail.Engine, detail.Liter, detail.Chassis);
+                            if (!string.IsNullOrEmpty(detail.Make))
+                            {
+                                dOCount += 1;
+                                table.Rows.Add(detail.Make, detail.Model, detail.Year, detail.Engine, detail.Liter, detail.Chassis, dOCount);
+                            }
                         }
                     }
+
 
                     var detailsParam = new SqlParameter("@MultipleDetails", SqlDbType.Structured)
                     {
@@ -105,12 +117,28 @@ namespace sumarauto.web.Controllers
 
         }
 
+        public ActionResult AutoPartEdit(int Id = 0)
+        {
+            int width = Convert.ToInt32(ConfigurationManager.AppSettings["Width"]);
+            int height = Convert.ToInt32(ConfigurationManager.AppSettings["Height"]);
+            ViewBag.Width = width;
+            ViewBag.Height = height;
+            using(var db = new AppDbContext())
+            {
+                var data = db.AutoPart.Include(x=>x.AutoPartImages).AsNoTracking().FirstOrDefault(x => x.Id == Id);
+                ViewBag.GalleryImgs = data.AutoPartImages.Select(x => x.Image).ToList();
+                var dataDefault = data.AutoPartImages.FirstOrDefault(x => x.Default == true);
+                ViewBag.DefaultImg = dataDefault != null ? dataDefault.Image : "";
+                return View(data);
+            }
+        }
         //Make
         public ActionResult MakeList(string Id)
         {
             List<MakeDetail> makeDetails = new List<MakeDetail>();
             try
             {
+                ViewBag.AutoPartId = Id;
                 using (var connection = new SqlConnection(connectionString))
                 {
                     var command = new SqlCommand("GetMakeList", connection);
@@ -124,13 +152,13 @@ namespace sumarauto.web.Controllers
                             MakeDetail makeDetail = new MakeDetail
                             {
                                 Id = (int)reader["Id"],
-                                AutoPartSId = Id,
-                                Make = Convert.ToString(reader["Make"]),
-                                Chassis = Convert.ToString(reader["Chassis"]),
-                                Engine = Convert.ToString(reader["Engine"]),
-                                Liter = Convert.ToString(reader["Liter"]),
-                                Model = Convert.ToString(reader["Model"]),
-                                Year = Convert.ToString(reader["Year"]),
+                                AutoPartSId = Convert.ToString(reader["AutoPartSId"]),
+                                Make = Convert.ToString(reader["Make_Title"]),
+                                Chassis = string.IsNullOrEmpty(Convert.ToString(reader["Chassis_Title"])) ? "-" : Convert.ToString(reader["Chassis_Title"]),
+                                Engine = string.IsNullOrEmpty(Convert.ToString(reader["Engine_Title"])) ? "-" : Convert.ToString(reader["Engine_Title"]),
+                                Liter = string.IsNullOrEmpty(Convert.ToString(reader["Liter_Title"])) ? "-" : Convert.ToString(reader["Liter_Title"]),
+                                Model = string.IsNullOrEmpty(Convert.ToString(reader["Model_Title"])) ? "-" : Convert.ToString(reader["Model_Title"]),
+                                Year = string.IsNullOrEmpty(Convert.ToString(reader["Year_Title"])) ? "-" : Convert.ToString(reader["Year_Title"]),
                                 DisplayOrder = !string.IsNullOrEmpty(Convert.ToString(reader["DisplayOrder"]))
                                 ? Convert.ToInt32(Convert.ToString(reader["DisplayOrder"])): 0,
                             };
@@ -143,8 +171,73 @@ namespace sumarauto.web.Controllers
             {
                 throw;
             }
-            return View(makeDetails.OrderBy(x => x.DisplayOrder)
+            return View(makeDetails.OrderBy(x => x.DisplayOrder).ThenByDescending(x=>x.Id)
                       .ToList());
+        }
+
+        public ActionResult AutoMakeAction(int autoId,int Id=0)
+        {
+            ViewBag.AutoPartId = autoId;
+            var data = new MakeDetailAction();
+            if (Id > 0)
+            {
+                using(var db = new AppDbContext())
+                {
+                   var Modeldata = db.AutoPartMake.AsNoTracking().FirstOrDefault(x=>x.Id == Id);
+                    data.AutoPartId = autoId;
+                    data.Id = Id;
+                    data.Year = Modeldata.Year_Title;
+                    data.DisplayOrder = Modeldata.DisplayOrder;
+                    data.Chassis = Modeldata.Chassis_Title;
+                    data.Status = Modeldata.Status;
+                    data.Engine = Modeldata.Engine_Title;
+                    data.Liter = Modeldata.Liter_Title;
+                    data.MakeId = Modeldata.Make_Id;
+                    data.Model = Modeldata.Model_Title;
+                }
+            }
+            return View(data);
+        }
+        [HttpPost]
+        public ActionResult AutoMakeAction(MakeDetailAction autoPart)
+        {
+            ViewBag.AutoPartId = autoPart.AutoPartId;
+            bool result = false;
+            string message = "Something went wrong!";
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand("SaveOrUpdateAutoPartMake", connection)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    // Pass parameters
+                    cmd.Parameters.AddWithValue("@Id", autoPart.Id == 0 ? (object)DBNull.Value : autoPart.Id);
+                    cmd.Parameters.AddWithValue("@AutoPartId", autoPart.AutoPartId);
+                    cmd.Parameters.AddWithValue("@MakeId", autoPart.MakeId);
+                    cmd.Parameters.AddWithValue("@Model_Title", string.IsNullOrEmpty(autoPart.Model) ? (object)DBNull.Value : autoPart.Model);
+                    cmd.Parameters.AddWithValue("@Year_Title", string.IsNullOrEmpty(autoPart.Year) ? (object)DBNull.Value : autoPart.Year);
+                    cmd.Parameters.AddWithValue("@Engine_Title", string.IsNullOrEmpty(autoPart.Engine) ? (object)DBNull.Value : autoPart.Engine);
+                    cmd.Parameters.AddWithValue("@Liter_Title", string.IsNullOrEmpty(autoPart.Liter) ? (object)DBNull.Value : autoPart.Liter);
+                    cmd.Parameters.AddWithValue("@Chassis_Title", string.IsNullOrEmpty(autoPart.Chassis) ? (object)DBNull.Value : autoPart.Chassis);
+                    cmd.Parameters.AddWithValue("@DisplayOrder", autoPart.DisplayOrder);
+                    cmd.Parameters.AddWithValue("@Status", autoPart.Status);
+                    cmd.Parameters.AddWithValue("@CreatedBy", "Admin");  
+                    cmd.Parameters.AddWithValue("@UserHostAddress", Request.UserHostAddress);
+
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+
+            return Json(new { success = result }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
@@ -209,7 +302,7 @@ namespace sumarauto.web.Controllers
                             data.Title = Convert.ToString(reader["Title"]);
                             data.Image = Convert.ToString(reader["Image"]);
                             data.Description = Convert.ToString(reader["Description"]);
-                            data.DisplayOrder = Convert.ToString(reader["DisplayOrder"]);
+                            data.DisplayOrder = Convert.ToInt32(reader["DisplayOrder"]);
                         }
                     }
                     return View(data);
@@ -470,6 +563,7 @@ namespace sumarauto.web.Controllers
         }
         #endregion
         #endregion
+
         #region Change Password
         public ActionResult ChangePassword()
         {
@@ -516,8 +610,262 @@ namespace sumarauto.web.Controllers
         }
         #endregion
 
-        #region Helper
+        #region Blogs
+        public ActionResult Blogs()
+        {
+            return View();
+        }
+        public ActionResult BlogAction(int Id = 0)
+        {
+            var data = new Blogs();
+            data.Date = DateTime.Now;
+            if (Id > 0)
+            {
+                using(var db = new AppDbContext())
+                {
+                    data = db.Blogs.AsNoTracking().FirstOrDefault(x=>x.Id == Id);
+                }
+            }
+            return View(data);
+        }
+        [HttpPost]
+        public ActionResult BlogAction(Blogs blogs)
+        {
+            bool result = false;
+            int Id = 0;
+            string Message = DateTime.Now.ToString("yyyyMMddHHmmss");
 
+            try
+            {
+                if (blogs.NewImage != null && blogs.NewImage != "" && blogs.NewImage.Length > 0)
+                {
+                    blogs.Image = "/Content/Blog/" + Message + blogs.NewImage;
+                }
+                using (var db = new AppDbContext())
+                {
+                    if (blogs != null && blogs.Id > 0)
+                    {
+                        //Edit
+                        blogs.EditedOn = DateTime.Now;
+                        blogs.UserHostAdd = Request.UserHostAddress;
+                        Id = blogs.Id;
+                        db.Entry(blogs).State = EntityState.Modified;
+                        db.SaveChanges();
+                        result = true;
+                    }
+                    else
+                    {
+                        //Save
+                        blogs.CreatedBy = "Admin";
+                        blogs.CreatedOn = DateTime.Now;
+                        blogs.EditedOn = DateTime.Now;
+                        blogs.UserHostAdd = Request.UserHostAddress;
+                        db.Blogs.Add(blogs);
+                        db.SaveChanges();
+                        result = true;
+                        Id = blogs.Id;
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return Json(new {success = result, message = Message },JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Banners
+        public ActionResult BannerList()
+        {
+            try
+            {
+                var data = BannerService.Instance.GetBannerList();
+                return View(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public ActionResult BannerAdd()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult BannerAdd(Banner model)
+        {
+            try
+            {
+                model.Status = true;
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                model.UserHostAdd = Request.UserHostAddress;
+                var result = BannerService.Instance.SaveBanner(model);
+                TempData["Message"] = result.Messsage;
+
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = Constant.Message.Error;
+            }
+            return RedirectToAction("BannerList");
+        }
+        public ActionResult BannerEdit(int Id)
+        {
+            try
+            {
+                var BannerData = BannerService.Instance.GetBannerById(Id);
+                TempData["OldImage"] = BannerData.Image;
+                return View(BannerData);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult BannerEdit(Banner model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                model.UserHostAdd = Request.UserHostAddress;
+                var result = BannerService.Instance.EditBanner(model);
+                if (TempData["OldImage"].ToString() != result.Value1)
+                {
+                    string removeimagepath = Request.MapPath(TempData["OldImage"].ToString());
+                    if (System.IO.File.Exists(removeimagepath))
+                    {
+                        System.IO.File.Delete(removeimagepath);
+                    }
+                }
+                TempData["Message"] = result.Messsage;
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = Constant.Message.Error;
+            }
+            return RedirectToAction("BannerList");
+        }
+        public ActionResult BannerDelete(int Id)
+        {
+            try
+            {
+                var result = BannerService.Instance.DeleteBanners(Id);
+                TempData["Message"] = result.Messsage;
+                if (result.Value1 != null)
+                {
+                    string removeimagepath = Request.MapPath(result.Value1);
+                    if (System.IO.File.Exists(removeimagepath))
+                    {
+                        System.IO.File.Delete(removeimagepath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = Constant.Message.Error;
+            }
+            return RedirectToAction("BannerList");
+        }
+        [HttpPost]
+        public ActionResult BannerStatus(bool status, int id)
+        {
+            var result = false;
+            using (var context = new AppDbContext())
+            {
+                var data = context.Banners.FirstOrDefault(x => x.Id == id);
+                data.Status = status;
+                context.Entry(data).State = EntityState.Modified;
+                context.SaveChanges();
+                result = true;
+            }
+            return Json(result);
+        }
+        #endregion
+
+        #region Website Info
+        public ActionResult WebsiteInformation()
+        {
+            var data = WebInfoService.Instance.GetInfoKeys();
+            return View(data);
+        }
+        public ActionResult InfoAdd()
+        {
+            return PartialView();
+        }
+        [HttpPost]
+        public ActionResult InfoAdd(Key Key)
+        {
+            string result;
+            try
+            {
+                Key.CreatedOn = HelperService.Instance.getCurrentDateTime();
+                var data = WebInfoService.Instance.SaveWebInfo(Key);
+                result = data == true ? "true" : "false";
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        public ActionResult InfoEdit(int id)
+        {
+            try
+            {
+                var key = WebInfoService.Instance.GetInfoKey(id);
+                return PartialView(key);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        [HttpPost]
+        public ActionResult InfoEdit(Key key)
+        {
+            string result = "false";
+            try
+            {
+                var data = WebInfoService.Instance.EditWebInfo(key);
+                result = data == true ? "true" : "false";
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(result);
+            }
+        }
+        public bool InfoDelete(int id)
+        {
+            bool result = false;
+            try
+            {
+                result = WebInfoService.Instance.RemoveWebInfo(id);
+                return result;
+            }
+            catch (Exception)
+            {
+                return result;
+            }
+        }
         #endregion
     }
 }

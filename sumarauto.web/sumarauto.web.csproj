@@ -246,11 +246,22 @@
     <Content Include="Views\Home\Blogs.cshtml" />
     <Content Include="Views\Home\Blog.cshtml" />
     <Content Include="Views\Admin\MakeList.cshtml" />
+    <Content Include="Views\Admin\AutoPartEdit.cshtml" />
+    <Content Include="Views\Admin\AutoMakeAction.cshtml" />
+    <Content Include="Views\Admin\BlogAction.cshtml" />
+    <Content Include="Views\Admin\Blogs.cshtml" />
+    <Content Include="Views\Admin\BannerList.cshtml" />
+    <Content Include="Views\Admin\BannerAdd.cshtml" />
+    <Content Include="Views\Admin\BannerEdit.cshtml" />
+    <Content Include="Views\Admin\WebsiteInformation.cshtml" />
+    <Content Include="Views\Admin\InfoAdd.cshtml" />
+    <Content Include="Views\Admin\InfoEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\AutoPartImages\" />
     <Folder Include="Content\Banner\" />
+    <Folder Include="Content\Blog\" />
     <Folder Include="Content\Component\" />
     <Folder Include="Content\Gallery\" />
     <Folder Include="Models\" />
@@ -297,6 +308,10 @@
     <ProjectReference Include="..\sumarauto.Model\sumarauto.Model.csproj">
       <Project>{70a37b63-faf5-43dd-90b4-13c12b7a2630}</Project>
       <Name>sumarauto.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sumarauto.Service\sumarauto.Service.csproj">
+      <Project>{516816e2-c8ca-4c98-baad-d41c3d89688e}</Project>
+      <Name>sumarauto.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
