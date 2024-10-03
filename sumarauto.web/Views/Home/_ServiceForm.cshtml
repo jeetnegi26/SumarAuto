@@ -1,0 +1,237 @@
+﻿<style>
+    .intro_text a {
+        color: var(--primary);
+    }
+
+    .intro_form_container {
+        width: 100%;
+        background: #FFFFFF;
+        padding: 63px 33px;
+    }
+
+    .intro_form_title {
+        position: absolute;
+        top: -23px;
+        left: -48px;
+        width: 336px;
+        height: 80px;
+        background: #57ccc3;
+        line-height: 80px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        color: #FFFFFF;
+    }
+
+    .intro_form {
+        width: 100%;
+    }
+
+    .intro_box {
+        width: calc((100% - 15px) / 2);
+    }
+
+    .intro_box_full {
+        width: calc(100% - 10px)
+    }
+
+    .intro_input {
+        width: 100%;
+        height: 50px;
+        background: transparent;
+        border: solid 2px #e6ebf1;
+        margin-bottom: 18px;
+        padding-left: 25px;
+        padding-right: 15px;
+        outline: none;
+        font-size: 15px;
+        color: #404040;
+        font-weight: 500;
+        -webkit-transition: all 200ms ease;
+        -moz-transition: all 200ms ease;
+        -ms-transition: all 200ms ease;
+        -o-transition: all 200ms ease;
+        transition: all 200ms ease;
+        border-radius: 10PX;
+    }
+
+    .intro_input_full {
+        width: 100%;
+        height: 50px;
+        background: transparent;
+        border: solid 2px #e6ebf1;
+        margin-bottom: 18px;
+        padding-left: 25px;
+        padding-right: 15px;
+        outline: none;
+        font-size: 15px;
+        color: #404040;
+        font-weight: 500;
+        -webkit-transition: all 200ms ease;
+        -moz-transition: all 200ms ease;
+        -ms-transition: all 200ms ease;
+        -o-transition: all 200ms ease;
+        transition: all 200ms ease;
+        border-radius: 10PX
+    }
+
+    .intro_select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+        -webkit-user-select: none;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-style: italic;
+        color: #a09f9f !important;
+        cursor: pointer;
+    }
+
+        .intro_select.selected {
+            font-size: 15px !important;
+            color: #404040 !important;
+            font-weight: 500 !important;
+            font-style: normal !important;
+        }
+
+        .intro_select option {
+            color: #404040;
+        }
+
+    .intro_input:focus,
+    .intro_input:hover {
+        border: solid 2px #57ccc3;
+    }
+
+    .intro_input::-webkit-input-placeholder {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-style: italic;
+        color: #a09f9f !important;
+    }
+
+    .intro_input:-moz-placeholder {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-style: italic;
+        color: #a09f9f !important;
+    }
+
+    .intro_input::-moz-placeholder {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-style: italic;
+        color: #a09f9f !important;
+    }
+
+    .intro_input:-ms-input-placeholder {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-style: italic;
+        color: #a09f9f !important;
+    }
+
+    .intro_input::input-placeholder {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-style: italic;
+        color: #a09f9f !important;
+    }
+
+    .intro_button {
+        width: 100%;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        border: solid 2px var(--primary);
+        cursor: pointer;
+        background-color: white;
+        transition: 0.3s;
+    }
+
+        .intro_button:hover {
+            background: var(--primary);
+            border: solid 2px transparent;
+            color: #FFFFFF;
+        }
+
+    @@media (max-width: 500px) {
+        .intro_box {
+            width: 100%;
+        }
+    }
+
+    .cont-box {
+        padding: 2rem;
+    }
+
+    .contact-info p {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .contact-info i {
+        color: var(--primary);
+    }
+
+    .contact-info a {
+        color: var(--text);
+    }
+
+    .modal-body .btn-close {
+        display: flex;
+        margin-left: auto;
+    }
+
+</style>
+
+<div class="contact-form cont-bento-box">
+    <div class="intro_form_container cont-bento">
+        <h2>GET IN TOUCH WITH US</h2>
+        <form action="#" class="intro_form" id="intro_form">
+            <div class="d-flex flex-row align-items-start justify-content-between flex-wrap">
+                <div class="intro_box">
+                    <small>Name *</small>
+                    <input type="text" class="intro_input" placeholder="Your Name" required="required">
+                </div>
+                <div class="intro_box">
+                    <small>Phone No *</small>
+                    <input type="tel" class="intro_input" placeholder="Your Phone" required="required">
+                </div>
+                <div class="w-100">
+                    <small>Company Name </small>
+                    <input type="text" class="intro_input" placeholder="Your Company Name" required="required">
+                </div>
+                <div class="w-100">
+                    <small>Email *</small>
+                    <input type="email" class="intro_input" placeholder="Your E-mail" required="required">
+                </div>
+
+                <div class="intro_box">
+                    <small>Country</small>
+                    <input type="text" class="intro_input" placeholder="Your Country" required="required">
+                </div>
+                <div class="intro_box">
+                    <small>City </small>
+                    <input type="email" class="intro_input" placeholder="Your City" required="required">
+                </div>
+                <div class="w-100">
+                    <small>Requirements </small>
+                    <textarea type="text" style="height:100px;" class="intro_input" placeholder="Type your message here" required="required"></textarea>
+                </div>
+
+                <div class="w-100">
+                    <small>Product: </small>
+                    <p>ACVAL1002 / Boot, CV joint, NBR</p>
+                </div>
+
+
+            </div>
+            <button style="width: max-content; padding:8px 20px" class="button button_1 intro_button trans_200">make an appointment</button>
+        </form>
+    </div>
+</div>

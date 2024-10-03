@@ -27,6 +27,13 @@ namespace sumarauto.web.Controllers
             return View();
         }
 
+        public ActionResult Categories()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
         public ActionResult Blogs()
         {
             ViewBag.Message = "Your contact page.";
@@ -39,6 +46,11 @@ namespace sumarauto.web.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public ActionResult _ServiceForm()
+        {
+            return PartialView();
         }
     }
 }
