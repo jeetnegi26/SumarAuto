@@ -33,10 +33,6 @@ namespace sumarauto.web.Controllers
         //}
         public ActionResult AutoPartAction(int Id = 0)
         {
-            int width = Convert.ToInt32(ConfigurationManager.AppSettings["Width"]);
-            int height = Convert.ToInt32(ConfigurationManager.AppSettings["Height"]);
-            ViewBag.Width = width;
-            ViewBag.Height = height;
             return View();
         }
         [HttpPost]
@@ -121,10 +117,6 @@ namespace sumarauto.web.Controllers
 
         public ActionResult AutoPartEdit(int Id = 0)
         {
-            int width = Convert.ToInt32(ConfigurationManager.AppSettings["Width"]);
-            int height = Convert.ToInt32(ConfigurationManager.AppSettings["Height"]);
-            ViewBag.Width = width;
-            ViewBag.Height = height;
             using(var db = new AppDbContext())
             {
                 var data = db.AutoPart.Include(x=>x.AutoPartImages).AsNoTracking().FirstOrDefault(x => x.Id == Id);

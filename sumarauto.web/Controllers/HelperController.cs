@@ -195,49 +195,6 @@ namespace sumarauto.web.Controllers
             }
             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult GetSelectListCat()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListEngine()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListMake()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListMMade()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListChassis()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListLiter()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListYear()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-
         public async Task<ActionResult> GetDropdownCatList()
         {
             try
@@ -246,6 +203,7 @@ namespace sumarauto.web.Controllers
                 {
                     var command = new SqlCommand("GetCategoryList", connection);
                     command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Active", 1);
                     connection.Open();
                     var rows = await command.ExecuteReaderAsync();
                     var result = new List<SelectListItem>();
@@ -270,7 +228,7 @@ namespace sumarauto.web.Controllers
             {
                 using (var db = new AppDbContext())
                 {
-                    var dataList = await db.Make.AsNoTracking().ToListAsync();
+                    var dataList = await db.Make.AsNoTracking().Where(x=>x.Status == true).ToListAsync();
                     var result = new List<SelectListItem>();
                     foreach (var item in dataList)
                     {
