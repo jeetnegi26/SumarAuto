@@ -410,6 +410,67 @@ namespace sumarauto.web.Controllers
                 return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpPost]
+        public ActionResult GetGalleryData(int draw, int start, int length, int dropdownId)
+        {
+            List<Gallery> Galleries = new List<Gallery>();
+            try
+            {
+                var sortColumnIndex = Request.Form.GetValues("order[0][column]")?.FirstOrDefault();
+                var sortColumnDirection = Request.Form.GetValues("order[0][dir]")?.FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetGalleryData", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Start", start);
+                    command.Parameters.AddWithValue("@Length", length);
+                    command.Parameters.AddWithValue("@dropdownId", dropdownId);
+                    command.Parameters.AddWithValue("@sortColumnIndex", sortColumnIndex);
+                    command.Parameters.AddWithValue("@sortColumnDirection", sortColumnDirection);
+                    command.Parameters.AddWithValue("@SearchValue", string.IsNullOrEmpty(searchValue) ? (object)DBNull.Value : searchValue);
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var data = new Gallery
+                            {
+                                Id = (int)reader["Id"],
+                                DefaultImage = Convert.ToString(reader["DefaultImage"]),
+                                Title = Convert.ToString(reader["Title"]),
+                                CreatedBy = Convert.ToString(reader["CreatedBy"]),
+                                Status = (bool)reader["Status"],
+                                CreatedOnString = Convert.ToDateTime(reader["CreatedOn"]).ToString("dd MMM yyyy"),
+                                EditedOnString = Convert.ToDateTime(reader["EditedOn"]).ToString("dd MMM yyyy"),
+                            };
+                            Galleries.Add(data);
+                        }
+                        reader.NextResult();
+                        int totalRecords = 0;
+                        if (reader.Read())
+                        {
+                            totalRecords = reader.GetInt32(0);
+                        }
+                        var result = new
+                        {
+                            draw = draw,
+                            recordsTotal = totalRecords,
+                            recordsFiltered = totalRecords,
+                            data = Galleries.OrderByDescending(x => x.Id)
+                        };
+
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         #endregion
     }
 }

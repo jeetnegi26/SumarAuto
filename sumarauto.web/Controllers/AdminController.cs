@@ -13,9 +13,11 @@ using DataModel;
 using Model;
 using Service;
 using sumarauto.database;
+using sumarauto.web.App_Start;
 
 namespace sumarauto.web.Controllers
 {
+    [CustomAuthorize]
     public class AdminController : Controller
     {
         string connectionString = ConfigurationManager.ConnectionStrings["sumarautoDb"].ConnectionString;
@@ -25,10 +27,10 @@ namespace sumarauto.web.Controllers
             return View();
         }
         #region AutoParts
-        public ActionResult AutoPart()
-        {
-            return View();
-        }
+        //public ActionResult AutoPart()
+        //{
+        //    return View();
+        //}
         public ActionResult AutoPartAction(int Id = 0)
         {
             int width = Convert.ToInt32(ConfigurationManager.AppSettings["Width"]);
@@ -864,6 +866,116 @@ namespace sumarauto.web.Controllers
             catch (Exception)
             {
                 return result;
+            }
+        }
+        #endregion
+
+        #region Gallery
+        public ActionResult Gallery()
+        {
+            return View();
+        }
+        public ActionResult GalleryAction(int Id = 0)
+        {
+            var gallery = new Gallery();
+            List<GalleryImage> images = new List<GalleryImage>();
+            if (Id > 0)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand("GetGalleryDetails", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@GalleryId", Id);
+
+                        conn.Open();
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            // Read the banner details
+                            if (reader.Read())
+                            {
+                                gallery = new Gallery
+                                {
+                                    Id = (int)reader["GalleryId"],
+                                    Title = Convert.ToString(reader["Title"]),
+                                };
+                            }
+                            // Move to the next result set (banner images)
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    images.Add(new GalleryImage
+                                    {
+                                        Id = (int)reader["GalleryImgId"],
+                                        Image = reader["Image"].ToString(),
+                                        DefaultImage = (bool)reader["DefaultImage"],
+                                    });
+                                }
+                            }
+                            //banner.BannerImages = images;
+                            ViewBag.GalleryImgs = images.Select(x => x.Image).ToList();
+                            var dataDefault = images.FirstOrDefault(x => x.DefaultImage == true);
+                            ViewBag.DefaultImg = dataDefault != null ? dataDefault.Image : "";
+                        }
+                    }
+                }
+            }
+            return View(gallery);
+        }
+        [HttpPost]
+        public ActionResult UpdateGalleryStatus(int id, string field, bool value)
+        {
+            using (var context = new AppDbContext())
+            {
+                var downMaster = context.Gallery.FirstOrDefault(p => p.Id == id);
+                if (downMaster == null)
+                {
+                    return Json(new { success = false, message = "Download page not found." });
+                }
+                // Update the corresponding field
+                switch (field)
+                {
+                    case "Status":
+                        downMaster.Status = value;
+                        break;
+                    default:
+                        return Json(new { success = false, message = "Invalid field name." });
+                }
+
+                context.SaveChanges();
+                return Json(new { success = true, message = "Status updated successfully!" });
+            }
+        }
+        #endregion
+
+        #region Contact Form
+        public async Task<ActionResult> ContactFormList()
+        {
+            try
+            {
+                var dataList = await ContactService.Instance.GetContactList();
+                return View(dataList);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+        [HttpPost]
+        public JsonResult DeleteContactForm(int id)
+        {
+            var resultData = "False";
+            try
+            {
+                var data = ContactService.Instance.RemoveContactForm(id);
+                resultData = data == true ? "True" : "False";
+                return Json(resultData, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(resultData, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion

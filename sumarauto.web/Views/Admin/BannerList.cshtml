@@ -16,15 +16,16 @@
     }
 </style>
 <div class="adminpage-head p-3">
-    <div>
-        <h4 class="m-0 mb-4">Banner</h4>
-    </div>
+
     <div class="message-box p-3 m-1 mb-3 bg-success text-white border-left-primary" @(message != null && message != string.Empty ? "" : "hidden")>
         <span class="message">@message</span>
     </div>
 
     <div class="card shadow mb-4">
         <div class="card-header d-flex flex-row align-items-center justify-content-between">
+            <div>
+                <h4 class="m-0">Manage Banner</h4>
+            </div>
             <div>
                 <a type="button" class="btn btn-primary" id="add-category" href="/Admin/BannerAdd" title="Add Banner">
                     <span class="glyphicon glyphicon-cog"><i class="bi bi-plus"></i> Add New</span>

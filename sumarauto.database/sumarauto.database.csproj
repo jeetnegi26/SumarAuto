@@ -52,33 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDbContext.cs" />
-    <Compile Include="Migrations\202410011330214_Initial.cs" />
-    <Compile Include="Migrations\202410011330214_Initial.Designer.cs">
-      <DependentUpon>202410011330214_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202410020320254_DOINT.cs" />
-    <Compile Include="Migrations\202410020320254_DOINT.Designer.cs">
-      <DependentUpon>202410020320254_DOINT.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202410021633424_Blogs.cs" />
-    <Compile Include="Migrations\202410021633424_Blogs.Designer.cs">
-      <DependentUpon>202410021633424_Blogs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202410021647298_BlogsDate.cs" />
-    <Compile Include="Migrations\202410021647298_BlogsDate.Designer.cs">
-      <DependentUpon>202410021647298_BlogsDate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202410021855398_removeBI.cs" />
-    <Compile Include="Migrations\202410021855398_removeBI.Designer.cs">
-      <DependentUpon>202410021855398_removeBI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202410030155303_Key.cs" />
-    <Compile Include="Migrations\202410030155303_Key.Designer.cs">
-      <DependentUpon>202410030155303_Key.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202410030217271_ContactFormAdd.cs" />
-    <Compile Include="Migrations\202410030217271_ContactFormAdd.Designer.cs">
-      <DependentUpon>202410030217271_ContactFormAdd.cs</DependentUpon>
+    <Compile Include="Migrations\202410030329264_Initial.cs" />
+    <Compile Include="Migrations\202410030329264_Initial.Designer.cs">
+      <DependentUpon>202410030329264_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,26 +70,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202410011330214_Initial.resx">
-      <DependentUpon>202410011330214_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202410020320254_DOINT.resx">
-      <DependentUpon>202410020320254_DOINT.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202410021633424_Blogs.resx">
-      <DependentUpon>202410021633424_Blogs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202410021647298_BlogsDate.resx">
-      <DependentUpon>202410021647298_BlogsDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202410021855398_removeBI.resx">
-      <DependentUpon>202410021855398_removeBI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202410030155303_Key.resx">
-      <DependentUpon>202410030155303_Key.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202410030217271_ContactFormAdd.resx">
-      <DependentUpon>202410030217271_ContactFormAdd.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202410030329264_Initial.resx">
+      <DependentUpon>202410030329264_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -23,6 +23,9 @@
             display: none;
         }
     }
+    table .ti{
+        font-size:22px;
+    }
 </style>
 <div id="key-add-container" class="p-3">
 
@@ -87,8 +90,8 @@
                                         <h6 class="table-text"> @item.CreatedOn.ToString("MMM-d-yyyy") </h6>
                                     </td>
                                     <td style="text-align:center;" class="d-flex">
-                                        <button type="button" class="bg-transparent p-0 border-0 editbtn mr-3" data-class="edit-@item.Id" title="Edit" style="cursor:pointer;"><i class="bi bi-pencil-square text-primary"></i></button>
-                                        <button type="button" class="bg-transparent p-0 m-0 border-0 deletebtn text-danger @(item.Type == "BrandName" || item.Type == "BrandLogo" ? "disabled":"")" data-id="@item.Id" title="Delete" style="cursor:pointer;" @(item.Type == "BrandName" || item.Type == "BrandLogo" ? "disabled" : "")><i class="bi bi-trash"></i></button>
+                                        <button type="button" class="bg-transparent p-0 border-0 editbtn mr-3" data-class="edit-@item.Id" title="Edit" style="cursor:pointer;"><i class="ti ti-pencil text-primary"></i></button>
+                                        <button type="button" class="bg-transparent p-0 m-0 border-0 deletebtn text-danger @(item.Type == "BrandName" || item.Type == "BrandLogo" ? "disabled":"")" data-id="@item.Id" title="Delete" style="cursor:pointer;" @(item.Type == "BrandName" || item.Type == "BrandLogo" ? "disabled" : "")><i class="ti ti-trash"></i></button>
                                     </td>
                                 </tr>
                             }

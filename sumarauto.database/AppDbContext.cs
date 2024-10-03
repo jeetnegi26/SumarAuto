@@ -8,7 +8,6 @@ using System.Data.Entity;
 using Model;
 using System.Data;
 using System.Reflection;
-using sumarauto.Model;
 
 namespace sumarauto.database
 {

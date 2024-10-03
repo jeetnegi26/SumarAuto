@@ -18,6 +18,7 @@ namespace sumarauto.web.Controllers
 {
     public class ImageController : Controller
     {
+        string connectionString = ConfigurationManager.ConnectionStrings["sumarautoDb"].ConnectionString;
         [HttpPost]
         public async Task<JsonResult> UploadComponent(IEnumerable<HttpPostedFileBase> Files, string prefix,string OldImage)
         {
@@ -236,5 +237,101 @@ namespace sumarauto.web.Controllers
             }
             return result;
         }
+        //Gallery Work
+        [HttpPost]
+        public async Task<JsonResult> UploadGalleryImages(IEnumerable<HttpPostedFileBase> Files, string Title, int Id = 0, string SelectedDefault = "")
+        {
+            JsonResult result = new JsonResult();
+            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            try
+            {
+                var galleryImgList = new List<GalleryImage>();
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("UpsertGallery", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.Parameters.AddWithValue("@Title", Title);
+                    command.Parameters.AddWithValue("@CreatedBy", Convert.ToString(TempData["UName"]));
+                    command.Parameters.AddWithValue("@SelectedDefault", string.IsNullOrEmpty(SelectedDefault) ? (object)DBNull.Value : SelectedDefault);
+                    var outputIdParam = new SqlParameter("@OutputId", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    command.Parameters.Add(outputIdParam);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    Id = (int)outputIdParam.Value;
+                }
+                using (var db = new AppDbContext())
+                {
+                    if (Files != null)
+                    {
+                        foreach (var file in Files)
+                        {
+                            if (file != null && file.ContentLength > 0)
+                            {
+                                // Generate unique file name
+                                var timestampPrefix = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                                var fileName = timestampPrefix + "_" + Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/Content/Gallery/"), fileName);
+                                await Task.Run(() => file.SaveAs(path));
+                                var imgUrl = string.Format("/Content/Gallery/" + fileName);
+                                var data = new GalleryImage()
+                                {
+                                    Image = imgUrl,
+                                    GalleryId = Id,
+                                    DefaultImage = !string.IsNullOrEmpty(SelectedDefault) &&
+                                    imgUrl.Contains(SelectedDefault) ? true : false,
+                                };
+
+                                galleryImgList.Add(data);
+                            }
+                        }
+
+                        db.GalleryImages.AddRange(galleryImgList);
+                        await db.SaveChangesAsync();
+                    }
+                }
+                result.Data = new { Success = true, Message = "Media and data successfully uploaded." };
+            }
+            catch (Exception ex)
+            {
+                result.Data = new { Success = false, Message = "Oops! The media could not be saved on the server, try again. " + ex.Message };
+            }
+            return result;
+        }
+        [HttpPost]
+        public JsonResult DeleteGalleryImg(string img)
+        {
+            try
+            {
+                if (img.Length > 0)
+                {
+                    string removeimagepath = System.Web.Hosting.HostingEnvironment.MapPath(img);
+                    if (System.IO.File.Exists(removeimagepath))
+                    {
+                        System.IO.File.Delete(removeimagepath);
+                    }
+                    using (var db = new AppDbContext())
+                    {
+                        var data = db.GalleryImages.FirstOrDefault(x => x.Image == img);
+                        if (data != null)
+                        {
+                            db.GalleryImages.Remove(data);
+                            db.SaveChanges();
+                        }
+                    }
+                    return Json(new { Success = true, Message = "Successfully remove image from server." });
+                }
+                return Json(new { Success = false, Message = "Oops! Image not found." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = "Oops! Something went wrong during removing the image from server. " + ex.Message });
+            }
+        }
+
     }
 }

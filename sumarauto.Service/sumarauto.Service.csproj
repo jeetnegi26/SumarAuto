@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BannerService.cs" />
+    <Compile Include="ContactService.cs" />
     <Compile Include="HelperService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebInfoService.cs" />
