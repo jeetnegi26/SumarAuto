@@ -4,5 +4,280 @@
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
-<h2>AutoPart</h2>
+<style>
+    span strong {
+        color: black !important;
+    }
+    .ti-thumb-up, .ti-thumb-down,.ti-settings {
+        font-size: 24px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="card my-2">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title fw-semibold mb-0 pb-0">Manage Auto Parts</h5>
+            </div>
+            <div class="d-flex">
+                <div style="margin-right:10px;">
+                    <a href="@Url.Action("AutoPartAction","Admin")" class="btn btn-primary">Add New</a>
+                </div>
+                <div>
+                    <select class="form-select shadow-sm bg-light" aria-label="Select Filter" id="filterType">
+                        <option value="1" selected="">Active</option>
+                        <option value="0">In Active</option>
+                        <option value="2">Select All</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table id="APList" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th title="Display Order">D. Order</th>
+                        <th>Featured</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
 
+<script>
+    let table = initializeDataTable(1);
+    const filterType = document.getElementById("filterType");
+    if (filterType) {
+        filterType.addEventListener("change", function () {
+            filterTypeId = this.value;
+            table.destroy();
+            table = initializeDataTable(filterTypeId);
+            if (filterTypeId == 1 || filterTypeId == 2) {
+                table.columns().visible(true);
+            }
+        });
+    }
+    function initializeDataTable(filterTypeId) {
+        return new DataTable('#APList', {
+            ajax: {
+                url: '/Helper/GetAutoPartList',
+                type: 'POST',
+                data: { dropdownId: filterTypeId },
+                dataSrc: 'data'
+        },
+        columns: [
+            { data: 'AutoPartSId',orderable: false, },
+            { data: 'Title', orderable: false, },
+            { data: 'Category', orderable: false, },
+            {
+                class: 'handleButtonDisplayOrder',
+                "data": "Id",
+                orderable: false,
+                render: function (data, type, row) {
+                    let htmlString = `<div class="align-items-center d-flex" style="width: min-content;"><input style="width: 60px;" type="text" class="DisplayOrderVal form-control p-0 px-2 py-1 border-0" value="${row.DisplayOrder}" disabled/>
+                    <i class="ti ti-pencil mx-1" style="font-size: 20px;"></i></div>`;
+                    return htmlString;
+                }
+            },
+            {
+                class: 'handleButtonIsFeatured',
+                "data": "Id",
+                orderable: false,
+                render: function (data, type, row) {
+                    let trueValue = `<i class="ti ti-thumb-up text-success"></i>`;
+                    let falseValue = `<i class="ti ti-thumb-down text-danger"></i>`;
+                    return row.IsFeatured ? trueValue : falseValue;
+                }
+            },
+            {
+                class: 'handleButtonStatus',
+                "data": "Id",
+                orderable: false,
+                render: function (data, type, row) {
+                    let trueValue = `<svg  xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checkbox" width="26" height="26" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00b341" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l3 3l8 -8" /><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" /></svg>`;
+                    let falseValue = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-square-x" width="26" height="26" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ff2825" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>`;
+                    return row.Status ? trueValue : falseValue;
+                }
+            },
+            {
+                    class: 'handleButtonModel',
+                    data: 'Id',
+                    orderable: false,
+                render: function (data, type, row, meta) {
+                    let buttons = `<div class="d-flex" style="width: min-content;"><a href="/Admin/MakeList?Id=${row.Id}" title="Make List" class="btn bg-transparent text-primary border-0 moreInfo handleBtn"><i class="ti ti-settings"></i></a>
+                    <a href="/Admin/AutoPartEdit?Id=${row.Id}" title="Edit" class="btn bg-transparent text-primary border-0 moreInfo handleBtn"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-pencil" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+  <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+  <path d="M10 18l5 -5a1.414 1.414 0 0 0 -2 -2l-5 5v2h2z"></path>
+</svg></a> </div> `;
+                        return buttons;
+                    }
+                },
+        ],
+        order: [[1, 'asc']],
+        processing: true,
+        serverSide: true,
+        stateSave: true
+        });
+    }
+    table.on('click', 'tbody td.handleButtonStatus', function (event) {
+        let tr = event.target.closest('tr');
+        let row = table.row(tr);
+        let data = row.data();
+        let id = data["Id"];
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+            url: '@Url.Action("StatusChange", "Helper")',
+            data: {
+                Id: id,
+                Type: 'AutoPart'
+            }
+                })
+                    .done(function (response) {
+                        if (response.Result == true) {
+                            Swal.fire({
+                                title: 'Done',
+                                text: 'Successfully Changed the status!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            })
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    });
+            }
+        })
+    });
+    table.on('click', 'tbody td.handleButtonIsFeatured', function (event) {
+        let tr = event.target.closest('tr');
+        let row = table.row(tr);
+        let data = row.data();
+        let id = data["Id"];
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to change the status",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Change it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+            url: '@Url.Action("FeaturedChange", "Helper")',
+            data: {
+                Id: id,
+                Type: "AutoPart"
+            }
+                })
+                    .done(function (response) {
+                        if (response.Result == true) {
+                            Swal.fire({
+                                title: 'Done',
+                                text: 'Successfully Changed the featured status!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            })
+                        }
+                    })
+                    .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    });
+            }
+        })
+    });
+
+    table.on('click', 'tbody td.handleButtonDisplayOrder i.ti-pencil', function (event) {
+        event.stopPropagation();
+        let tr = event.target.closest('tr');
+        let row = table.row(tr);
+        let data = row.data();
+        let id = data["Id"];
+
+        let inputField = $(tr).find('input.DisplayOrderVal');
+        let pencilIcon = $(this);
+        inputField.prop('disabled', false).removeClass('border-0');
+
+        pencilIcon.removeClass('ti-pencil').addClass('ti-arrow-right');
+        pencilIcon.off('click').on('click', function (event) {
+            event.stopPropagation();
+            let newDisplayOrder = inputField.val();
+            $.ajax({
+                url: '/Helper/ChangeOrder',
+                method: 'POST',
+                data: {
+                    id: id,
+                    displayOrder: newDisplayOrder,
+                    type:"AutoPart"
+                },
+                success: function (response) {
+                    // On successful submission, disable the input field again
+                    Swal.fire({
+                        title: 'Done',
+                        text: 'Successfully Changed the order!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            inputField.prop('disabled', true).addClass('border-0');
+                            pencilIcon.removeClass('ti-arrow-right').addClass('ti-pencil');
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.error('Failed to update DisplayOrder:', error);
+                }
+            });
+        });
+    });
+</script>

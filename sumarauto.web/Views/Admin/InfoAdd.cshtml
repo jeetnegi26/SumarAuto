@@ -1,0 +1,222 @@
+﻿
+@model Model.Key
+
+@{
+    Layout = null;
+}
+<style>
+    .img-pro-box {
+        width: 17%;
+        margin: 1rem;
+        border-radius: 10px;
+    }
+
+    #imageUpload {
+        padding-bottom: 0 !important;
+        padding: 10px !important;
+    }
+</style>
+
+<div class="adminpage-head">
+    <div class="card shadow mb-4">
+        <div class="form-horizontal">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <div>
+                    <h6 class="m-0 head-title">Add Information</h6>
+                </div>
+                <div>
+                    <p class="m-0">
+                        <a id="key-close" style="cursor:pointer;" class="text-danger">Back To List</a>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="key-create">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label class="control-label">Info Type</label>
+                            <div class="">
+                                <select id="key-type-dd" class="form-control" name="Type" style="-webkit-appearance: listbox !important">
+                                    <option value="" disabled selected>Select Info Type</option>
+                                    @*<option value="BrandName">BrandName</option>*@
+                                    <option value="BrandInfo">BrandInfo</option>
+                                    <option value="SocialMedia">SocialMedia</option>
+                                    <option value="DefaultKeys">DefaultKeys</option>
+                                    @*<option value="BrandLogo">BrandLogo</option>*@
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4 infoValue">
+                            <label class="control-label">Name</label><br />
+                            <input class="form-control" name="Name" id="Name" placeholder="Address" required />
+                        </div>
+                        <div class="form-group col-md-4 infoDesc">
+                            <label class="control-label">Detail</label><br />
+                            <input class="form-control" name="Description" id="Description" placeholder="Miyanwala,Dehradun Uttarakhand 248005" />
+                        </div>
+                        <div class="form-group col-md-2 infoEmpty" style="display:none">
+
+                        </div>
+                        <div class="form-group col-md-6 infoImage" style="display:none">
+                            <label class="control-label">Brand Logo</label><br />
+                            <div class="img-container col-12">
+                                <input id="imageUpload" type="file" name="ImageOne" accept="image/*" class="form-control-file" required>
+                                <br />
+                                <img id="PlaceImage" alt="" src="" style="width: 20%; margin-top: 5px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <button id="Keycreate" class="btn btn-primary px-4 py-2" type="button">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="CreatedBy" class="CreatedBy">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        // Attach a change event listener to the dropdown
+        $("#key-type-dd").change(function () {
+            // Get the selected value of the dropdown
+            var selectedValue = $(this).val();
+            // Check if the selected value is the one that should trigger hiding the div
+            if (selectedValue === "BrandLogo") { // Change "2" to the value you want to trigger the hiding
+                // Hide the div with the class "infoValue"
+                $(".infoDesc").hide();
+                $(".infoValue").hide();
+                $(".infoEmpty").show();
+                $(".infoImage").show();
+            } else {
+                // Show the div if a different option is selected
+                $(".infoValue").show();
+                $(".infoDesc").show();
+                $(".infoImage").hide();
+                $(".infoEmpty").hide();
+            }
+        });
+    });
+    $("#key-close").click(function () {
+        $("#key-add-container").hide();
+    });
+    $('#key-create').validate({
+        rules: {
+            Name: {
+                required: true,
+            },
+        },
+        messages: {
+            Name: {
+                required: '* Info Name is required',
+            },
+        }
+    });
+    $("#Keycreate").click(function (e) {
+        e.preventDefault();
+        if ($("#key-create").valid()) {
+            CheckName(function (response) {
+                if (response == "true") {
+                    // Show Swal popover indicating the category already exists
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Name already exists',
+                        text: 'Please choose a different name.',
+                    });
+                }
+                else {
+                   $.ajax({
+                       type: 'Post',
+                       url: '@Url.Action("InfoAdd", "Admin")',
+                       data: $("#key-create").serialize(),
+                   })
+                   .done(function (response) {
+                       if (response == "true") {
+                           Swal.fire({
+                               position: 'top-end',
+                               icon: 'success',
+                               title: 'Your work has been saved',
+                               showConfirmButton: false,
+                               timer: 1500
+                           })
+                           setTimeout(function () {// wait for 5 secs(2)
+                               window.location.reload(); // then reload the page.(3)
+                           }, 1550);
+                       }
+                   })
+                   .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                       Swal.fire({
+                       icon: 'error',
+                       title: 'Oops...',
+                       text: 'Something went wrong!',
+                       })
+                   });
+                }
+            });
+         }
+     });
+    function CheckName(callback) {
+        $.ajax({
+            url: '@Url.Action("CheckName", "Helper")',
+            data: {
+                name: $("#Name").val(),
+                type: "0",
+                catId: $("#key-type-dd").val()
+            },
+        })
+            .done(function (response) {
+                callback(response);
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                })
+            });
+    }
+     $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+        var totlaFiles = element.files.length;
+
+        for (var i = 0; i < totlaFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file)
+        }
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadImageLogo", "Image")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                if (response.Success == true)
+                {
+                    $("#Description").val("-");
+                    $("#Name").val(response.ImageURL);
+                    $("#PlaceImage").attr("src", response.ImageURL);
+                }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+    });
+</script>
+
+
+
+

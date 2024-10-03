@@ -1,4 +1,4 @@
-﻿using sumarauto.Model;
+﻿using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,7 @@ namespace Model
     public class AutoPart : Base
     {
         public int Id { get; set; }
+        public string AutoPartSId { get; set; }
         public string Title { get; set; }
         public string ExtraField { get; set; }
         [AllowHtml]

@@ -1,0 +1,196 @@
+﻿
+@{
+    ViewBag.Title = "Gallery";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+<style>
+    td.details-control {
+        background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control {
+        background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+    }
+
+    .download_page .dt-column-order {
+        display: none;
+    }
+</style>
+
+<div class="container-fluid download_page">
+    <div class="card my-2">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="card-title fw-semibold mb-0 pb-0">Manage Gallery</h5>
+            </div>
+            <div class="d-flex">
+                <div style="margin-right:10px;">
+                    <a href="@Url.Action("GalleryAction","Admin")" class="btn btn-primary">Add New</a>
+                </div>
+                <div>
+                    <select class="form-select shadow-sm bg-light" aria-label="Select Filter" id="filterType">
+                        <option value="0" selected="">Active</option>
+                        <option value="1">In Active</option>
+                        <option value="2">Select All</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table id="galleryPageTable" class="display responsive" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Default Image</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let table = initializeDataTable(0);
+    const detailRows = [];
+    function format(d) {
+        var data = d;
+        return (
+            `<div class="card"><div class="m-4 detailViewDiv text-lg-start card-body m-0 p-0">
+              <h5 class="mb-3">Complete Details</h5>
+              <div class="row">
+                            <div class="col-6 mb-2">
+              <span><strong>Created By:</strong> ${data.CreatedBy}</span>
+              </div>
+              <div class="col-6 mb-2">
+              <span><strong>Created Date:</strong> ${data.CreatedOnString}</span>
+              </div>
+              <div class="col-6 mb-2">
+              <span><strong>Edited Date:</strong> ${data.EditedOnString}</span>
+              </div>
+             <div class="col-6 mb-2">
+    <strong>Status:</strong>
+    <input type="checkbox" class="status-checkbox" data-id="${data.Id}" ${data.Status ? 'checked' : ''}>
+</div>
+            </div></div>`
+        );
+    }
+    const filterType = document.getElementById("filterType");
+    if (filterType) {
+        filterType.addEventListener("change", function () {
+            filterTypeId = this.value;
+            table.destroy();
+            table = initializeDataTable(filterTypeId);
+            if (filterTypeId == 1 || filterTypeId == 2) {
+                table.columns().visible(true);
+            }
+        });
+    }
+    function initializeDataTable(filterTypeId) {
+        return new DataTable('#galleryPageTable', {
+            ajax: {
+                url: '/Helper/GetGalleryData',
+                type: 'POST',
+                data: { dropdownId: filterTypeId },
+                dataSrc: 'data'
+        },
+        columns: [
+                {
+                    class: 'dt-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: ''
+                },
+            {
+                data: 'Id',
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    return meta.row + 1;
+                }
+            },
+            { data: 'Title', orderable: false, },
+            {
+                data: 'DefaultImage', orderable: false,
+                render: function (data, type, row, meta) {
+                    var file_name = "";
+                    if (data != null && data != "") {
+                        file_name = `<img src="${data}" style="width:80px;">`;
+                    }
+                    return file_name;
+                }
+            },
+            {
+                    class: 'handleButtonModel',
+                    data: 'Id',
+                    orderable: false,
+                    render: function (data, type, row, meta) {
+                        let buttons = `<a href="/Admin/GalleryAction?Id=${row.Id}" title="Edit" class="btn bg-transparent text-primary border-0 moreInfo handleBtn"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-pencil" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+  <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+  <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+  <path d="M10 18l5 -5a1.414 1.414 0 0 0 -2 -2l-5 5v2h2z"></path>
+</svg></a>`;
+                        return buttons;
+                    }
+                },
+        ],
+        order: [[1, 'asc']],
+        processing: true,
+        serverSide: true,
+        stateSave: true
+        });
+    }
+    table.on('draw', () => {
+        detailRows.forEach((id, i) => {
+            let el = document.querySelector('#' + id + ' td.dt-control');
+
+            if (el) {
+                el.dispatchEvent(new Event('click', { bubbles: true }));
+            }
+        });
+    });
+    table.on('click', 'tbody td.dt-control', function (event) {
+        let tr = event.target.closest('tr');
+        let row = table.row(tr);
+        let idx = detailRows.indexOf(tr.id);
+        if (row.child.isShown()) {
+            tr.classList.remove('details');
+            row.child.hide();
+            detailRows.splice(idx, 1);
+        } else {
+            tr.classList.add('details');
+            row.child(format(row.data())).show();
+            $('.status-checkbox').change(function () {
+                var isChecked = $(this).is(':checked');
+                var dowId = $(this).data('id');
+                updateStatus(dowId, 'Status', isChecked);
+            });
+            if (idx === -1) {
+                detailRows.push(tr.id);
+            }
+        }
+    });
+    function updateStatus(postId, fieldName, fieldValue) {
+        $.ajax({
+            url: '/Admin/UpdateGalleryStatus',
+            type: 'POST',
+            data: {
+                id: postId,
+                field: fieldName,
+                value: fieldValue
+            },
+            success: function (response) {
+                alert('Status updated successfully!');
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert('Error updating status: ' + error);
+            }
+        });
+    }
+</script>

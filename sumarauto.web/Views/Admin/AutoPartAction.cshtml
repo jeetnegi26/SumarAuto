@@ -3,8 +3,8 @@
     ViewBag.Title = "AutoPartAction";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
 <style>
     .ql-toolbar.ql-snow {
         background-color: #fff;
@@ -53,7 +53,7 @@
             </div>
             <div>
                 <p class="m-0">
-                    <a class="text-danger" href="/admin/AutoPart">Back to List</a>
+                    <a class="text-danger" href="/admin">Back to List</a>
                 </p>
             </div>
         </div>
@@ -66,7 +66,7 @@
                         <div class="card-body">
                             <div>
                                 <div class="mb-3">
-                                    <label class="form-label">Title</label>
+                                    <label class="form-label">Title </label> <small><strong class="text-danger"> (*required)</strong></small>
                                     <input type="text" value="" name="Title" class="form-control" placeholder="Enter Title">
                                 </div>
 
@@ -76,16 +76,11 @@
                                     <div class="pb-8" id="editor"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Image Upload</label>
+                                    <label class="form-label">Image Upload <span class="mx-3 text-danger-emphasis" id="img-size-desc"> </span></label>
                                     <br />
-                                    @*@if (!string.IsNullOrEmpty(Model.Image))
-                                        {
-                                            <img src="@Model.Image" alt="Image" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
-                                        }*@
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" onchange="previewImage(this)">
-                                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                    <div action="#" class="d-block dropzone border-dashed rounded-2" id="myDropzone">
+                                        <div class="fallback">
+                                            <input name="file" type="file" multiple />
                                         </div>
                                     </div>
                                 </div>
@@ -98,17 +93,32 @@
                         <div class="card-body">
                             <div>
                                 <div class="mb-3">
-                                    <label class="form-label">Category</label>
-                                    <select class="form-select" aria-label="Default select example" id="categoryList" name="categoryId" >
+                                    <label class="form-label">Category</label> <small><strong class="text-danger"> (*required)</strong></small>
+                                    <select class="form-select" aria-label="Default select example" id="categoryList" name="categoryId">
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Display Order</label>
-                                    <input type="text" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                    <label class="form-label">Display Order <strong class="text-danger"> (*required)</strong></label>
+                                    <input type="text" id="DisplayOrder" name="DisplayOrder" value="0" class="form-control" placeholder="Enter Display Order" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Featured</label>
+                                    <select name="IsFeatured" class="form-select" aria-label="Default select example">
+                                        <option value="true">Yes</option>
+                                        <option value="false" selected>No</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Published</label>
+                                    <select name="Status" class="form-select" aria-label="Default select example">
+                                        <option value="true" selected>Published</option>
+                                        <option value="false">UnPublished</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
                                     <label class="form-label">Extra</label>
-                                    <input type="text" name="Title" class="form-control" placeholder="Enter Title">
+                                    <input type="text" name="ExtraField" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -147,42 +157,42 @@
                                         <div class="row autoPartItem_container">
                                             <div class="col-2">
                                                 <div class="mb-3">
-                                                    <select class="form-select makeSelected" aria-label="Default select example">
+                                                    <select class="form-select makeSelected" name="MultipleDetails[0].Make" aria-label="Default select example">
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="mb-3">
                                                     <div class="ui-widget">
-                                                        <input id="models" class="form-control" placeholder="Model">
+                                                        <input id="models" class="form-control" name="MultipleDetails[0].Model" placeholder="Model">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="mb-3">
                                                     <div class="ui-widget">
-                                                        <input id="years" class="form-control" placeholder="e.g : 06-12 (2006 - 2012)">
+                                                        <input id="years" class="form-control" name="MultipleDetails[0].Year" placeholder="e.g : 06-12 (2006 - 2012)">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="mb-3">
                                                     <div class="ui-widget">
-                                                        <input id="engines" class="form-control" placeholder="Engine">
+                                                        <input id="engines" class="form-control" name="MultipleDetails[0].Engine" placeholder="Engine">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="mb-3">
                                                     <div class="ui-widget">
-                                                        <input id="liter" class="form-control" placeholder="Liter">
+                                                        <input id="liter" class="form-control" name="MultipleDetails[0].Liter" placeholder="Liter">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="mb-3">
                                                     <div class="ui-widget">
-                                                        <input id="chassiss" class="form-control" placeholder="Chassis">
+                                                        <input id="chassiss" class="form-control" name="MultipleDetails[0].Chassis" placeholder="Chassis">
                                                     </div>
                                                 </div>
                                             </div>
@@ -208,43 +218,13 @@
         </form>
     </div>
 </div>
-<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         getCatListData();
         getMakeListData();
     });
     var lastSelected = "";
-    $(function () {
-        var availableTags = [
-            "ActionScript",
-            "AppleScript",
-            "Asp",
-            "BASIC",
-            "C",
-            "C++",
-            "Clojure",
-            "COBOL",
-            "ColdFusion",
-            "Erlang",
-            "Fortran",
-            "Groovy",
-            "Haskell",
-            "Java",
-            "JavaScript",
-            "Lisp",
-            "Perl",
-            "PHP",
-            "Python",
-            "Ruby",
-            "Scala",
-            "Scheme"
-        ];
-        $("#models").autocomplete({
-            source: availableTags
-        });
-    });
     var quill;
     if ($("#editor").length) {
         quill = new Quill('#editor', {
@@ -267,11 +247,21 @@
 
     //Replicate AutoPartItem --------------Start
     const container_box = document.getElementById("container_box");
-    const autoPartItem_Container = document.querySelector(".autoPartItem_container");
+    var autoPartItem_Container = document.querySelectorAll(".autoPartItem_container");
     const newMakeItems = document.querySelectorAll(".newMakeItem");
     newMakeItems.forEach(newMakeItem => {
         newMakeItem.addEventListener("click", function () {
-            const clonedContainer = autoPartItem_Container.cloneNode(true);
+            debugger
+            autoPartItem_Container = document.querySelectorAll(".autoPartItem_container");
+            const clonedContainer = autoPartItem_Container[autoPartItem_Container.length - 1].cloneNode(true);
+            const currentIndex = container_box.children.length;
+            const inputs = clonedContainer.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                let name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace(/\[\d+\]/, `[${currentIndex}]`)); // Update index
+                }
+            });
             //const inputs = clonedContainer.querySelectorAll("input");
             //inputs.forEach(input => input.value = "");
             // Add a Cancel button
@@ -308,6 +298,7 @@
             }
         });
     });
+
     const makeSelects = document.querySelectorAll(".makeSelected");
     makeSelects.forEach(makeSelect => {
         makeSelect.addEventListener("change", function () {
@@ -318,7 +309,7 @@
 
     //Select Item Dropdown ------------------Start
     async function getCatListData() {
-        var response = await fetch("/Admin/GetDropdownCatList");
+        var response = await fetch("/Helper/GetDropdownCatList");
         var result = await response.json();
         let htmlString = '';
         const catSelect = document.getElementById("categoryList");
@@ -327,20 +318,18 @@
                 htmlString += `<option value="${result[i].Value}">${result[i].Text}</option>`;
             }
             catSelect.innerHTML = htmlString;
-            $('.selectpicker').selectpicker('refresh');
         }
     }
     async function getMakeListData() {
-        var response = await fetch("/Admin/GetMakedownList");
+        var response = await fetch("/Helper/GetMakedownList");
         var result = await response.json();
-        let htmlString = '';
+        let htmlString = '<option value=""> Select Make</option>';
         const makeSelectList = document.querySelector(".makeSelected");
         if (result != null && makeSelectList) {
             for (var i = 0; i < result.length; i++) {
                 htmlString += `<option value="${result[i].Value}">${result[i].Text}</option>`;
             }
             makeSelectList.innerHTML = htmlString;
-            $('.selectpicker').selectpicker('refresh');
         }
     }
     //Select Item Dropdown ------------------End
@@ -350,10 +339,16 @@
             Title: {
                 required: true,
             },
+            DisplayOrder: {
+                required: true,
+            },
         },
         messages: {
             Title: {
                 required: '*Title is required',
+            },
+            DisplayOrder: {
+                required: '*Display Order is required',
             },
         }
     });
@@ -363,24 +358,30 @@
           const spinnerborder = document.querySelector(".spinner-border");
           spinnerborder.classList.remove("d-none");
           CreateBtn.setAttribute("disabled", true);
-
           //var editorData = CKEDITOR.instances.editor1.getData();
-          //$("#LongDesc").val(editorData);
-
-          var formData = $("#Create").serialize();
+            //$("#LongDesc").val(editorData);
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
+          const formData = new FormData(document.getElementById("Create"));
           if ($("#Create").valid()) {
-          @*$.ajax({
+          $.ajax({
               type: "POST",
-              url: '@Url.Action("PageAction")',
+              url: '@Url.Action("saveOrUpdateAutoParts")',
               data: formData,
+              processData: false,
+              contentType: false,
               success: function (response) {
-                  if (response.Success == true) {
+                  debugger
+                  if (response.success == true) {
+                      if (response.message != "" && uploadedFiles != null && uploadedFiles.length > 0) {
+                          SaveImgsOnServer(response.message);
+                      }
                       Swal.fire({
                           icon: 'success',
-                          title: 'Page details saved successfully',
+                          title: 'Auto part data have been successfully saved.',
                       }).then((result) => {
                           if (result.isConfirmed) {
-                              window.location.href = "/admin/PageList";
+                              window.location.href = "/admin/AutoPartAction";
                           }
                       });
                   }
@@ -388,7 +389,7 @@
                       Swal.fire({
                           icon: 'error',
                           title: 'Oops...',
-                          text: 'Something went wrong!',
+                          text: response.message,
                       })
                   }
               },
@@ -403,12 +404,235 @@
                   spinnerborder.classList.add("d-none");
                   CreateBtn.removeAttribute("disabled");
               },
-          });*@
+          });
       }
       else {
           spinnerborder.classList.add("d-none");
           CreateBtn.removeAttribute("disabled");
       }
       });
+    }
+
+    //Upload multiple image of product
+    const trgWidth = @ViewBag.Width;
+    const trgHeight = @ViewBag.Height;
+    const imgs = document.getElementById("img-size-desc");
+    if (imgs) {
+        imgs.innerHTML = "(Image size should be " + trgWidth + " x " + trgHeight + ")";
+    }
+    //DropZone Image Editor
+    const uploadedFiles = [];
+    Dropzone.autoDiscover = false;
+    const existingImages = @Html.Raw(Json.Encode(ViewBag.GalleryImgs));
+    const DefaultImage = @Html.Raw(Json.Encode(ViewBag.DefaultImg));
+    const myDropzone = new Dropzone("#myDropzone", {
+        url: null,
+        paramName: "Files",
+        maxFilesize: 45,
+        maxFiles: 45,
+        acceptedFiles: "image/*",
+        init: function () {
+            let totalSize = 0;
+            let fileCount = 0;
+            let alertShown = false;
+            if (existingImages != null && existingImages.length > 0) {
+                existingImages.forEach(existingImage => {
+                    let checkedStatus =  existingImage == DefaultImage ? 'checked' : "";
+                    const mockFile = {
+                        name: existingImage,
+                        size: 0, // Set size to 0 since we are not uploading these images
+                        dataURL: existingImage, // Assuming Image property contains the URL of the image
+                        mock: true
+                    };
+                    this.emit("addedfile", mockFile);
+                    this.emit("thumbnail", mockFile, existingImage);
+                    this.emit("success", mockFile);
+
+                    // Add Delete Button
+                    const cancelButton = Dropzone.createElement("<button class='dz-remove' data-dz-remove>Delete</button>");
+                    cancelButton.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: 'Once deleted, you will not be able to recover this image!',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                RemoveImgeFromServer(existingImage);
+                                myDropzone.removeFile(mockFile);
+                            }
+                        });
+                    });
+                    mockFile.previewElement.appendChild(cancelButton);
+
+                    // Add Checkbox for Default Image
+                    const checkboxContainer = Dropzone.createElement(`<div class='default-checkbox-container text-center'><input name='radio' type='radio' class='default-checkbox' data-id="${existingImage}" ${checkedStatus} /><label> Set as default</label></div>`);
+                    mockFile.previewElement.appendChild(checkboxContainer);
+                });
+            }
+
+            this.on("addedfile", function (file) {
+                if (totalSize + file.size > this.options.maxFilesize * 1024 * 1024) {
+                    this.removeFile(file);
+                    if (!alertShown) {
+                        alert("Total file size exceeds the limit of " + this.options.maxFilesize + "MB.");
+                        alertShown = true;
+                    }
+                    return;
+                }
+                if (fileCount >= this.options.maxFiles) {
+                    this.removeFile(file);
+                    if (!alertShown) {
+                        alert("You can only upload a maximum of " + this.options.maxFiles + " files.");
+                        alertShown = true;
+                    }
+                    return;
+                }
+                totalSize += file.size;
+                fileCount++;
+            });
+
+            this.on("success", function (file) {
+                uploadedFiles.push({ file });
+            });
+
+            this.on("removedfile", function (file) {
+                const fileIndex = uploadedFiles.findIndex(item => item.file === file);
+                if (fileIndex !== -1) {
+                    const removedFile = uploadedFiles.splice(fileIndex, 1)[0];
+                    totalSize -= removedFile.file.size;
+                    fileCount--;
+                }
+            });
+
+            this.on("error", function (file, errorMessage) {
+                console.error(errorMessage);
+            });
+
+            this.on("thumbnail", function (file, dataUrl) {
+                const cancelLink = Dropzone.createElement("<a class='dz-remove' href='javascript:undefined;' data-dz-remove>Cancel</a>");
+                const drfault = Dropzone.createElement(`<div class="default-checkbox-container text-center">
+                    <input type="radio" name="default" class="default-checkbox" data-id="${file.name}" />
+                    <label>Set as default</label>
+                </div>`);
+                file.previewElement.appendChild(cancelLink);
+                file.previewElement.appendChild(drfault);
+                cancelLink.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    myDropzone.removeFile(file);
+                });
+            });
+        },
+    });
+    function SaveImgsOnServer(id) {      
+        if (uploadedFiles.length > 0) {
+            const defaultChecks = document.querySelectorAll(".default-checkbox");
+            let selectedDefault = "";
+            const selected = Array.from(defaultChecks).find(checkbox => checkbox.checked);
+            if (selected) {
+                const dataId = selected.getAttribute('data-id');
+                selectedDefault = dataId;
+            } else {
+                console.log("No image is selected as default.");
+            }
+
+            const formDataForMultipleImage = new FormData(document.getElementById('Create'));
+            for (const uploadedFile of uploadedFiles) {
+                formDataForMultipleImage.append('Files', uploadedFile.file);
+            }
+            formDataForMultipleImage.append("Id", id);
+            formDataForMultipleImage.append("SelectedDefault", selectedDefault);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UploadAutoPartImgs", "Image")',
+                data: formDataForMultipleImage,
+                dataType: 'json',
+                contentType: false,
+                processData: false
+            })
+                .done(function (response) {
+                    if (response.Success == true) {
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'Auto part data have been successfully saved.',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/AutoPartAction";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.Message,
+                        })
+                    }
+                })
+                .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest.status === 413) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Maximum request length exceeded. Please upload smaller images, less then 12MB.',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Oops! The image could not be saved on the server.',
+                        });
+                    }
+                });
+        }
+        else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Select images to submit.',
+            });
+        }
+    }
+    function RemoveImgeFromServer(image) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("DeleteGalleryImg", "Image")',
+            data: {
+                img: image,
+            },
+        })
+        .done(function (response) {
+            if (response.Success == true) {
+            }
+            else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: response.Message,
+                })
+            }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            if (XMLHttpRequest.status === 413) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Maximum request length exceeded. Please upload smaller images, less then 12MB.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Oops! The image could not be saved on the server.',
+                });
+            }
+        });
     }
 </script>

@@ -1,0 +1,203 @@
+﻿
+
+@model Model.Key
+
+@{
+    Layout = null;
+}
+<style>
+    .img-pro-box {
+        width: 17%;
+        margin: 1rem;
+        border-radius: 10px;
+    }
+
+    #imageUpload {
+        padding-bottom: 0 !important;
+        padding: 10px !important;
+    }
+</style>
+
+<div class="adminpage-head">
+    <div class="card shadow mb-4">
+        <div class="form-horizontal">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <div>
+                    <h6 class="m-0 head-title">Edit Information</h6>
+                </div>
+                <div>
+                    <p class="m-0">
+                        <a id="key-close" style="cursor:pointer;" class="text-danger">Back To List</a>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="key-edit">
+                    <input name="Id" value="@Model.Id" hidden />
+                    <input name="CreatedOn" value="@DateTime.Now" hidden />
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <input id="dd-value" value="@Model.Type" hidden />
+                            <input value="@Model.Type" name="Type" hidden />
+                            <label class="control-label">Info Type</label>
+                            <p class="form-control">@Model.Type</p>
+                        </div>
+
+                        <div class="form-group col-md-4 infoValue">
+                            <label class="control-label">Name</label><br />
+                            <input class="form-control" value="@Model.Name" id="Name" name="Name" />
+                        </div>
+
+                        <div class="form-group col-md-5 infoDesc">
+                            <label class="control-label">Detail</label><br />
+                            <input class="form-control" name="Description" id="Description" value="@Model.Description" />
+                        </div>
+
+                        <div class="form-group col-md-2 infoEmpty" style="display:none">
+
+                        </div>
+                        <div class="form-group col-md-6 infoImage" style="display:none">
+                            <label class="control-label">Brand Logo</label><br />
+                            <div class="img-container col-12">
+                                <input id="imageUpload" type="file" name="ImageOne" accept="image/*" class="form-control-file">
+                                <br />
+                                <img id="PlaceImage" alt="" src="@Model.Name" style="width: 20%; margin-top: 5px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <button id="Keyedit" class="btn btn-primary px-4 py-2" type="button">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var ddval = $("#dd-value").val();
+        if (ddval === "BrandLogo") {
+            brandLogoSection();
+        }
+        $('#key-type-dd').val(ddval);
+        $("#key-type-dd").change(function () {
+            // Get the selected value of the dropdown
+            var selectedValue = $(this).val();
+            // Check if the selected value is the one that should trigger hiding the div
+            if (selectedValue === "BrandLogo") { // Change "2" to the value you want to trigger the hiding
+                // Hide the div with the class "infoValue"
+                $(".infoDesc").hide();
+                $(".infoValue").hide();
+                $(".infoEmpty").show();
+                $(".infoImage").show();
+            } else {
+                // Show the div if a different option is selected
+                $(".infoValue").show();
+                $(".infoDesc").show();
+                $(".infoImage").hide();
+                $(".infoEmpty").hide();
+            }
+        });
+    });
+    $("#key-close").click(function () {
+        $("#key-add-container").hide();
+
+    });
+    $('#key-edit').validate({
+        rules: {
+            Name: {
+                required: true,
+            },
+        },
+        messages: {
+            Name: {
+                required: '* Info Name is required',
+            },
+        }
+    });
+    $("#Keyedit").click(function () {
+        if ($("#key-edit").valid()) {
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("InfoEdit", "Admin")',
+                data: $("#key-edit").serialize(),
+            })
+            .done(function (response) {
+                if (response == "true") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Information edited successfully ',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () {// wait for 5 secs(2)
+                        window.location.reload(); // then reload the page.(3)
+                    }, 1550);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                })
+            });
+        }
+    });
+    function brandLogoSection() {
+        $(".infoDesc").hide();
+        $(".infoValue").hide();
+        $(".infoEmpty").show();
+        $(".infoImage").show();
+    };
+
+     $("#imageUpload").change(function () {
+        var element = this;
+
+        var formData = new FormData();
+        var totlaFiles = element.files.length;
+
+        for (var i = 0; i < totlaFiles; i++) {
+            var file = element.files[i];
+            formData.append("Photo", file)
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UploadImageLogo", "Image")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false
+        })
+            .done(function (response) {
+                if (response.Success == true)
+                {
+                    $("#Description").val("Logo");
+                    $("#Name").val(response.ImageURL);
+                    $("#PlaceImage").attr("src", response.ImageURL);
+                }
+        })
+        .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            })
+        });
+     });
+</script>
+
+
+

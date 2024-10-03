@@ -1,0 +1,287 @@
+﻿@model Model.Blogs
+@{
+    ViewBag.Title = "BlogAction";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+<style>
+    .ql-toolbar.ql-snow {
+        background-color: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem .5rem 0 0;
+        padding: 8px;
+    }
+
+    .ql-container.ql-snow {
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 .5rem .5rem;
+    }
+</style>
+<div class="product-container py-2 dow_page_con">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
+            <!-- Page header -->
+            <div class="mb-4">
+                <h4 class="mb-0">@(Model != null && Model.Id > 0 ? "Edit - Blog" : "Add - Blog")</h4>
+            </div>
+            <div>
+                <p class="m-0">
+                    <a class="text-danger" href="/admin/Blogs">Back to List</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div>
+        <form id="Create">
+            <input type="text" class="d-none" id="Id" value="@Model.Id" name="Id" />
+            <input type="text" class="d-none" id="CreatedBy" value="@Model.CreatedBy" name="CreatedBy" />
+            <input type="text" class="d-none" id="CreatedOn" value="@Model.CreatedOn" name="CreatedOn" />
+            <input type="text" class="d-none" name="Image" value="@Model.Image" id="OldImage" />
+            <input type="text" class="d-none" name="NewImage" id="NewImage" value="" />
+            <div class="row">
+                <div class="col-lg-8 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title <strong class="text-danger"> *required</strong></label>
+                                    <input type="text" value="@Model.Title" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="hidden" id="editor-content" name="Description" value="@Model.Description" />
+                                    <label class="form-label"> Overview</label>
+                                    <div class="pb-8" id="editor"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Image Upload</label>
+                                    <br />
+                                    @if (!string.IsNullOrEmpty(Model.Image))
+                                    {
+                                        <img src="@Model.Image" alt="Image" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
+                                    }
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" onchange="previewImage(this)">
+                                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" value="@Model.Date.ToString("yyyy-MM-dd")" name="Date" id="Date" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Order</label>
+                                    <input type="text" value="@Model.DisplayOrder" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Featured</label>
+                                    <select name="IsFeatured" class="form-select" aria-label="Default select example">
+                                        <option value="true" @(Model.IsFeatured ? "selected" : "")>Yes</option>
+                                        <option value="false" @(!Model.IsFeatured ? "selected" : "")>No</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Published</label>
+                                    <select name="Status" class="form-select" aria-label="Default select example">
+                                        <option value="true" @(Model.Id == 0 ? "selected" : Model.Status ? "selected" : "")>Published</option>
+                                        <option value="false" @(Model.Id > 0 && !Model.Status ? "selected" : "")>UnPublished</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-grid w-25">
+                <button id="CreateBtn" type="button" class="btn btn-primary w-100 p-2">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var quill;
+    var Description = @Html.Raw(Json.Encode(Model.Description));
+    if ($("#editor").length) {
+        quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ['link', 'image'],
+                ]
+            }
+        });
+        if (Description != null && Description.length > 2) {
+            quill.clipboard.dangerouslyPasteHTML(Description);
+        }
+    }
+
+    $("#Create").validate({
+        rules: {
+            Title: {
+                required: true,
+            },
+        },
+        messages: {
+            Title: {
+                required: '*Title is required',
+            },
+        }
+    });
+    const CreateBtn = document.getElementById("CreateBtn");
+    if (CreateBtn) {
+        CreateBtn.addEventListener("click", function () {
+            const spinnerborder = document.querySelector(".spinner-border");
+            spinnerborder.classList.remove("d-none");
+            CreateBtn.setAttribute("disabled", true);
+
+            var editorContent = quill.root.innerHTML;
+            $("#editor-content").val(editorContent);
+
+            var formData = $("#Create").serialize();
+            if ($("#Create").valid()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BlogAction")',
+                data: formData,
+                success: function (response) {
+                    if (response.success == true) {
+                        if (response.message != null && response.message.length > 0 && uploadedFile.length > 0) {
+                            SaveImgOnServer(response.message);
+                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Blog successfully update',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/Blogs";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.Message,
+                        })
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                },
+                complete: function (response) {
+                    spinnerborder.classList.add("d-none");
+                    CreateBtn.removeAttribute("disabled");
+                },
+            });
+        }
+        else {
+            spinnerborder.classList.add("d-none");
+            CreateBtn.removeAttribute("disabled");
+        }
+        });
+    }
+    //File upload
+    const uploadedFile = [];
+    document.getElementById('inputGroupFile04').addEventListener('change', function (e) {
+        let fileName = document.getElementById('inputGroupFile04').files[0].name;
+        let customFileLabel = e.target.parentElement.querySelector('.custom-file-label');
+        if (customFileLabel) {
+            customFileLabel.innerText = fileName;
+        }
+        const files = e.target.files;
+
+        if (uploadedFile.length > 0) {
+            const fileId = uploadedFile[0].fileId;
+            const fileIndex = uploadedFile.findIndex(item => item.fileId === fileId);
+            if (fileIndex !== -1) {
+                uploadedFile.splice(fileIndex, 1);
+            } else {
+                console.log(`File with fileId '${fileId}' not found in uploadedFile.`);
+            }
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = `file${i}`;
+                uploadedFile.push({ file, fileId });
+                $("#NewImage").val(file.name);
+            }
+        }
+        else {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = `file${i}`;
+                uploadedFile.push({ file, fileId });
+                $("#NewImage").val(file.name);
+            }
+        }
+    });
+    function SaveImgOnServer(prefix) {
+        const formData = new FormData(document.getElementById('Create'));
+        if (uploadedFile.length > 0) {
+            let OldImage = $("#OldImage").val();
+            formData.append('Files', uploadedFile[0].file);
+            formData.append('Prefix', prefix);
+            formData.append('OldImage', OldImage);
+         $.ajax({
+             type: 'POST',
+             url: '@Url.Action("UploadBlog", "Image")',
+             data: formData,
+             dataType: 'json',
+             contentType: false,
+             processData: false
+         })
+         .done(function (response) {
+             if (response.Success) {
+                 return;
+             } else {
+                 Swal.fire({
+                     icon: 'error',
+                     title: 'Oops...',
+                     text: response.Message
+                 });
+             }
+         })
+         .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Oops! The images could not be saved on the server.'
+             });
+         });
+        }
+        return;
+    }
+    function previewImage(input) {
+        var fileInput = input.files[0];
+        var preview = document.querySelector('.img-fluid');
+        if (fileInput) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput);
+        }
+    }
+</script>
+
