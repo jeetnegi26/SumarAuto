@@ -39,8 +39,8 @@
             overflow: hidden;
         }
         /*.slider-banner-image {
-        height: 610px;
-    }*/
+            height: 610px;
+        }*/
         .banner-slider .slider.slider-nav {
             padding: 20px 0 0;
         }
@@ -133,8 +133,8 @@
                 height: auto;
             }
             /*.slider-banner-image {
-            height: 500px;
-        }*/
+                height: 500px;
+            }*/
             .slider.slider-nav.thumb-image {
                 padding: 10px 30px 0;
             }
@@ -188,8 +188,8 @@
 
         @@media screen and (max-width : 767px) {
             /*.slider-banner-image {
-            height: 400px;
-        }*/
+                height: 400px;
+            }*/
             .slider.slider-nav.thumb-image {
                 padding: 0px 20px 0;
                 margin: 10px 0px 0;
@@ -216,14 +216,14 @@
 
         @@media screen and (max-width: 580px) {
             /*.slider-banner-image {
-            height:340px;
-        }*/
+                height:340px;
+            }*/
         }
 
         @@media screen and (max-width : 480px) {
             /*.slider-banner-image {
-            height:280px;
-        }*/
+                height:280px;
+            }*/
         }
 
         .slick-vertical {
@@ -321,7 +321,7 @@
         }
 
         .product-link a {
-            color: var(--bg);
+            color: var(--secondary);
         }
 
         #profile .desc {
@@ -351,10 +351,76 @@
             color: var(--text);
         }
 
-    .wapp-product {
-        font-size: 2rem;
-        color: var(--primary);
+        .wapp-product {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .table-dark {
+            background-color: white; /* Set the background color to white */
+            color: var(--text); /* Set the text color to black */
+        }
+
+            .table-dark th,
+            .table-dark td {
+                background-color: white; /* Ensure table cells also have white background */
+                color: var(--text); /* Black text for cells */
+                border-color: var(--text); /* Set the border color to black */
+            }
+
+
+        @@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
+            .slick-vertical {
+                height: 18vh;
+            }
+        }
+    @@media(max-width: 575px) {
+        table td[data-label]::before {
+            color: var(--primary);
+            font-weight: 400;
+        }
+
+        .table-dark th, .table-dark td {;
+             border-color: transparent; 
+        }
+
+        .table-bordered > :not(caption) > * {
+            border-width: 1px 0;
+            border:1px solid var(--text);
+            margin: 1rem 0;
+            padding: 1rem;
+        }
+
     }
+
+        @@media(max-width:500px) {
+            #tile-1 .nav-tabs li a {
+                padding: 20px 7px !important;
+            }
+
+            .nav-link .bi {
+                font-size: 2.5rem;
+            }
+
+            .nav-text {
+                font-size: 10px;
+            }
+
+            .product-gallery {
+                padding: 5rem 2rem;
+            }
+
+            .product-descr {
+                padding-top: 1rem;
+            }
+
+            #profile .desc {
+                padding: 1rem 2rem;
+            }
+
+            .product-link a {
+                font-size: 1.6rem;
+            }       }
 </style>
 
 
@@ -446,10 +512,10 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <div class="slider" id="slider"></div>
         <li class="nav-item">
-            <a class="nav-link active" id="home-tab" data-id="#home" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-gear"></i> Make</a>
+            <a class="nav-link  d-lg-flex d-md-flex d-block justify-content-center active" id="home-tab" data-id="#home" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-gear"></i> <p class="nav-text mb-0">Make</p></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="profile-tab" data-id="#profile" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-nut"></i> Parts for Same Model</a>
+            <a class="nav-link d-lg-flex d-md-flex d-block justify-content-center" id="profile-tab" data-id="#profile" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-nut"></i> <p class="nav-text mb-0">Parts for Same Model</p></a>
         </li>
     </ul>
 
@@ -498,7 +564,7 @@
             </div>
         </div>
         <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <div class="desc d-flex justify-content-around py-3">
+            <div class="desc d-lg-flex d-md-flex d-block justify-content-around py-3">
                 <p>Parts For</p>
                 <p>Make: <span>AUDI</span></p>
                 <p>Model: <span>A4</span></p>
