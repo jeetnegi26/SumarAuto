@@ -276,7 +276,7 @@
             border-radius: 3px;
             background-color: var(--primary);
             position: absolute;
-            z-index: 1200;
+            z-index: 1;
             bottom: 0;
             transition: all 0.4s linear;
         }
@@ -351,10 +351,11 @@
             color: var(--text);
         }
 
-        .wapp-product {
-            font-size: 2rem;
-            color: var(--primary);
-        }
+    .wapp-product {
+        font-size: 2rem;
+        color: var(--primary);
+        padding: 0px 1rem;
+    }
 
         .table-dark {
             background-color: white; /* Set the background color to white */
@@ -367,6 +368,11 @@
                 color: var(--text); /* Black text for cells */
                 border-color: var(--text); /* Set the border color to black */
             }
+
+    .btn-primary {
+        align-self: center;
+        height: fit-content;
+    }
 
 
         @@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
@@ -497,11 +503,13 @@
             <h2>ACVAL1002 / Boot, CV joint, NBR</h2>
             <p>2/BOX,32/CTN</p>
 
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Enquire for this product
-            </button>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Enquire for this product
+                </button>
 
-            <a class="wapp-product" href="https://wa.me/919004755779text=Hey%21+I+came+across+Sumaru+Auto+Parts+website.+Liked+some+of+the+products.+can+we+connect+regarding+this.%0D%0AThank+you." class=""><i class="bi bi-whatsapp"></i></a>
+                <a class="wapp-product" href="https://wa.me/919004755779text=Hey%21+I+came+across+Sumaru+Auto+Parts+website.+Liked+some+of+the+products.+can+we+connect+regarding+this.%0D%0AThank+you." class=""><i class="bi bi-whatsapp"></i></a>
+            </div>
         </div>
     </div>
 </div>
