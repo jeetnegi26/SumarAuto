@@ -13,6 +13,9 @@ using System.Configuration;
 using sumarauto.DataModel;
 using Model;
 using DataModel;
+using System.Net.Mail;
+using System.Text;
+using System.Web.Hosting;
 
 namespace sumarauto.web.Controllers
 {
@@ -110,6 +113,16 @@ namespace sumarauto.web.Controllers
                             }
                             result = true;
                             break;
+                        case "Make":
+                            var Make = db.Make.Find(Id);
+                            if (Make != null)
+                            {
+                                bool value = Make.IsFeatured;
+                                Make.IsFeatured = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
                         default:
                             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
                     }
@@ -179,6 +192,16 @@ namespace sumarauto.web.Controllers
                             {
                                 bool value = Blogs.Status;
                                 Blogs.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "Client":
+                            var Client = db.Clients.Find(Id);
+                            if (Client != null)
+                            {
+                                bool value = Client.Status;
+                                Client.Status = value == true ? false : true;
                                 db.SaveChanges();
                             }
                             result = true;
@@ -428,6 +451,44 @@ namespace sumarauto.web.Controllers
             {
                 throw;
             }
+        }
+
+        public async Task<ActionResult> SendEmail(EmailTemplateModel model)
+        {
+            try
+            {
+                // var context = new ApplicationDbContext();
+                string subject = model.Subject;
+                TempData["subject"] = model.Subject;
+                TempData["address"] = model.CompanyAddress;
+                TempData["contact"] = model.CompanyContact;
+                string body = System.IO.File.ReadAllText(HostingEnvironment.MapPath("~/EmailTemplate/") + "EmailTemp" + ".cshtml");
+                var url = model.Message;
+                body = body.Replace("@ViewBag.templateBodyContent", url);
+                body = body.Replace("@ViewBag.subject", subject);
+                body = body.Replace("@ViewBag.address", model.CompanyAddress);
+                body = body.Replace("@ViewBag.contact", model.CompanyContact);
+                body = body.ToString();
+                StringBuilder sb = new StringBuilder();
+                MailMessage msg = new MailMessage();
+                msg.From = new MailAddress(ConfigurationManager.AppSettings["Email"].ToString());
+                msg.To.Add(new MailAddress(model.Destination));
+                msg.Subject = subject;
+                sb.Append(body);
+                msg.Body = sb.ToString();
+                msg.IsBodyHtml = true;
+                SmtpClient smtp = new SmtpClient(ConfigurationManager.AppSettings["smtp"].ToString(), Convert.ToInt32(ConfigurationManager.AppSettings["port"]));
+                smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["email"].ToString(), ConfigurationManager.AppSettings["pass"].ToString());
+                smtp.EnableSsl = false;
+                await smtp.SendMailAsync(msg);
+                smtp.Dispose();
+                return Content("True");
+            }
+            catch (Exception ex)
+            {
+                return Redirect("~/not_found.html");
+            }
+
         }
         #endregion
     }

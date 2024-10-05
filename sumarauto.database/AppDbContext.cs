@@ -39,6 +39,7 @@ namespace sumarauto.database
         public DbSet<Blogs> Blogs { get; set; }
         public DbSet<Key> Keys { get; set; }
         public DbSet<ContactForm> ContactForm { get; set; }
+        public DbSet<Client> Clients { get; set; }
 
     }
 }

@@ -1,4 +1,4 @@
-﻿
+﻿@model List<Model.Blogs>
 <style>
     .owl-prev, .owl-next {
         width: 15px;
@@ -58,7 +58,7 @@
             padding: 0 0rem;
         }
     }
-    
+
     @@media(max-width:770px) {
         .owl-prev {
             left: -36px;
@@ -88,106 +88,41 @@
     }
 </style>
 
-<div class="blogs">
-    <div class="container">
-        <div class="heading-home text-center">
-            <h2>NEWS & BLOGS</h2>
-            <p>
-                Browse through our selection by brand to find the right parts for your vehicle.
-            </p>
-        </div>
-
-        <div class="owl-carousel owl-theme blogs-carousel">
-            <div class="item blog-item">
-                <div class="blog-box">
-                    <img src="~/Content/Images/blog-1.jpg" />
-                    <div class="blog-content">
-                        <h4>Diagnosing Top Strut Mount Problems</h4>
-                        <p>
-                            Something wrong with your car? It could be
-                            a strut mount issue. Tenacity Auto Parts
-                            shares its symptoms. Read on to find out
-                            what you can do to fix it.
-                        </p>
-                        <br />
-                        <p class="blog-date">04 Jan 20241</p>
-                        <a>Read More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="item blog-item">
-                <div class="blog-box">
-                    <img src="~/Content/Images/blog-1.jpg" />
-                    <div class="blog-content">
-                        <h4>Diagnosing Top Strut Mount Problems</h4>
-                        <p>
-                            Something wrong with your car? It could be
-                            a strut mount issue. Tenacity Auto Parts
-                            shares its symptoms. Read on to find out
-                            what you can do to fix it.
-                        </p>
-                        <br />
-                        <p class="blog-date">04 Jan 20241</p>
-                        <a>Read More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="item blog-item">
-                <div class="blog-box">
-                    <img src="~/Content/Images/blog-1.jpg" />
-                    <div class="blog-content">
-                        <h4>Diagnosing Top Strut Mount Problems</h4>
-                        <p>
-                            Something wrong with your car? It could be
-                            a strut mount issue. Tenacity Auto Parts
-                            shares its symptoms. Read on to find out
-                            what you can do to fix it.
-                        </p>
-                        <br />
-                        <p class="blog-date">04 Jan 20241</p>
-                        <a>Read More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="item blog-item">
-                <div class="blog-box">
-                    <img src="~/Content/Images/blog-1.jpg" />
-                    <div class="blog-content">
-                        <h4>Diagnosing Top Strut Mount Problems</h4>
-                        <p>
-                            Something wrong with your car? It could be
-                            a strut mount issue. Tenacity Auto Parts
-                            shares its symptoms. Read on to find out
-                            what you can do to fix it.
-                        </p>
-                        <br />
-                        <p class="blog-date">04 Jan 20241</p>
-                        <a>Read More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="item blog-item">
-                <div class="blog-box">
-                    <img src="~/Content/Images/blog-1.jpg" />
-                    <div class="blog-content">
-                        <h4>Diagnosing Top Strut Mount Problems</h4>
-                        <p>
-                            Something wrong with your car? It could be
-                            a strut mount issue. Tenacity Auto Parts
-                            shares its symptoms. Read on to find out
-                            what you can do to fix it.
-                        </p>
-                        <br />
-                        <p class="blog-date">04 Jan 20241</p>
-                        <a>Read More</a>
-                    </div>
-                </div>
+@if (Model != null && Model.Count() > 0)
+{
+    <div class="blogs">
+        <div class="container">
+            <div class="heading-home text-center">
+                <h2>NEWS & BLOGS</h2>
+                <p>
+                    Browse through our selection by brand to find the right parts for your vehicle.
+                </p>
             </div>
 
-        </div>
+            <div class="owl-carousel owl-theme blogs-carousel">
+                @foreach (var item in Model)
+                {
+                    <div class="item blog-item">
+                        <div class="blog-box">
+                            <img src="@item.Image" alt="Blog Image" />
+                            <div class="blog-content">
+                                <h4>@item.Title</h4>
+                                <p>
+                                   @Html.Raw(item.Description)
+                                </p>
+                                <br />
+                                <p class="blog-date"> @item.Date.ToString("dd MMM yyyy")</p>
+                                <a href="/Blog?bId=@item.Id">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
 
     </div>
 </div>
+
+}
 
 
 

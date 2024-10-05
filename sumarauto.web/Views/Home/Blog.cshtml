@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Model.Blogs
+@{
     ViewBag.Title = "Name of the blog here";
     ViewBag.Description = "description first 100 charactres here + ..";
     ViewBag.Image = "/Content/Images/blog-1.jpg";
@@ -32,21 +33,17 @@
     <div class="blog">
         <div class="blog-head">
             <h2>
-                What Do You Need To Know About Engine Mounts?
+              @Model.Title
             </h2>
-            <small>04 Jan 2024</small>
+            <small>@Model.Date.ToString("dd MMM yyyy")</small>
         </div>
 
-        <img src="~/Content/Images/blog-1.jpg" />
+        <img src="@Model.Image" alt="Blog Image"/>
 
         <div class="blog-desc">
-            <h3>How does an engine mount work?</h3>
-            <p>Engine mounts are essentially shock absorbers that prevent your engine from bumping into the transmission and other components that keep your vehicle running. They have a metal frame that provides sturdy support and protection. They also have a rubber component that dampens vibrations and prevents metal-to-metal contact between your engine and the vehicle body. While engine mounts don’t require maintenance work or regular servicing, you still have to look out for signs of wear or damage. Signs of wear start to show within 5 to 7 years. Meanwhile, check for engine mount damages if you encounter road traffic accidents.</p>
-            <h3>How do you detect engine mount damage?</h3>
-            <p>Engine mounts usually provide optimal protection for 5 to 7 years. Nevertheless, it’s important that you have them checked once in a while so you can keep the engine protected and keep your driving experience smooth. You don’t need to change all your engine and transmission mounts all at once. One mount could be damaged or show greater signs of wear than another. You have to pay closer attention to those mounts. Tenacity is a premium supplier of high-quality engine mounts and aftermarket parts. The team is constantly developing its products to meet the evolving needs of the industry and, more importantly, of customers. Contact us today for inquiries about engine mounts. We’re glad to address all your concerns.</p>
-
+            @Html.Raw(Model.Description)
         </div>
     </div>
 </div>
 
-@Html.Partial("_BlogsPartial")
+@Html.Action("_BlogsPartial")
