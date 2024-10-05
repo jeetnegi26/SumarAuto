@@ -1,6 +1,6 @@
 ﻿@{
-
     string webname = "sumarauto.com";
+    string webImg = webname + (ViewBag.Image == ""  ? "/content/images/logo.png" : ViewBag.Image);
 }
 <!DOCTYPE html>
 <html>
@@ -8,13 +8,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
-    <meta name="keywords" content="morya, luxury, living" />
-    <meta name="description" content="Morya Luxury Living Real Estate is a full-service, real estate brokerage representing clients in Dubai and worldwide in a broad spectrum of classes, i
-          ncluding single-family residential, new development, commercial, and residential leasing." />
+    <meta name="keywords" content="Auto parts Dubai,Car spare parts Dubai,Dubai auto parts store,Dubai auto parts store,Car accessories Dubai,
+          Genuine car parts Dubai,Online auto parts UAE,OEM auto parts Dubai,Aftermarket car parts Dubai,Cheap car parts Dubai,Best auto parts 
+          Dubai,Brake pads Dubai,Brake pads Dubai,Auto parts delivery Dubai,Auto parts delivery Dubai,Auto parts delivery Dubai,Luxury car parts Dubai,
+          4x4 auto parts Dubai,Car batteries DubaiTyres and rims Dubai" />
+    <meta name="description" content="@ViewBag.Description" />
     <meta property="og:title" content="@ViewBag.Title" />
     <meta property="og:url" content="@webname" />
-    <meta property="og:description" content="" />
-    <meta property="og:image" content="@(webname + "/Content/Images/logo.png")"   />
+    <meta property="og:description" content="@ViewBag.Description" />
+    <meta property="og:image" content="@webImg"/>
 
 
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
@@ -40,8 +42,8 @@
     <div class="navbar">
         <div class="container nav-boxx">
             <div class="row">
-                <div class="col-lg-12 col-md-8 col-8 navbar-logo"><a href="/Home/Index"><img src="~/Content/Images/logo.png" alt="logo" /></a></div>
-                <div style="z-index: 2;" class="col-lg-12 col-md-4 col-4 navbar-menu">
+                <div class="col-lg-12 col-md-8 col-8 navbar-logo"><a href="/Home/Index"><img src="~/Content/Images/logo.svg" alt="logo" /></a></div>
+                <div style="z-index: 2;" class="col-lg-12 col-md-4 col-4 navbar-menu sticky">
                     <nav>
                         <ul>
                             <li><a href="/">HOME</a></li>
@@ -69,8 +71,8 @@
     </div>
 
     <footer class="">
-        <div class="footer-logo">
-            <a href="/Home/Index"><img style="width: 20%;" src="~/Content/Images/logo.png" /></a>
+        <div style="padding:1rem 0" class="footer-logo">
+            <a href="/Home/Index"><img  src="~/Content/Images/logo-footer.svg" /></a>
         </div>
         <div class="d-lg-flex d-md-flex d-block justify-content-center">
             <div><a class="foot-q-link" href="/">HOME</a></div>
@@ -84,12 +86,9 @@
             <a class="pr-1" href="" target="_blank"><i class="bi bi-instagram"></i></a>
         </div>
         <div class="footer-copy">
-            <p>
+            <p style="margin-bottom:0; padding-bottom:1rem;">
                 © Copyright Sumaru Auto 2024
             </p>
-        </div>
-        <div class="foot-bottom-img">
-            <img style="width: 40%;" src="~/Content/Images/foot-img.png" />
         </div>
     </footer>
 
@@ -102,6 +101,21 @@
             $(this).toggleClass("active");
             $(".navbar-menu nav").toggleClass("active");
         });
+
+        window.onscroll = function () { handleScroll() };
+
+        function handleScroll() {
+            var navbarLogo = document.querySelector('.navbar-logo');
+            var navbarMenu = document.querySelector('.navbar-menu');
+
+            if (window.pageYOffset > navbarLogo.offsetHeight) {
+                navbarLogo.classList.add("sticky-logo-hidden");
+                navbarMenu.classList.add("sticky-active");
+            } else {
+                navbarLogo.classList.remove("sticky-logo-hidden");
+                navbarMenu.classList.remove("sticky-active");
+            }
+        }
     </script>
 </body>
 </html>
