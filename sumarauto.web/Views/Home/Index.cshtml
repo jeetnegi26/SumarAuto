@@ -1,5 +1,7 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Sumar Auto Parts";
+    ViewBag.Description = "Sumar is a professional auto parts supplier in Dubai. Base on years experiences in the Auto parts field, we know what our customers’ demand and can offer our best service.";
+    ViewBag.Image = "";
 }
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />
@@ -518,6 +520,10 @@
     .info h2{
         font-size:3.5rem;
         color:var(--bg);
+    } 
+    
+    .info h4{
+        color:var(--bg);
     }
 
 
@@ -859,8 +865,25 @@
         </div>
 
         <div class="category-list">
-            <div class="row" id="catList-home">
-            </div>
+            <div class="row">
+                <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>CV Boots</h4>
+                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                        <button class="
+                                ">Found out more</button>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Strut Mounts</h4>
+                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>
 
             <div class="text-center">
                 <a href="/categories" class="btn-primary">See all categories</a>

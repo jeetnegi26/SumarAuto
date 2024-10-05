@@ -227,6 +227,8 @@
     <Content Include="Content\images\l7.png" />
     <Content Include="Content\images\l8.png" />
     <Content Include="Content\images\l9.png" />
+    <Content Include="Content\images\logo-footer.svg" />
+    <Content Include="Content\images\logo.svg" />
     <Content Include="Content\images\logoHONDA.png" />
     <Content Include="Content\images\logoMAZDA.png" />
     <Content Include="Content\images\logoMITSUBISHI.png" />

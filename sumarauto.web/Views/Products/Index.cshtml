@@ -1,21 +1,62 @@
 ﻿@{
     ViewBag.Title = "Products";
+    ViewBag.Description = "Sumar Auto Parts in Dubai offers genuine auto " +
+                "parts, OEM parts, and accessories for all car models. Fast delivery, " +
+                "competitive prices, and expert assistance. Shop now!";
+    ViewBag.Image = "";
 }
 
 <style>
+    .search-container {
+        padding: 0;
+    }
+
+    .overlap-form {
+        color: #1e1e1e;
+    }
 
 
         .products-container {
             padding: 5rem 0;
         }
 
-        .product-card, .product-box {
-            padding: 2rem;
+    .form_book {
+        background: var(--text);
+        padding: 20px 33px;
+    }
+
+    .boo-btn {
+        align-self: center;
+        text-align: center;
+    }
+
+        .boo-btn button {
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--bg);
+            color: var(--text);
         }
 
-        .product-desc {
-            padding-top: 1.3rem;
-        }
+    .search-text {
+        background-color: var(--text);
+        padding: 6px 2px;
+        border: 1px solid var(--bg);
+        color: var(--bg);
+        width: 100%
+    }
+
+    .products-container {
+        padding: 5rem 0;
+    }
+
+    .product-card, .product-box {
+        padding: 2rem;
+    }
+
+    .product-desc {
+        padding-top: 1.3rem;
+    }
 
         .product-box {
             border-radius: 5px;
@@ -23,29 +64,23 @@
             border-top: 5px solid var(--primary);
         }
 
-        .product-desc {
-            color: var(--text);
-        }
+    .product-desc {
+        color: var(--text);
+    }
 
-            .product-desc H4 {
-                text-transform: uppercase;
-            }
+        .product-desc H4 {
+            text-transform: uppercase;
+        }
 
         .product-spec h6 {
             color: var(--primary);
             text-transform: uppercase;
         }
 
-        .product-box img {
-            border-radius: 10px;
-        }
-
-        @@media(max-width:1024px) {
-            .product-card, .product-box {
-                padding: 1rem;
-            }
-        }
-
+    .product-box img {
+        border: 5px solid var(--text);
+        border-radius: 10px;
+    }
 </style>
 
 
@@ -166,3 +201,5 @@
 
     </div>
 </div>
+
+

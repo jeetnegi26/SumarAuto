@@ -82,6 +82,8 @@ a {
 }
 
 /*-----------------layout--------------------*/
+
+
 .navbar {
     padding: 20px 0;
     margin: 0;
@@ -93,7 +95,7 @@ a {
     }
 
     .navbar img {
-        width: 40%;
+        width: 25%;
     }
 
     .navbar .row {
@@ -114,6 +116,38 @@ a {
     align-items: center;
 }
 
+footer img {
+    width: 20%;
+}
+
+.navbar-logo img {
+    transition: opacity 0.3s ease;
+}
+
+.navbar-menu nav ul li a {
+    transition: all 0.3s ease;
+}
+
+.sticky {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+/* Change the size of the logo when scrolled */
+.sticky-logo-hidden {
+    opacity: 0; /* Logo will fade away when scrolled */
+}
+
+/* For smooth transition of sticky navbar */
+.sticky-active nav ul li a {
+    font-size: 14px;
+}
+
+
+
 @media screen and (min-width: 992px) {
     .navbar-icon {
         display: none;
@@ -124,11 +158,22 @@ a {
     }
 
     .navbar img {
-        width: 20%;
+        width: 15%;
     }
 
     .nav-boxx{
         display: block !important;
+    }
+
+    footer img{
+        width:12%;
+    }
+}
+
+@media screen and (min-width: 1500px) {
+
+    footer img {
+        width: 8%;
     }
 }
 
