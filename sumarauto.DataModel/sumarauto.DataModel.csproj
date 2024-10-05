@@ -66,6 +66,7 @@
     <Compile Include="AutoPartDataModel.cs" />
     <Compile Include="CompanyDetailsViewModel.cs" />
     <Compile Include="Constant.cs" />
+    <Compile Include="EmailTemplateModel.cs" />
     <Compile Include="HomeViewModel.cs" />
     <Compile Include="LoginDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

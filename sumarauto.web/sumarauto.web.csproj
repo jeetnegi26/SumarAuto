@@ -265,6 +265,7 @@
     <Content Include="Content\icons\tabler-icons\fonts\tabler-icons.woff2" />
     <Content Include="Scripts\bootstrap-select.min.js.map" />
     <Content Include="Content\Fonts\Oswald-VariableFont_wght.ttf" />
+    <Content Include="EmailTemplate\EmailTemp.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dashboard.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -313,6 +314,26 @@
     <Content Include="Views\Products\Product.cshtml" />
     <Content Include="Views\Home\Blogs.cshtml" />
     <Content Include="Views\Home\Blog.cshtml" />
+    <Content Include="Views\Home\_BlogsPartial.cshtml" />
+    <Content Include="Views\Home\_AboutPartial.cshtml" />
+    <Content Include="Views\Shared\_Search.cshtml" />
+    <Content Include="Views\Home\Categories.cshtml" />
+    <Content Include="Views\Admin\Clients.cshtml" />
+    <Content Include="Views\Admin\AutoMakeAction.cshtml" />
+    <Content Include="Views\Admin\AutoPartEdit.cshtml" />
+    <Content Include="Views\Admin\BannerAdd.cshtml" />
+    <Content Include="Views\Admin\BannerEdit.cshtml" />
+    <Content Include="Views\Admin\BannerList.cshtml" />
+    <Content Include="Views\Admin\BlogAction.cshtml" />
+    <Content Include="Views\Admin\Blogs.cshtml" />
+    <Content Include="Views\Admin\ContactFormList.cshtml" />
+    <Content Include="Views\Admin\Gallery.cshtml" />
+    <Content Include="Views\Admin\GalleryAction.cshtml" />
+    <Content Include="Views\Admin\InfoAdd.cshtml" />
+    <Content Include="Views\Admin\InfoEdit.cshtml" />
+    <Content Include="Views\Admin\MakeList.cshtml" />
+    <Content Include="Views\Admin\WebsiteInformation.cshtml" />
+    <Content Include="Views\Admin\ClientAction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
