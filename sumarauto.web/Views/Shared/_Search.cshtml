@@ -79,7 +79,7 @@
                 <div class="row">
                     <div class="col-lg-2 col-md-3 col-12 search-box">
                         <h6 class="date">Category</h6>
-                        <select name="Category" id="Category" class="selectpicker">
+                        <select name="Category" id="Category" class="selectpicker" data-live-search="true">
                             <option value="Air hose"> Air hose</option>
                             <option value="Air hose"> Air hose</option>
                             <option value="Air hose"> Air hose</option>
@@ -88,7 +88,7 @@
                     </div>
                     <div class="col-lg-2 col-md-4 col-12 search-box">
                         <h6 class="date">Make</h6>
-                        <select name="Make" id="Make" class="selectpicker">
+                        <select name="Make" id="Make" class="selectpicker" data-live-search="true">
                             <option value="Air hose"> Alfa Romeo</option>
                             <option value="Air hose"> Audi</option>
                             <option value="Air hose"> Aston Martin</option>
@@ -164,3 +164,11 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('.search-bar').empty();
+        $(function () {
+            $('.selectpicker').selectpicker();
+        });
+    })
+</script>
