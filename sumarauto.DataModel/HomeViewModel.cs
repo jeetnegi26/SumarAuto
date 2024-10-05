@@ -35,4 +35,10 @@ namespace DataModel
         public string Title { get; set; }
         public string Image { get; set; }
     }
+    public class KeysDataModel
+    {
+        public string Type { get; set; }
+        public string Title { get; set; }
+        public string Value { get; set; }
+    }
 }

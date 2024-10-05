@@ -490,6 +490,34 @@ namespace sumarauto.web.Controllers
             }
 
         }
+        [OutputCache(Duration = 3600, VaryByParam = "none")]
+        public async Task<ActionResult> GetKeys()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetKeysList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    var rows = await command.ExecuteReaderAsync();
+                    var result = new List<KeysDataModel>();
+                    while (rows.Read())
+                    {
+                        var data = new KeysDataModel();
+                        data.Type = Convert.ToString(rows["Type"]);
+                        data.Title = Convert.ToString(rows["Title"]);
+                        data.Value = Convert.ToString(rows["Value"]);
+                        result.Add(data);
+                    }
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         #endregion
     }
 }
