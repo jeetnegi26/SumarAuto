@@ -13,6 +13,9 @@ using System.Configuration;
 using sumarauto.DataModel;
 using Model;
 using DataModel;
+using System.Net.Mail;
+using System.Text;
+using System.Web.Hosting;
 
 namespace sumarauto.web.Controllers
 {
@@ -110,6 +113,16 @@ namespace sumarauto.web.Controllers
                             }
                             result = true;
                             break;
+                        case "Make":
+                            var Make = db.Make.Find(Id);
+                            if (Make != null)
+                            {
+                                bool value = Make.IsFeatured;
+                                Make.IsFeatured = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
                         default:
                             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
                     }
@@ -183,6 +196,16 @@ namespace sumarauto.web.Controllers
                             }
                             result = true;
                             break;
+                        case "Client":
+                            var Client = db.Clients.Find(Id);
+                            if (Client != null)
+                            {
+                                bool value = Client.Status;
+                                Client.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
                         default:
                             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
                     }
@@ -195,49 +218,6 @@ namespace sumarauto.web.Controllers
             }
             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult GetSelectListCat()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListEngine()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListMake()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListMMade()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListChassis()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListLiter()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult GetSelectListYear()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-            //Method
-            return Json(items, JsonRequestBehavior.AllowGet);
-        }
-
         public async Task<ActionResult> GetDropdownCatList()
         {
             try
@@ -246,6 +226,7 @@ namespace sumarauto.web.Controllers
                 {
                     var command = new SqlCommand("GetCategoryList", connection);
                     command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Active", 1);
                     connection.Open();
                     var rows = await command.ExecuteReaderAsync();
                     var result = new List<SelectListItem>();
@@ -270,7 +251,7 @@ namespace sumarauto.web.Controllers
             {
                 using (var db = new AppDbContext())
                 {
-                    var dataList = await db.Make.AsNoTracking().ToListAsync();
+                    var dataList = await db.Make.AsNoTracking().Where(x=>x.Status == true).ToListAsync();
                     var result = new List<SelectListItem>();
                     foreach (var item in dataList)
                     {
@@ -470,6 +451,44 @@ namespace sumarauto.web.Controllers
             {
                 throw;
             }
+        }
+
+        public async Task<ActionResult> SendEmail(EmailTemplateModel model)
+        {
+            try
+            {
+                // var context = new ApplicationDbContext();
+                string subject = model.Subject;
+                TempData["subject"] = model.Subject;
+                TempData["address"] = model.CompanyAddress;
+                TempData["contact"] = model.CompanyContact;
+                string body = System.IO.File.ReadAllText(HostingEnvironment.MapPath("~/EmailTemplate/") + "EmailTemp" + ".cshtml");
+                var url = model.Message;
+                body = body.Replace("@ViewBag.templateBodyContent", url);
+                body = body.Replace("@ViewBag.subject", subject);
+                body = body.Replace("@ViewBag.address", model.CompanyAddress);
+                body = body.Replace("@ViewBag.contact", model.CompanyContact);
+                body = body.ToString();
+                StringBuilder sb = new StringBuilder();
+                MailMessage msg = new MailMessage();
+                msg.From = new MailAddress(ConfigurationManager.AppSettings["Email"].ToString());
+                msg.To.Add(new MailAddress(model.Destination));
+                msg.Subject = subject;
+                sb.Append(body);
+                msg.Body = sb.ToString();
+                msg.IsBodyHtml = true;
+                SmtpClient smtp = new SmtpClient(ConfigurationManager.AppSettings["smtp"].ToString(), Convert.ToInt32(ConfigurationManager.AppSettings["port"]));
+                smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["email"].ToString(), ConfigurationManager.AppSettings["pass"].ToString());
+                smtp.EnableSsl = false;
+                await smtp.SendMailAsync(msg);
+                smtp.Dispose();
+                return Content("True");
+            }
+            catch (Exception ex)
+            {
+                return Redirect("~/not_found.html");
+            }
+
         }
         #endregion
     }

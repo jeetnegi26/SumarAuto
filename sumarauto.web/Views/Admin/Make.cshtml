@@ -24,6 +24,7 @@
                     <tr>
                         <th style="width:10%;">#</th>
                         <th>Title</th>
+                        <th style="width:20%;">Featured</th>
                         <th style="width:20%;">Status</th>
                         <th style="width:10%;">Edit</th>
                     </tr>
@@ -35,6 +36,11 @@
                         <tr data-id="@item.MakeId">
                             <td style="text-align: center;" data-id="@item.MakeId">@count</td>
                             <td>@item.Title</td>
+                            <td>
+                                <button class="featuredBtn border-0 bg-transparent" data-class="@(item.IsFeatured == true ? false:true)" data-id="@item.MakeId">
+                                    <i class=" @(item.IsFeatured == true ? "ti ti-thumb-up" : "ti ti-thumb-down text-danger")" style="font-size: x-large; color: darkseagreen;"></i>
+                                </button>
+                            </td>
                             <td>
                                 <button class="statusBtn border-0 bg-transparent" data-class="@(item.Status == true ? false:true)" data-id="@item.MakeId">
                                     <i class=" @(item.Status == true ? "ti ti-checkbox" : "ti ti-square-rounded-letter-x text-danger")" style="font-size: x-large; color: darkseagreen;"></i>
@@ -74,6 +80,47 @@
                  data: {
                     Id : id,
                     Type:"Make"
+                },
+                success: function (response) {
+                    if (response.Result = true) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Make status update successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/admin/Make";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        })
+                    }
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                }
+            })
+        });
+    });
+
+    const featuredBtns = document.querySelectorAll(".featuredBtn");
+    featuredBtns.forEach(featuredBtn => {
+        featuredBtn.addEventListener("click", function () {
+            var id = this.getAttribute("data-id");
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("FeaturedChange", "Helper")',
+                 data: {
+                     Id: id,
+                     Type: "Make"
                 },
                 success: function (response) {
                     if (response.Result = true) {

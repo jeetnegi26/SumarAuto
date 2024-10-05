@@ -7,8 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
 
 <style>
-
-
     /*banner css starts*/
 
     /* Arrows */
@@ -517,6 +515,11 @@
         border: 1px solid transparent;
     }
 
+    .info h2{
+        font-size:3.5rem;
+        color:var(--bg);
+    }
+
 
     /*Banner Css ends*/
 
@@ -751,14 +754,15 @@
     }
 
     .category-box {
-        padding: 2rem 3rem;
+        padding: 10rem 3rem 2rem;
+        position: relative;
     }
 
     .category-item {
         display: flex;
         flex-direction: column;
         text-align: center;
-        padding: 1.5rem 1rem;
+        padding: 6.5rem 1rem 1.5rem;
         height: 100%;
         border-radius: 7px;
         transition: 0.3s;
@@ -781,12 +785,16 @@
         }
 
         .category-item img {
-            width: 61%;
+            width: 46%;
             margin: 0 auto;
             padding: 1rem;
-            border: 8px solid var(--text);
+            border: 8px solid var(--primary);
             border-radius: 50%;
             margin-bottom: 2rem;
+            position: absolute;
+            top: 11%;
+            left: 27%;
+            background-color: white;
         }
 
         .category-item p {
@@ -824,156 +832,11 @@
 </style>
 
 <div class="banner-box">
-    <!-- form_lebal -->
-    <section class="overlap-form">
-        <div class="row">
-            <div class="col-md-12 search-container">
-                <form class="form_book">
-                    <div class="row">
-                        <div class="col-lg-2 col-md-2 col-12 search-box">
-                            <h6 class="date">Category</h6>
-                            <select name="Category" id="Category" class="selectpicker">
-                                <option value="Air hose"> Air hose</option>
-                                <option value="Air hose"> Air hose</option>
-                                <option value="Air hose"> Air hose</option>
-                                <option value="Air hose"> Air hose</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-2 col-12 search-box">
-                            <h6 class="date">Make</h6>
-                            <select name="Make" id="Make" class="selectpicker">
-                                <option value="Air hose"> Alfa Romeo</option>
-                                <option value="Air hose"> Audi</option>
-                                <option value="Air hose"> Aston Martin</option>
-                                <option value="Air hose"> Mazda Japan Ford</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-12 search-box">
-                            <h6 class="date">Model</h6>
-                            <select name="Make" id="Make" class="selectpicker">
-                                <option value="Air hose"> RSX-TYPE-S</option>
-                                <option value="Air hose"> RL</option>
-                                <option value="Air hose"> TSX</option>
-                                <option value="Air hose"> TS215</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-12 search-box">
-                            <h6 class="date">Years</h6>
-                            <select name="Years" id="Years" class="selectpicker">
-                                <option value="Air hose"> 2020</option>
-                                <option value="Air hose"> 2021</option>
-                                <option value="Air hose"> 2022</option>
-                                <option value="Air hose"> 2023</option>
-                                <option value="Air hose"> 2024</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-12 search-box">
-                            <h6 class="date">Engine</h6>
-                            <select name="Engine" id="Engine" class="selectpicker">
-                                <option value="Air hose"> K24W7</option>
-                                <option value="Air hose"> K44W8</option>
-                                <option value="Air hose"> L24W7</option>
-                                <option value="Air hose"> A24W7</option>
-                                <option value="Air hose"> G24W7</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-12 search-box">
-                            <h6 class="date">Liters</h6>
-                            <select name="Liters" id="Liters" class="selectpicker">
-                                <option value="Air hose">  2.4L</option>
-                                <option value="Air hose">  3.4L</option>
-                                <option value="Air hose">  1.4L</option>
-                                <option value="Air hose">  2.5L</option>
-                                <option value="Air hose">  3.4L</option>
-                            </select>
-                        </div>
-
-
-                        <div class="col-lg-1 col-md-1 col-12 search-box">
-                            <h6 class="date">Chassis</h6>
-                            <select name="Chassis" id="Chassis" @*class="selectpicker"*@>
-                                <option value="Air hose"> DE2F</option>
-                                <option value="Air hose"> 4D2F</option>
-                                <option value="Air hose"> PE2F</option>
-                                <option value="Air hose"> DL2F</option>
-                                <option value="Air hose"> DE4O</option>
-                            </select>
-                        </div>
-
-                        <div class="col-lg-2 col-md-2 col-12 search-box">
-                            <h6 class="date">Search</h6>
-                            <input class="search-text form-control" type="text" id="">
-                        </div>
-
-                        <div class="col-lg-1 col-md-1 col-12 boo-btn search-box">
-                            <button class="book_btn" type="button"><i class="bi bi-search"></i></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-    <!-- end form_lebal -->
+    @Html.Partial("_Search")
 
     <div class="Modern-Slider">
-        <div class="Gallery-Slider">
-            <!-- The Slider --->
-            <!-- Item -->
-            <div class="item">
-                <div class="img-fill">
-                    <img src="~/Content/Images/b1.jpg" />
-                    <div class="info">
-                        <h2>Seed money rockstar beta</h2>
-                        <p>
-                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- // Item -->
-            <!-- Item -->
-            <div class="item">
-                <div class="img-fill">
-                    <img src="~/Content/Images/b2.png" />
-                    <div class="info">
-                        <h2>Seed money rockstar beta</h2>
-                        <p>
-                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- // Item -->
-            <!-- Item -->
-            <div class="item">
-                <div class="img-fill">
-                    <img src="~/Content/Images/b3.jpg" />
-                    <div class="info">
-                        <h2>Seed money rockstar beta</h2>
-                        <p>
-                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- // Item -->
-            <!-- Item -->
-            <div class="item">
-                <div class="img-fill">
-                    <img src="~/Content/Images/b4.png" />
-                    <div class="info">
-                        <h2>Seed money rockstar beta</h2>
-                        <p>
-                            Seed money rockstar beta conversion stealth creative www.discoverartisans.com. Seed round iteration long tail product management churn rate buzz sales social proof growth hacking influencer. Ecosystem android assets partner network. Alpha value proposition validation. User experience infrastructure termsheet interaction design sales business-to-consumer ramen
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- // Item -->
+        <div class="Gallery-Slider" id="Slider">
+
         </div>
         <div class="Slick-Navigation">
         </div>
@@ -996,61 +859,11 @@
         </div>
 
         <div class="category-list">
-            <div class="row">
-                <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>CV Boots</h4>
-                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
+            <div class="row" id="catList-home">
+            </div>
 
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Engine Mounts</h4>
-                        <p>Hydraulic Design, Premium Rubber Material, Dampening vibration and noise to the vehicle by Tenacity mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Bushings</h4>
-                        <p>Tenacity ‘s premium rubber material (NR+BR) ensures longer life and performance, enhancing the ride quality of the automobiles.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>CV Boots</h4>
-                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
+            <div class="text-center">
+                <a href="/categories" class="btn-primary">See all categories</a>
             </div>
         </div>
     </div>
@@ -1066,67 +879,7 @@
         </div>
 
         <div class="clients-list">
-            <div class="row">
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoHONDA.png" />
-                        <h4>Honda</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoMAZDA.png" />
-                        <h4>Mazda</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoMITSUBISHI.png" />
-                        <h4>Mitsubushi</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoNISSAN.png" />
-                        <h4>Nissan</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoTOYOTA.png" />
-                        <h4>Toyota</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoNISSAN.png" />
-                        <h4>Nissan</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoMAZDA.png" />
-                        <h4>Mazda</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoTOYOTA.png" />
-                        <h4>Toyota</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoMITSUBISHI.png" />
-                        <h4>Mitsubushi</h4>
-                    </a>
-                </div>
-                <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
-                        <img src="~/Content/Images/logoHONDA.png" />
-                        <h4>Honda</h4>
-                    </a>
-                </div>
+            <div class="row" id="makeList-home">
             </div>
         </div>
     </div>
@@ -1135,12 +888,59 @@
 
 @Html.Partial("_AboutPartial")
 
-@Html.Partial("_BlogsPartial")
+@Html.Action("_BlogsPartial")
 
 
 <script>
     $(document).ready(function () {
+        $('.search-bar').empty();
+        $(function () {
+            $('.selectpicker').selectpicker();
+        });
 
+    })
+    const Slider = document.getElementById("Slider");
+    const catListHome = document.getElementById("catList-home");
+    const makeListHome = document.getElementById("makeList-home");
+    document.addEventListener("DOMContentLoaded", function () {
+        getTopHomeData();
+        getIsFeaturedMakeAndCat();
+    });
+    async function getTopHomeData() {
+        try {
+            const response = await fetch('/Home/GetHomePageData', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Something went worng!');
+            }
+            const data = await response.json();
+            if (data.Banners != null && Slider) {
+                populateBannerData(data.Banners);
+            }
+        } catch (error) {
+            console.error('Error fetching page data:', error);
+        }
+    }
+    function populateBannerData(data) {
+        let htmlString = "";
+        data.forEach(item => {
+            htmlString += `<div class="item">
+                <div class="img-fill">
+                    <img src="${item.Image}" alt="Home Banner"/>
+                    <div class="info">
+                        <h2>${item.Heading}</h2>
+                        <p>
+                        ${item.Subheading}
+                        </p>
+                    </div>
+                </div>
+            </div>`;
+        });
+        Slider.innerHTML = htmlString;
         $(".Gallery-Slider").slick({
             autoplay: true,
             autoplaySpeed: 9000,
@@ -1156,12 +956,53 @@
             prevArrow: '<button class="PrevArrow"></button>',
             nextArrow: '<button class="NextArrow"></button>',
         })
+    }
 
-        $(function () {
-            $('.selectpicker').selectpicker();
-        });
-
-    })
-
+    async function getIsFeaturedMakeAndCat() {
+        try {
+            const response = await fetch('/Home/GetIsFeaturedMakeAndCat', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Something went worng!');
+            }
+            const data = await response.json();
+            populateFeaturedMakeAndCat(data);
+        } catch (error) {
+            console.error('Error fetching page data:', error);
+        }
+    }
+    function populateFeaturedMakeAndCat(data) {
+        let htmlStringCat = "";
+        let htmlStringMake = "";
+        if (catListHome && data != null && data.Categories != null) {
+            data.Categories.forEach(Item => {
+                htmlStringCat += ` 
+                <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
+                    <div class="category-item">
+                        <img src="${Item.Image}" alt="${Item.Title}"/>
+                        <h4>${Item.Title}</h4>
+                        <p>${Item.Description}</button>
+                    </div>
+                </div>`;
+            });
+            catListHome.innerHTML = htmlStringCat;
+        }
+        if (makeListHome && data != null && data.Makes != null) {
+            data.Makes.forEach(Item => {
+                htmlStringMake += ` 
+                <div class="custom-col col-md-4 col-6 client-item">
+                    <a class="brand-anchor">
+                        <img src="${Item.Image}" alt = "${Item.Title}" />
+                        <h4>${Item.Title}</h4>
+                    </a>
+                </div>`;
+            });
+            makeListHome.innerHTML = htmlStringMake;
+        }
+    }
 
 </script>

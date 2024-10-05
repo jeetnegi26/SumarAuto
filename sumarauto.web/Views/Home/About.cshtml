@@ -1,5 +1,305 @@
 ﻿@{
     ViewBag.Title = "About";
 }
+<style>
+    .about-read {
+        display:none;
+    }
+
+    .about-us {
+        padding: 5rem 0px;
+    }
+
+    .gallert-gallery {
+        padding: 5rem 0;
+    }
+
+        .gallert-gallery h2 {
+            text-align: center;
+        }
+
+    .owl-item .item {
+        transform: translate3d(0, 0, 0); /* DO NOT REMEMBER WHERE TU PUT THIS, SEARCH FOR 3D ACCELERATION */
+        margin: 50px 0; /* OVERWRITE PLUGIN MARGIN */
+    }
+
+    .owl-carousel .owl-nav button.owl-next, .owl-carousel .owl-nav button.owl-prev {
+        color: var(--text) !important;
+    }
+
+        .owl-carousel .owl-nav button.owl-next:focus, .owl-carousel .owl-nav button.owl-prev:focus {
+            outline: none;
+            border: none;
+        }
+
+    .gallert-slider .owl-item .item img {
+        -webkit-transition: 0.3s;
+        -webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+        box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+        -o-transition: 0.3s;
+        transition: 0.3s;
+        -webkit-transform: scale(0.80);
+        -ms-transform: scale(0.80);
+        transform: scale(0.80);
+    }
+
+    .gallert-slider .owl-item.center .item img {
+        -webkit-transform: scale(1.15);
+        -ms-transform: scale(1.15);
+        transform: scale(1.15);
+    }
+
+    .gallert-slider .owl-nav {
+        text-align: center;
+    }
+
+        .gallert-slider .owl-nav button {
+            font-size: 24px !important;
+            margin: 10px;
+            color: #033aff !important;
+        }
+
+    .mission{
+        padding:2rem 0;
+    }
+
+    .mission-container {
+        padding-top:3rem;
+    }
+
+    
+
+        .mission-container p{
+            margin:0;
+        }
+
+    .client-carousal .item {
+        padding: 0 1.7rem;
+    }
+
+    @@media (min-width:1025px) {
+        .mission-container img {
+            width: 50%
+        }
+    }
+
+    @@media (max-width:1025px) {
+
+        .client-carousal .item {
+            padding: 0 0.5rem;
+        }
+    }
+
+    @@media (min-width:550px) and (max-width:770px) {
+        .gallert-gallery {
+            padding: 2rem 0;
+        }
+    }
+
+
+
+    @@media(max-width:500px) {
+        .client-carousal .item {
+            padding: 0px 0;
+        }
+
+        .gallert-gallery {
+            padding: 1rem 0;
+        }
+    }
+</style>
+
 
 @Html.Partial("_AboutPartial")
+
+<div class="mission container">
+
+    <div class="text-center">
+        <h2>OUR MISSION</h2>
+    </div>
+
+    <div class="row mission-container">
+        <div class="col-lg-3 col-md-6 col-12">
+            <div class="mission-item">
+                <div class="row text-lg-center pb-2">
+                    <div class="col-lg-12 col-md-4 col-4">
+                        <img src="~/Content/Images/mis_shake.png" />
+                    </div>
+                    <div class="col-lg-12 col-md-8 col-8 align-self-center">
+                        <p>Be long-term business partner on mutual reliability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-12">
+            <div class="mission-item">
+                <div class="row text-lg-center">
+                    <div class="col-lg-12 col-md-4 col-4">
+                        <img src="~/Content/Images/mis_cus.png" />
+                    </div>
+                    <div class="col-lg-12 col-md-8 col-8 align-self-center">
+                        <p>Insistence to offer our best service for our customer.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-12">
+
+            <div class="mission-item">
+                <div class="row text-lg-center">
+                    <div class="col-lg-12 col-md-4 col-4">
+                        <img src="~/Content/Images/mis_upg.png" />
+                    </div>
+                    <div class="col-lg-12 col-md-8 col-8 align-self-center">
+                        <p>Forever to upgrade our professional in the technical field</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-12">
+
+            <div class="mission-item">
+                <div class="row text-lg-center">
+                    <div class="col-lg-12 col-md-4 col-4">
+                        <img src="~/Content/Images/mis_gra.png" />
+                    </div>
+                    <div class="col-lg-12 col-md-8 col-8 align-self-center">
+                        <p>Continuous growth and long term customer’s cooperation</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+</div>
+
+<div class="gallert-gallery container">
+    <h2>GALLERY</h2>
+
+    <div class="gallert-images">
+        <div class="owl-carousel owl-theme gallert-slider" id="venGallery">
+
+        </div>
+    </div>
+</div>
+
+<div class="clients">
+    <div class="cat-heading text-center">
+        <h2>CLIENTS</h2>
+    </div>
+    <div class="client-carousal owl-carousel owl-theme" id="clientslist">
+
+    </div>
+</div>
+
+<script>
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        getClientsAndGallery();
+    });
+
+    const clientslist = document.getElementById("clientslist");
+    const venGallery = document.getElementById("venGallery");
+
+    async function getClientsAndGallery() {
+        try {
+            const response = await fetch('/Home/GetClientsAndGallery', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Something went worng!');
+            }
+            const data = await response.json();
+            populatelist(data);
+        } catch (error) {
+            console.error('Error fetching page data:', error);
+        }
+    }
+    function populatelist(data) {
+        let htmlStringClient = "";
+        let htmlStringGallery = "";
+        if (clientslist && data != null && data.Clients != null) {
+            data.Clients.forEach(Item => {
+                htmlStringClient += ` 
+                            <div class="item">
+                <img src="${Item.Image}" />
+            </div>`;
+            });
+            clientslist.innerHTML = htmlStringClient;
+        }
+        if (venGallery && data != null && data.Gallery != null) {
+            data.Gallery.forEach(Item => {
+                htmlStringGallery += `        <div class="item">
+            <img src="${Item.Image}" />
+        </div>`;
+            });
+            venGallery.innerHTML = htmlStringGallery;
+        }
+        $('.gallert-slider').owlCarousel({
+            loop: true,
+            margin: 0,
+            nav: true,
+            items: 1,
+            stagePadding: 300,
+            center: true,
+            navText: ['&#8592;', '&#8594;'],
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true,
+            responsive: {
+                0: {
+                    stagePadding: 0,
+                },
+                600: {
+                    stagePadding: 200,
+                },
+                1200: {
+                    stagePadding: 300,
+                }
+            },
+            onInitialized: function () {
+                if ($('.owl-item').first().hasClass('active'))
+                    $('.owl-prev').hide();
+                else
+                    $('.owl-prev').show();
+            }
+        })
+        owlInitialized = true;
+        $('.client-carousal').owlCarousel({
+            loop: true,
+            margin: 20,
+            autoplay: true,
+            slideTransition: 'linear',
+            autoplayTimeout: 3220,
+            smartSpeed: 3200,
+            autoplayHoverPause: true,
+            dots: true,
+            pagination: false,
+            navigation: true,
+            responsive: {
+                0: {
+                    items: 3
+                },
+                600: {
+                    items: 5
+                },
+                1000: {
+                    items: 8
+                }
+            }
+        });
+    }
+</script>

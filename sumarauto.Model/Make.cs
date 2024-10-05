@@ -15,6 +15,7 @@ namespace Model
         public string Image { get; set; }
         [AllowHtml]
         public string Description { get; set; }
+        public bool IsFeatured { get; set; }
         [NotMapped]
         public string NewImage { get; set; }
     }

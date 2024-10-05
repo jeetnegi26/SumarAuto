@@ -111,17 +111,7 @@ namespace sumarauto.web.Controllers
                                 var timestampPrefix = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                                 var fileName = timestampPrefix + "_" + Path.GetFileName(file.FileName);
                                 var path = Path.Combine(Server.MapPath("~/Content/AutoPartImages/"), fileName);
-                                // Resize the image before saving
-                                using (var image = Image.FromStream(file.InputStream))
-                                {
-                                    int newWidth = Convert.ToInt32(ConfigurationManager.AppSettings["Width"]);
-                                    int newHeight = Convert.ToInt32(ConfigurationManager.AppSettings["Height"]);
-
-                                    var resizedImage = ResizeImage(image, newWidth, newHeight);
-
-                                    // Save the resized image
-                                    resizedImage.Save(path, ImageFormat.Jpeg);
-                                }
+                                await Task.Run(() => file.SaveAs(path));
                                 var imgUrl = string.Format("/Content/AutoPartImages/" + fileName);
 
                                 var data = new AutoPartImages()
@@ -253,6 +243,7 @@ namespace sumarauto.web.Controllers
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", Id);
                     command.Parameters.AddWithValue("@Title", Title);
+                    command.Parameters.AddWithValue("@UserHostAdd", Request.UserHostAddress);
                     command.Parameters.AddWithValue("@CreatedBy", Convert.ToString(TempData["UName"]));
                     command.Parameters.AddWithValue("@SelectedDefault", string.IsNullOrEmpty(SelectedDefault) ? (object)DBNull.Value : SelectedDefault);
                     var outputIdParam = new SqlParameter("@OutputId", SqlDbType.Int)

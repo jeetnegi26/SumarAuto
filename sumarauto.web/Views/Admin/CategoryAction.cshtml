@@ -155,7 +155,8 @@
                             title: 'Category saved successfully',
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "/admin/Category";
+                                window.location.reload();
+                                /*window.location.href = "/admin/Category";*/
                             }
                         });
                     }
