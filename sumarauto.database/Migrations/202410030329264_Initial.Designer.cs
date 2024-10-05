@@ -13,7 +13,7 @@ namespace sumarauto.database.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202410011330214_Initial"; }
+            get { return "202410030329264_Initial"; }
         }
         
         string IMigrationMetadata.Source

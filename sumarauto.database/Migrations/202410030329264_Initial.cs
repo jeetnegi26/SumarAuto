@@ -24,7 +24,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -59,7 +59,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                         AutoPart_Id = c.Int(),
                     })
@@ -68,31 +68,42 @@
                 .Index(t => t.AutoPart_Id);
             
             CreateTable(
-                "dbo.BannerImages",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        BannerId = c.Int(nullable: false),
-                        Image = c.String(),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
                 "dbo.Banners",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        TypeId = c.String(),
-                        BannerHeading = c.String(),
-                        BannerSubHeading = c.String(),
-                        BannerButtonText = c.String(),
-                        BannerButtonUrl = c.String(),
+                        Image = c.String(nullable: false),
+                        Type = c.String(nullable: false),
+                        Heading = c.String(),
+                        Subheading = c.String(),
+                        url = c.String(),
+                        ButtonText = c.String(),
                         CreatedBy = c.String(),
                         CreatedOn = c.DateTime(nullable: false),
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
+                        RewriteUrl = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Blogs",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Title = c.String(),
+                        Date = c.DateTime(nullable: false),
+                        Image = c.String(),
+                        Description = c.String(),
+                        IsFeatured = c.Boolean(nullable: false),
+                        CreatedBy = c.String(),
+                        CreatedOn = c.DateTime(nullable: false),
+                        EditedOn = c.DateTime(nullable: false),
+                        Status = c.Boolean(nullable: false),
+                        UserHostAdd = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -111,7 +122,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -128,10 +139,31 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.ChassisId);
+            
+            CreateTable(
+                "dbo.ContactForms",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                        CompanyName = c.String(),
+                        Address = c.String(),
+                        Country = c.String(),
+                        Phone = c.String(),
+                        Comment = c.String(),
+                        CreatedBy = c.String(),
+                        CreatedOn = c.DateTime(nullable: false),
+                        EditedOn = c.DateTime(nullable: false),
+                        Status = c.Boolean(nullable: false),
+                        UserHostAdd = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
+                        RewriteUrl = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.Engines",
@@ -145,7 +177,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.EngineId);
@@ -161,7 +193,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -180,6 +212,18 @@
                 .Index(t => t.GalleryId);
             
             CreateTable(
+                "dbo.Keys",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(),
+                        Type = c.String(),
+                        Description = c.String(),
+                        CreatedOn = c.DateTime(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.Liters",
                 c => new
                     {
@@ -191,7 +235,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.LiterId);
@@ -209,7 +253,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.MakeId);
@@ -226,7 +270,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -245,7 +289,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -261,7 +305,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -279,7 +323,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
@@ -296,7 +340,7 @@
                         EditedOn = c.DateTime(nullable: false),
                         Status = c.Boolean(nullable: false),
                         UserHostAdd = c.String(),
-                        DisplayOrder = c.String(),
+                        DisplayOrder = c.Int(nullable: false),
                         RewriteUrl = c.String(),
                     })
                 .PrimaryKey(t => t.YearId);
@@ -318,13 +362,15 @@
             DropTable("dbo.MModels");
             DropTable("dbo.Makes");
             DropTable("dbo.Liters");
+            DropTable("dbo.Keys");
             DropTable("dbo.GalleryImages");
             DropTable("dbo.Galleries");
             DropTable("dbo.Engines");
+            DropTable("dbo.ContactForms");
             DropTable("dbo.Chassis");
             DropTable("dbo.Categories");
+            DropTable("dbo.Blogs");
             DropTable("dbo.Banners");
-            DropTable("dbo.BannerImages");
             DropTable("dbo.AutoPartMakes");
             DropTable("dbo.AutoPartImages");
             DropTable("dbo.AutoParts");
