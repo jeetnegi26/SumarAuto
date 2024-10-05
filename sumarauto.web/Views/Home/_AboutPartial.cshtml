@@ -1,61 +1,104 @@
-﻿
+﻿﻿
 <style>
     .about-us {
         padding: 7rem 0px;
     }
 
     .about-left {
-        padding: 0 6rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        background-image: url('../../content/images/about-bg.png');
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
     }
 
-    .about-read{
-        color:var(--primary);
+    .about-read {
+        color: var(--primary);
         text-decoration: none;
         opacity: 0.8;
-        transition:0.3s;
+        transition: 0.3s;
     }
 
-    .about-read:hover {
-        color: var(--primary);
-        opacity:1
+        .about-read:hover {
+            color: var(--primary);
+            opacity: 1
+        }
+
+    .abt-content-in {
+        padding: 5rem;
+        border: 3px solid #adadad;
+    }
+
+    .about-right {
+        align-self: center;
+    }
+
+    @@media(max-width:1024px) {
+
+        .about-us {
+            padding: 3rem 0px;
+        }
+
+        .abt-content-in {
+            padding: 2rem;
+            border: 3px solid #adadad;
+        }
+
+            .abt-content-in p {
+                font-size: 13px;
+            }
+    }
+
+    @@media (min-width:550px) and (max-width:770px) {
+        .about-boxx {
+            position: relative;
+        }
+
+        .about-right {
+            position: absolute;
+            right: -2%;
+            bottom: -13%;
+        }
+    }
+
+    @@media(max-width: 500px) {
+        .about-us {
+            padding: 2rem 0px;
+        }
+
+        .about-right img {
+            padding-top: 2rem;
+        }
     }
 </style>
 
 <div class="about-us">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-12 about-left">
-                <h2>OUR HISTORY</h2>
-                <p>
-                    Sumar is a professional auto parts supplier in Dubai.
-                    Base on years experiences in the Auto parts field, we know what our customers’
-                    demand and can offer our best service.
-                </p>
-                <p>
-                    Our mission is to offer the high quality parts and our goal is to innovate
-                    the durable new products to satisfy our customers.
-                </p>
-                <p>
-                    Our products including various kinds of Auto parts especially in the Rubber
-                    parts and Brake pads such as Engine Mounts, Shock Absorber Mounting, Center
-                    Bearing, Bushing for suspension, Stabilizer Link, Steering Boots and so on.
-                </p>
+        <div class="row about-boxx">
+            <div class="col-lg-6 col-md-8 col-12 about-left">
+                <div class="abt-content-in">
+                    <h2>OUR HISTORY</h2>
+                    <p>
+                        Sumar is a professional auto parts supplier in Dubai.
+                        Base on years experiences in the Auto parts field, we know what our customers’
+                        demand and can offer our best service.
+                    </p>
+                    <p>
+                        Our mission is to offer the high quality parts and our goal is to innovate
+                        the durable new products to satisfy our customers.
+                    </p>
+                    <p>
+                        Our products including various kinds of Auto parts especially in the Rubber
+                        parts and Brake pads such as Engine Mounts, Shock Absorber Mounting, Center
+                        Bearing, Bushing for suspension, Stabilizer Link, Steering Boots and so on.
+                    </p>
 
-                <a class="about-read" href="/Home/About">Read More</a>
+                    <a class="about-read" href="/about">Read More</a>
+                </div>
             </div>
 
-            <div class="col-lg-6 col-md-6 col-12 about-right">
+            <div class="col-lg-6 col-md-5 col-12 about-right">
                 <img src="~/Content/Images/abt-right.png" />
             </div>
         </div>
 
     </div>
 </div>
-

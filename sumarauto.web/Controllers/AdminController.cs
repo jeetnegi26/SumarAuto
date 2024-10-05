@@ -290,7 +290,7 @@ namespace sumarauto.web.Controllers
                         command.Parameters.AddWithValue("@Id", Id);
                         connection.Open();
                         var reader = command.ExecuteReader();
-                        if (reader.Read())
+                        if (reader.Read()) 
                         {
                             data.Id = (int)reader["Id"];
                             data.Title = Convert.ToString(reader["Title"]);
@@ -968,6 +968,96 @@ namespace sumarauto.web.Controllers
             catch (Exception)
             {
                 return Json(resultData, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region Clients
+        public ActionResult Clients()
+        {
+            using(var db = new AppDbContext())
+            {
+                var data = db.Clients.AsNoTracking().ToList();
+                return View(data);
+            }
+        }
+        public ActionResult ClientAction(int Id = 0)
+        {
+            var data = new Client();
+            try
+            {
+                if (Id > 0)
+                {
+                    using (var db = new AppDbContext())
+                    {
+                        data = db.Clients.FirstOrDefault(x => x.Id == Id);
+                    }
+                    return View(data);
+                }
+                return View(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult ClientAction(Client client)
+        {
+            var data = new Category();
+            string message = DateTime.Now.ToString("yyyyMMddHHmmss");
+            if (client.NewImage != null && client.NewImage != "" && client.NewImage.Length > 0)
+            {
+                client.Image = "/Content/Component/" + message + client.NewImage;
+            }
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    using (var command = new SqlCommand("ClientAction", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@Id", client.Id);
+                        command.Parameters.AddWithValue("@Title", client.Title);
+                        command.Parameters.AddWithValue("@Description", (object)client.Description ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@Image", (object)client.Image ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@CreatedBy", "Admin");
+                        command.Parameters.AddWithValue("@HostAddress", Request.UserHostAddress);
+                        command.Parameters.AddWithValue("@DisplayOrder", (object)client.DisplayOrder ?? 0); // Ensure integer type
+
+                        // Output parameters
+                        var requestparam = new SqlParameter("@Result", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        var requestparam1 = new SqlParameter("@IsCatExist", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+
+                        command.Parameters.Add(requestparam);
+                        command.Parameters.Add(requestparam1);
+
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Safely handle output parameter values
+                        int result = requestparam.Value != DBNull.Value ? (int)requestparam.Value : 0;
+                        int result1 = requestparam1.Value != DBNull.Value ? (int)requestparam1.Value : 0;
+
+                        if (result1 == 1)
+                        {
+                            result = 0;
+                            message = "Client with same name already exists in database.";
+                        }
+
+                        return Json(new { Success = result > 0, Message = message }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new { Success = false, Message = "Something went wrong!" }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion

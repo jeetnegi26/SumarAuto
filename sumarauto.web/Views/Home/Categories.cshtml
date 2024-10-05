@@ -1,8 +1,8 @@
-﻿
+﻿@model List<Model.Category>
 @{
     ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <style>
     .caregory {
         margin-top: 2rem;
@@ -81,90 +81,21 @@
 
         <div class="category-list">
             <div class="row">
-                <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>CV Boots</h4>
-                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Engine Mounts</h4>
-                        <p>Hydraulic Design, Premium Rubber Material, Dampening vibration and noise to the vehicle by Tenacity mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Bushings</h4>
-                        <p>Tenacity ‘s premium rubber material (NR+BR) ensures longer life and performance, enhancing the ride quality of the automobiles.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>CV Boots</h4>
-                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>
-
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
+                            <div class="category-item">
+                                <img src="@item.Image" alt="@item.Title" />
+                                <h4>@item.Title</h4>
+                                <p>@Html.Raw(@item.Description)</p>
+                                <button class="btn-primary">Find out more</button>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
-
         </div>
     </div>
 </div>
-
