@@ -43,6 +43,10 @@
         background-color: var(--bg);
         background-color: #f3f4f596;
     }
+    
+    .blog-content a{
+        color: var(--text);
+    }
 
     .blog-item {
         padding: 0 1.5rem;
@@ -112,7 +116,7 @@
                                 </p>
                                 <br />
                                 <p class="blog-date"> @item.Date.ToString("dd MMM yyyy")</p>
-                                <a href="/Blog?bId=@item.Id">Read More</a>
+                                <a href="/Blog?bId=@item.Id">Read More <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>

@@ -8,8 +8,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
 
 <style>
-    /*banner css starts*/
 
+    .img-fill {
+        width: 100%;
+        overflow: hidden; /* Ensures the image is cropped */
+    }
+
+        .img-fill img {
+            width: 100%; /* Responsive width */
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the container, cropping when needed */
+        }
+
+    /*banner css starts*/
     /* Arrows */
     .slick-prev,
     .slick-next {
@@ -863,32 +874,34 @@
             </p>
         </div>
 
-        <div class="category-list" >
+        <div class="category-list">
             <div class="row" id="catList-home">
                 @*<div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>CV Boots</h4>
-                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                        <button class="
-                                ">Found out more</button>
-                    </div>
+                <div class="category-item">
+                    <img src="~/Content/Images/pl_boot.png" />
+                    <h4>CV Boots</h4>
+                    <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                    <button class="
+                            ">Found out more</button>
                 </div>
+            </div>
 
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>*@
+            <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                <div class="category-item">
+                    <img src="~/Content/Images/pl_boot.png" />
+                    <h4>Strut Mounts</h4>
+                    <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                    <button class="btn-primary">Found out more</button>
+                </div>
+            </div>*@
 
-            <div class="text-center">
+
+            </div>
+
+            <div class="text-center py-5">
                 <a href="/categories" class="btn-primary">See all categories</a>
             </div>
         </div>
-    </div>
 </div>
 
 <div class="clients dark">
@@ -901,7 +914,7 @@
         </div>
 
         <div class="clients-list">
-            <div class="row" id="makeList-home">
+            <div class="row justify-content-center" id="makeList-home">
             </div>
         </div>
     </div>
