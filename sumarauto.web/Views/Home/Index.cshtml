@@ -569,13 +569,14 @@
     }
 
         .search-box .bootstrap-select {
-            border: 1px solid var(--bg);
             width: 100% !important;
             color: var(--bg);
         }
 
             .search-box .bootstrap-select .dropdown-toggle {
                 color: var(--bg);
+                background-color: var(--text);
+                padding: 8px;
             }
 
     .bootstrap-select .dropdown-toggle .filter-option {
@@ -729,10 +730,11 @@
 
     .search-text {
         background-color: var(--text);
-        padding: 6px 2px;
+        padding: 5px 6px;
         border: 1px solid var(--bg);
         color: var(--bg);
-        width: 100%
+        width: 100%;
+        border-radius: 5px;
     }
 
     @@media (min-width: 1200px) {
@@ -1015,6 +1017,7 @@
                         <img src="${Item.Image}" alt="${Item.Title}"/>
                         <h4>${Item.Title}</h4>
                         <p>${Item.Description}</button>
+                        <button class="btn-primary">Found out more</button>
                     </div>
                 </div>`;
             });

@@ -54,6 +54,25 @@
         border-radius: 0px;
     }
 
+    .filter-btn {
+        display: none;
+        text-align: right;
+    }
+
+    #show-filters {
+        font-size: 12px;
+        padding: 5px 11px;
+        border-radius: 3rem;
+        border-color: var(--bg);
+        color: var(--bg);
+    }
+
+        #show-filters:hover {
+            border-color: var(--bg);
+            color: var(--bg);
+            background-color: var(--text);
+        }
+
     @@media (min-width:550px) and (max-width:770px) {
 
         .form_book {
@@ -62,6 +81,16 @@
 
         .search-box{
             padding-top:1rem;
+        }
+    }
+
+    @@media(max-width:750px) {
+        .filter-btn {
+            display: block;
+        }
+
+        .mobile {
+            display: none;
         }
     }
 
@@ -77,7 +106,7 @@
         <div class="col-md-12 search-container">
             <form class="form_book">
                 <div class="row">
-                    <div class="col-lg-2 col-md-3 col-12 search-box">
+                    <div class="col-lg-2 col-md-3 col-12 search-box mobile">
                         <h6 class="date">Category</h6>
                         <select name="Category" id="Category" class="selectpicker" data-live-search="true">
                             <option value="Air hose"> Air hose</option>
@@ -96,7 +125,7 @@
                         </select>
                     </div>
 
-                    <div class="col-lg-1 col-md-3 col-12 search-box" >
+                    <div class="col-lg-1 col-md-3 col-12 search-box mobile" >
                         <h6 class="date">Model</h6>
                         <select name="Make" id="Make" class="selectpicker" data-live-search="true">
                             <option value="Air hose"> RSX-TYPE-S</option>
@@ -106,7 +135,7 @@
                         </select>
                     </div>
 
-                    <div class="col-lg-1 col-md-2 col-12 search-box">
+                    <div class="col-lg-1 col-md-2 col-12 search-box mobile">
                         <h6 class="date">Years</h6>
                         <select name="Years" id="Years" class="selectpicker" data-live-search="true">
                             <option value="Air hose"> 2020</option>
@@ -117,7 +146,7 @@
                         </select>
                     </div>
 
-                    <div class="col-lg-1 col-md-2 col-12 search-box">
+                    <div class="col-lg-1 col-md-2 col-12 search-box mobile">
                         <h6 class="date">Engine</h6>
                         <select name="Engine" id="Engine" class="selectpicker" data-live-search="true">
                             <option value="Air hose"> K24W7</option>
@@ -128,7 +157,7 @@
                         </select>
                     </div>
 
-                    <div class="col-lg-1 col-md-1 col-12 search-box">
+                    <div class="col-lg-1 col-md-1 col-12 search-box mobile">
                         <h6 class="date">Liters</h6>
                         <select name="Liters" id="Liters" class="selectpicker"  data-live-search="true">
                             <option value="Air hose">  2.4L</option>
@@ -140,7 +169,7 @@
                     </div>
 
 
-                    <div class="col-lg-1 col-md-2 col-12 search-box">
+                    <div class="col-lg-1 col-md-2 col-12 search-box mobile">
                         <h6 class="date">Chassis</h6>
                         <select name="Chassis" id="Chassis" @*class="selectpicker"*@>
                             <option value="Air hose"> DE2F</option>
@@ -153,7 +182,7 @@
 
                     <div class="col-lg-2 col-md-5 col-12 search-box">
                         <h6 class="date">Search</h6>
-                        <input class="search-text form-control" type="text" id="">
+                        <input class="search-text form-control" type="text" id="" placeholder="Search by parts">
                     </div>
 
                     <div class="col-lg-1 col-md-2 col-12 boo-btn search-box">
@@ -169,6 +198,24 @@
         $('.search-bar').empty();
         $(function () {
             $('.selectpicker').selectpicker();
+        });
+
+        // Initially hide the filters on mobile
+        $('#show-filters').click(function () {
+            // Toggle the visibility of the filters with a slide down/up effect
+            $('.mobile').slideToggle('slow');
+
+            if ($(this).html().includes('bi-funnel')) {
+                // Change to Close button with padding adjustment
+                $(this).html('<i class="bi bi-x"></i>').css({
+                    padding: '5px 8px'
+                });
+            } else {
+                // Change back to Filters button with default padding
+                $(this).html('<i class="bi bi-funnel"></i> Filters').css({
+                    padding: '5px 11px'
+                });
+            }
         });
     })
 </script>

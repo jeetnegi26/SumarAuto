@@ -90,7 +90,6 @@ a {
 }
 
     .navbar a {
-        color: var(--text) !important;
         text-decoration: none;
     }
 
@@ -251,7 +250,6 @@ footer img {
 .navbar-menu nav ul li a {
     display: block;
     padding: 10px 20px;
-    color: #000;
     transition: 0.3s;
 }
 

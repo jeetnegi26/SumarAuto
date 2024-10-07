@@ -35,6 +35,18 @@
     <script src="~/Scripts/owl.carousel.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
 
+
+    <style>
+
+        .navbar a {
+            color: var(--text)
+        }
+
+        .nav-active{
+            color:var(--primary) !important;
+            font-weight:500;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -44,7 +56,7 @@
                 <div style="z-index: 2;" class="col-lg-12 col-md-4 col-4 navbar-menu sticky">
                     <nav>
                         <ul>
-                            <li><a href="/">HOME</a></li>
+                            <li><a class="nav-active" href="/">HOME</a></li>
                             <li><a href="/Property/PropertyList">PRODUCTS</a></li>
                             <li><a href="/about">ABOUT US</a></li>
                             <li><a href="/contact-us">CONTACT</a></li>
