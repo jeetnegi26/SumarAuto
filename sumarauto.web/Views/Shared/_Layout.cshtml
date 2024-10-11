@@ -56,8 +56,7 @@
                             <li><a href="/Products">PRODUCTS</a></li>
                             <li><a href="/about">ABOUT US</a></li>
                             <li><a href="/contact-us">CONTACT</a></li>
-                            <li><a href="@Url.Action("Blogs")">BLOGS</a></li>
-
+                            <li><a href="/blogs">BLOGS</a></li>
                         </ul>
                     </nav>
                     <div class="navbar-icon">
@@ -101,6 +100,33 @@
     </div>
 
     <script>
+        // Function to handle nav item click
+        document.querySelectorAll('nav ul li a').forEach(navItem => {
+            navItem.addEventListener('click', function () {
+                // Store the clicked nav item's href in localStorage
+                localStorage.setItem('activeNavItem', this.getAttribute('href'));
+            });
+        });
+
+        // Function to apply the active class on page load
+        window.addEventListener('DOMContentLoaded', (event) => {
+            // Get the stored href from localStorage
+            const activeNavItem = localStorage.getItem('activeNavItem');
+
+            if (activeNavItem) {
+                // Remove the 'nav-active' class from all nav items
+                document.querySelectorAll('nav ul li a').forEach(navItem => {
+                    navItem.classList.remove('nav-active');
+                });
+
+                // Find the nav item with the stored href and add 'nav-active' class
+                const activeElement = document.querySelector(`nav ul li a[href="${activeNavItem}"]`);
+                if (activeElement) {
+                    activeElement.classList.add('nav-active');
+                }
+            }
+        });
+
         $('.navbar-icon').click(function () {
             $(this).toggleClass("active");
             $(".navbar-menu nav").toggleClass("active");
