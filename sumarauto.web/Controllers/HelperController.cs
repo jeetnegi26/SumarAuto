@@ -135,7 +135,6 @@ namespace sumarauto.web.Controllers
             }
             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
         }
-
         [HttpPost]
         public ActionResult StatusChange(int Id, string Type)
         {
@@ -202,6 +201,16 @@ namespace sumarauto.web.Controllers
                             {
                                 bool value = Client.Status;
                                 Client.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
+                        case "FileUpload":
+                            var FileUpload = db.FileUploadModels.Find(Id);
+                            if (FileUpload != null)
+                            {
+                                bool value = FileUpload.Status;
+                                FileUpload.Status = value == true ? false : true;
                                 db.SaveChanges();
                             }
                             result = true;
@@ -512,6 +521,180 @@ namespace sumarauto.web.Controllers
                     }
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [OutputCache(Duration = 3600, VaryByParam = "none")]
+        public async Task<ActionResult> GetDropCatMake()
+        {
+            try
+            {
+                var result = new DropCatMake
+                {
+                    SelectCategories = new List<SelectListItem>(),
+                    SelectMakes = new List<SelectListItem>()
+                };
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand("GetDropCatMake", connection)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    connection.Open();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        // First result set: Banners
+                        while (reader.Read())
+                        {
+                            result.SelectCategories.Add(new SelectListItem
+                            {
+                                Value = Convert.ToString(reader["Id"]),
+                                Text = Convert.ToString(reader["Title"]),
+                            });
+                        }
+                        // Move to the next result set (Makes)
+                        if (await reader.NextResultAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                result.SelectMakes.Add(new SelectListItem
+                                {
+                                    Value = Convert.ToString(reader["MakeId"]),
+                                    Text = Convert.ToString(reader["Title"]),
+                                });
+                            }
+                        }
+                    }
+                }
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<ActionResult> GetDropModel(int MakeId,int CatId=0)
+        {
+            try
+            {
+                var result = new List<DropModel>();
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand("GetDropMake", connection)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmd.Parameters.AddWithValue("MakeId", MakeId);
+                    cmd.Parameters.AddWithValue("CatId", CatId);
+                    connection.Open();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        
+                        // First result set: Banners
+                        while (reader.Read())
+                        {
+                            var resultSingle = new DropModel
+                            {
+                                Value = Convert.ToString(reader["Title"])
+                            };
+                            result.Add(resultSingle);
+                        }
+                    }
+                }
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<ActionResult> GetDropYELC(int MakeId, string ModelTitle, int CatId = 0, string YearTitle = null, string EngineTitle = null, string LitersTitle = null, string ChassisTitle = null)
+        {
+            try
+            {
+                DropYELC result = new DropYELC
+                {
+                    YearsSelect = new List<string>(),
+                    Engines = new List<string>(),
+                    Liters = new List<string>(),
+                    Chassis = new List<string>()
+                };
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand("GetDropYELC", connection)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmd.Parameters.AddWithValue("CatId", CatId);
+                    cmd.Parameters.AddWithValue("MakeId", MakeId);
+                    cmd.Parameters.AddWithValue("ModelTitle", ModelTitle);
+
+                    // Pass the filter parameters for each dropdown
+                    cmd.Parameters.AddWithValue("YearTitle", string.IsNullOrEmpty(YearTitle) ? (object)DBNull.Value : YearTitle);
+                    cmd.Parameters.AddWithValue("EngineTitle", string.IsNullOrEmpty(EngineTitle) ? (object)DBNull.Value : EngineTitle);
+                    cmd.Parameters.AddWithValue("LitersTitle", string.IsNullOrEmpty(LitersTitle) ? (object)DBNull.Value : LitersTitle);
+                    cmd.Parameters.AddWithValue("ChassisTitle", string.IsNullOrEmpty(ChassisTitle) ? (object)DBNull.Value : ChassisTitle);
+
+
+
+                    connection.Open();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            if (!reader.IsDBNull(reader.GetOrdinal("YearTitle")))
+                            {
+                                var yearRange = Convert.ToString(reader["YearTitle"]);  
+                                // Split the range into start and end years
+                                var years = yearRange.Split('-');
+                                if (years.Length == 2)
+                                {
+                                    int startYear = int.Parse(years[0]);
+                                    int endYear = int.Parse(years[1]);
+                                    // Iterate over the range and add each year to the result
+                                    for (int year = startYear; year <= endYear; year++)
+                                    {
+                                        var yearString = year.ToString();
+                                        if (!result.YearsSelect.Contains(yearString))  // Check for duplicates
+                                        {
+                                            result.YearsSelect.Add(yearString);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!reader.IsDBNull(reader.GetOrdinal("EngineTitle")))
+                            {
+                                var engineTitle = Convert.ToString(reader["EngineTitle"]);
+                                if (!result.Engines.Contains(engineTitle)) // Check for duplicates
+                                {
+                                    result.Engines.Add(engineTitle);
+                                }
+                            }
+                            if (!reader.IsDBNull(reader.GetOrdinal("LitersTitle")))
+                            {
+                                var litersTitle = Convert.ToString(reader["LitersTitle"]);
+                                if (!result.Liters.Contains(litersTitle)) // Check for duplicates
+                                {
+                                    result.Liters.Add(litersTitle);
+                                }
+                            }
+                            if (!reader.IsDBNull(reader.GetOrdinal("ChassisTitle")))
+                            {
+                                var chassisTitle = Convert.ToString(reader["ChassisTitle"]);
+                                if (!result.Chassis.Contains(chassisTitle)) // Check for duplicates
+                                {
+                                    result.Chassis.Add(chassisTitle);
+                                }
+                            }
+                        }
+                    }
+                }
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
             {

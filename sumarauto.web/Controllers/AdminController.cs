@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Services.Description;
+using System.Web.UI.WebControls;
 using DataModel;
 using Model;
 using Service;
@@ -1058,6 +1059,65 @@ namespace sumarauto.web.Controllers
             catch (Exception)
             {
                 return Json(new { Success = false, Message = "Something went wrong!" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region FileUpload
+        public ActionResult FileUpload()
+        {
+            List<FileUploadModel> fileUploadModels = new List<FileUploadModel>();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetFileUploadList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            FileUploadModel fileUploadModel = new FileUploadModel
+                            {
+                                Id = (int)reader["Id"],
+                                Title = Convert.ToString(reader["Title"]),
+                                FilePath = Convert.ToString(reader["FilePath"]),
+                                Status = (bool)reader["Status"],
+                                Date = (DateTime)reader["Date"],
+                                CreatedOnString = ((DateTime)reader["Date"]).ToString("dd MMM yyyy"),
+                            };
+                            fileUploadModels.Add(fileUploadModel);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View(fileUploadModels.OrderBy(x => x.DisplayOrder)
+                      .ThenBy(x => x.CreatedOn)
+                      .ToList());
+        }
+        public ActionResult FileUploadAction(int Id = 0)
+        {
+            var data = new FileUploadModel();
+            try
+            {
+                if (Id > 0)
+                {
+                    using (var db = new AppDbContext())
+                    {
+                        data = db.FileUploadModels.FirstOrDefault(x => x.Id == Id);
+                    }
+                    return View(data);
+                }
+                return View(data);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
         #endregion

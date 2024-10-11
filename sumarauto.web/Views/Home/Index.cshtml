@@ -3,11 +3,10 @@
     ViewBag.Description = "Sumar is a professional auto parts supplier in Dubai. Base on years experiences in the Auto parts field, we know what our customers’ demand and can offer our best service.";
     ViewBag.Image = "";
 }
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
-
 <style>
+
     /*banner css starts*/
 
     /* Arrows */
@@ -563,9 +562,9 @@
             color: var(--bg);
         }
 
-            .search-box .bootstrap-select .dropdown-toggle {
+/*            .search-box .bootstrap-select .dropdown-toggle {
                 color: var(--bg);
-            }
+            }*/
 
     .bootstrap-select .dropdown-toggle .filter-option {
         font-size: 12px;
@@ -835,9 +834,8 @@
         padding: 1.5rem 0;
     }
 </style>
-
 <div class="banner-box">
-    @Html.Partial("_Search")
+    @*@Html.Partial("_Search")*@
 
     <div class="Modern-Slider">
         <div class="Gallery-Slider" id="Slider">
@@ -863,32 +861,31 @@
             </p>
         </div>
 
-        <div class="category-list" >
+        <div class="category-list">
             <div class="row" id="catList-home">
                 @*<div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>CV Boots</h4>
-                        <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                        <button class="
-                                ">Found out more</button>
-                    </div>
+                <div class="category-item">
+                    <img src="~/Content/Images/pl_boot.png" />
+                    <h4>CV Boots</h4>
+                    <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
+                    <button class="
+                            ">Found out more</button>
                 </div>
+            </div>
 
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>*@
-
+            <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                <div class="category-item">
+                    <img src="~/Content/Images/pl_boot.png" />
+                    <h4>Strut Mounts</h4>
+                    <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                    <button class="btn-primary">Found out more</button>
+                </div>
+            </div>*@
+            </div>
             <div class="text-center">
                 <a href="/categories" class="btn-primary">See all categories</a>
             </div>
         </div>
-    </div>
 </div>
 
 <div class="clients dark">
@@ -915,6 +912,7 @@
 
 
 <script>
+    removeLocalDataMake();
     const Slider = document.getElementById("Slider");
     const catListHome = document.getElementById("catList-home");
     const makeListHome = document.getElementById("makeList-home");
@@ -935,16 +933,8 @@
             }
             const data = await response.json();
             if (data.Banners != null && Slider) {
-                populateBannerData(data.Banners);
-            }
-        } catch (error) {
-            console.error('Error fetching page data:', error);
-        }
-    }
-    function populateBannerData(data) {
-        let htmlString = "";
-        data.forEach(item => {
-            htmlString += `<div class="item">
+                data.Banners.forEach(item => {
+                    Slider.innerHTML += `<div class="item">
                 <div class="img-fill">
                     <img src="${item.Image}" alt="Home Banner"/>
                     <div class="info">
@@ -955,25 +945,27 @@
                     </div>
                 </div>
             </div>`;
-        });
-        Slider.innerHTML = htmlString;
-        $(".Gallery-Slider").slick({
-            autoplay: true,
-            autoplaySpeed: 9000,
-            speed: 700,
-            mobileFirst: true,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            pauseOnHover: false,
-            dots: true,
+                });
+                $(".Gallery-Slider").slick({
+                    autoplay: true,
+                    autoplaySpeed: 9000,
+                    speed: 700,
+                    mobileFirst: true,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    pauseOnHover: false,
+                    dots: true,
 
-            respondTo: 'min',
-            cssEase: 'linear',
-            prevArrow: '<button class="PrevArrow"></button>',
-            nextArrow: '<button class="NextArrow"></button>',
-        })
+                    respondTo: 'min',
+                    cssEase: 'linear',
+                    prevArrow: '<button class="PrevArrow"></button>',
+                    nextArrow: '<button class="NextArrow"></button>',
+                })
+            }
+        } catch (error) {
+            console.error('Error fetching page data:', error);
+        }
     }
-
     async function getIsFeaturedMakeAndCat() {
         try {
             const response = await fetch('/Home/GetIsFeaturedMakeAndCat', {
@@ -986,39 +978,65 @@
                 throw new Error('Something went worng!');
             }
             const data = await response.json();
-            populateFeaturedMakeAndCat(data);
-        } catch (error) {
-            console.error('Error fetching page data:', error);
-        }
-    }
-    function populateFeaturedMakeAndCat(data) {
-        let htmlStringCat = "";
-        let htmlStringMake = "";
-        if (catListHome && data != null && data.Categories != null) {
-            data.Categories.forEach(Item => {
-                htmlStringCat += ` 
+            if (catListHome && data != null && data.Categories != null) {
+                data.Categories.forEach(Item => {
+                    catListHome.innerHTML += ` 
                 <div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
                     <div class="category-item">
                         <img src="${Item.Image}" alt="${Item.Title}"/>
                         <h4>${Item.Title}</h4>
                         <p>${Item.Description}</button>
+                        <button class="btn-primary catListHomeBtn" data-id="${Item.Id}">Found out more</button>
                     </div>
                 </div>`;
-            });
-            catListHome.innerHTML = htmlStringCat;
-        }
-        if (makeListHome && data != null && data.Makes != null) {
-            data.Makes.forEach(Item => {
-                htmlStringMake += ` 
+                });
+                const catListHomeBtns = document.querySelectorAll(".catListHomeBtn");
+                if (catListHomeBtns) {
+                    catListHomeBtns.forEach(item => {
+                        item.addEventListener("click", function () {
+                            let id = this.getAttribute('data-id');
+                            const catStorageItems = {
+                                "TempCat": id,
+                                "TempMake": makeDrop.value,
+                                "TempModel": modelDrop.value,
+                                "TempYear": yearsDrop.value,
+                                "TempEngine": engineDrop.value,
+                                "TempLiter": litersDrop.value,
+                                "TempChassis": chassisDrop.value,
+                                "TempsearchInput": document.getElementById("searchInput").value
+                            };
+                            Object.keys(catStorageItems).forEach(key => {
+                                localStorage.removeItem(key);
+                                localStorage.setItem(key, catStorageItems[key]);
+                            });
+                            window.location.href = `/Products?Category=${catStorageItems.TempCat}&Make=${catStorageItems.TempMake}&Model=${catStorageItems.TempModel}&Years=${catStorageItems.TempYear}&Engine=${catStorageItems.TempEngine}&Liters=${catStorageItems.TempLiter}&Chassis=${catStorageItems.TempChassis}&Search=${catStorageItems.TempsearchInput}`;
+                        });
+                    });
+                }
+            }
+            if (makeListHome && data != null && data.Makes != null) {
+                data.Makes.forEach(Item => {
+                    makeListHome.innerHTML += ` 
                 <div class="custom-col col-md-4 col-6 client-item">
                     <a class="brand-anchor">
                         <img src="${Item.Image}" alt = "${Item.Title}" />
                         <h4>${Item.Title}</h4>
                     </a>
                 </div>`;
-            });
-            makeListHome.innerHTML = htmlStringMake;
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching page data:', error);
         }
     }
-
+    function removeLocalDataMake() {
+        localStorage.removeItem("TempCat");
+        localStorage.removeItem("TempMake");
+        localStorage.removeItem("TempModel");
+        localStorage.removeItem("TempYear");
+        localStorage.removeItem("TempEngine");
+        localStorage.removeItem("TempLiter");
+        localStorage.removeItem("TempChassis");
+        localStorage.removeItem("TempsearchInput");
+    }
 </script>

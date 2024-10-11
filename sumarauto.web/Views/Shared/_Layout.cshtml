@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="search-bar">
+    <div class="search-bar" id="s-bar">
         @Html.Partial("_Search")
     </div>
 
@@ -128,13 +128,9 @@
                     }
                     const data = await response.json();
                     if (data != null) {
-                        let socialMediaKeys = data.filter(item => item.Type === 'SocialMedia' && item.Value != "");
-                        let htmlString1 = "";
-                        socialMediaKeys.forEach(item => {
-                            htmlString1 += `<a class="pr-1" href="${item.Value}" target="_blank"><i class="bi bi-${item.Title}"></i></a>`;
+                        data.filter(item => item.Type === 'SocialMedia' && item.Value != "").forEach(item => {
+                            footerSocialMedia.innerHTML += `<a class="pr-1" href="${item.Value}" target="_blank"><i class="bi bi-${item.Title}"></i></a>`;
                         });
-                        footerSocialMedia.innerHTML = htmlString1;
-
                         //Contact Form
                         const BrandInfo = document.getElementById("BrandInfo-List");
                         if (BrandInfo) {
@@ -167,7 +163,6 @@
                     console.error('Error fetching page data:', error);
                 }
             }
-
         });
     </script>
 </body>

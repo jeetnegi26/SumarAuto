@@ -40,6 +40,7 @@ namespace sumarauto.database
         public DbSet<Key> Keys { get; set; }
         public DbSet<ContactForm> ContactForm { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<FileUploadModel> FileUploadModels { get; set; }
 
     }
 }

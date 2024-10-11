@@ -167,6 +167,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\DataUpdateController.cs" />
     <Compile Include="Controllers\HelperController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImageController.cs" />
@@ -336,12 +337,16 @@
     <Content Include="Views\Admin\MakeList.cshtml" />
     <Content Include="Views\Admin\WebsiteInformation.cshtml" />
     <Content Include="Views\Admin\ClientAction.cshtml" />
+    <Content Include="Views\Admin\FileUpload.cshtml" />
+    <Content Include="Views\Admin\FileUploadAction.cshtml" />
+    <Content Include="Views\DataUpdate\UploadCsv.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\AutoPartImages\" />
     <Folder Include="Content\Banner\" />
     <Folder Include="Content\Blog\" />
+    <Folder Include="Content\Brochures\" />
     <Folder Include="Content\Component\" />
     <Folder Include="Content\Gallery\" />
     <Folder Include="Models\" />

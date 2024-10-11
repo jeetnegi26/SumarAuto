@@ -11,163 +11,38 @@
 
 USE [sumarautoDb]
 GO
-/****** Object:  StoredProcedure [dbo].[GetGalleryData]    Script Date: 10/3/2024 1:23:15 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetPartofSameModel]    Script Date: 10/10/2024 2:37:56 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-ALTER PROCEDURE [dbo].[GetGalleryData]
-    @Start INT,
-    @Length INT,
-	@dropdownId INT,
-    @SearchValue NVARCHAR(255) = NULL,  -- Add parameter for search
-    @sortColumnIndex NVARCHAR(10) = NULL,  -- Add parameter for column index with default NULL
-    @sortColumnDirection NVARCHAR(4) = NULL  -- Add parameter for sorting direction with default NULL
+ALTER PROCEDURE [dbo].[GetPartofSameModel]
+@Make NVARCHAR(100),
+@Model NVARCHAR(100),
+@Engine NVARCHAR(100),
+@Chassis NVARCHAR(100)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
-    DECLARE @Offset INT = @Start;
-    DECLARE @OrderBy NVARCHAR(255);
-
-    -- Set default values if @sortColumnIndex or @sortColumnDirection is NULL or empty
-    IF @sortColumnIndex IS NULL OR @sortColumnIndex = ''
-    BEGIN
-        SET @sortColumnIndex = '1';  -- Default to sorting by Id
-    END
-
-    IF @sortColumnDirection IS NULL OR @sortColumnDirection = ''
-    BEGIN
-        SET @sortColumnDirection = 'desc';  -- Default to descending order
-    END
-
-    -- Determine the ORDER BY clause based on the column index
-    SET @OrderBy = CASE @sortColumnIndex
-                    WHEN '1' THEN 'Id'
-                    ELSE 'Id'  -- Default to Id if no valid column is specified
-                   END + ' ' + @sortColumnDirection;
-
-    -- Use dynamic SQL to include the dynamic ORDER BY clause
-    DECLARE @SQL NVARCHAR(MAX);
-    SET @SQL = '
-    ;WITH GalleryPageData AS
-    (
-SELECT
-    g.Id,
-		g.CreatedBy,
-			g.Status,
-	g.CreatedOn,
-	g.EditedOn,
-    g.Title,
-    COALESCE(
-        (SELECT TOP 1 gi.Image
-         FROM GalleryImages gi
-         WHERE gi.GalleryId = g.Id AND gi.DefaultImage = 1),
-        (SELECT TOP 1 gi.Image
-         FROM GalleryImages gi
-         WHERE gi.GalleryId = g.Id
-         ORDER BY gi.Id)
-    ) AS DefaultImage
-FROM
-    Galleries g
-        WHERE  (@SearchValue IS NULL OR @SearchValue = ''''
-                OR CAST(g.Id AS NVARCHAR) LIKE ''%'' + @SearchValue + ''%''
-                OR g.Title LIKE ''%'' + @SearchValue + ''%'')
-				AND (@dropdownId = 2 OR (g.Status = CASE @dropdownId WHEN 0 THEN 1 WHEN 1 THEN 0 END))
+    -- Get distinct AutoPart Ids first
+    WITH DistinctAutoParts AS (
+        SELECT DISTINCT ap.Id
+        FROM AutoParts ap
+        INNER JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+        INNER JOIN Makes m ON m.MakeId = apm.Make_Id
+		LEFT JOIN AutoPartImages ai ON ai.AutoPartId = ap.Id AND ai.[Default] = 0
+        WHERE m.Title = @Make
+          AND apm.Model_Title = @Model
+          AND apm.Chassis_Title = @Chassis
     )
+    -- Now select the other fields for the distinct AutoPart Ids
     SELECT
-        *
-    FROM
-        GalleryPageData
-    ORDER BY ' + @OrderBy + '
-    OFFSET @Offset ROWS
-    FETCH NEXT @Length ROWS ONLY;';
-
-    EXEC sp_executesql @SQL,
-       N'@dropdownId INT,@SearchValue NVARCHAR(255), @Offset INT, @Length INT',
-         @dropdownId, @SearchValue, @Offset, @Length;
-
-    -- Return total records count for pagination
-    SELECT COUNT(*) FROM
-    (
-        SELECT
-            g.Id
-        FROM
-            Galleries g
-        JOIN
-            GalleryImages gi ON g.Id = gi.GalleryId OR gi.DefaultImage = 1
-        WHERE (@SearchValue IS NULL OR @SearchValue = ''
-                OR CAST(g.Id AS NVARCHAR) LIKE '%' + @SearchValue + '%'
-                OR g.Title LIKE '%' + @SearchValue + '%')
-				AND (@dropdownId = 2 OR (g.Status = CASE @dropdownId WHEN 0 THEN 1 WHEN 1 THEN 0 END))
-    ) AS TotalRecords;
-END
-
-
-
-
-/*    ==Scripting Parameters==
-
-    Source Server Version : SQL Server 2016 (13.0.4259)
-    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
-    Source Database Engine Type : Standalone SQL Server
-
-    Target Server Version : SQL Server 2017
-    Target Database Engine Edition : Microsoft SQL Server Standard Edition
-    Target Database Engine Type : Standalone SQL Server
-*/
-
-USE [sumarautoDb]
-GO
-/****** Object:  StoredProcedure [dbo].[UpsertGallery]    Script Date: 10/3/2024 1:23:59 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-Create PROCEDURE [dbo].[UpsertGallery]
-    @Id INT,
-    @Title NVARCHAR(255),
-    @SelectedDefault NVARCHAR(255) = NULL,
-    @CreatedBy NVARCHAR(100) = 'Admin',
-    @OutputId INT OUTPUT  -- Correctly declare the OUTPUT parameter
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    IF @Id > 0
-    BEGIN
-        -- Edit existing Gallery
-        UPDATE Galleries
-        SET Title = @Title,
-            EditedOn = GETDATE()
-        WHERE Id = @Id;
-
-        -- If no files are provided but a default image is selected, update the default image flag
-        IF @SelectedDefault IS NOT NULL
-        BEGIN
-            UPDATE GalleryImages
-            SET DefaultImage = 0
-            WHERE GalleryId = @Id;
-
-            UPDATE GalleryImages
-            SET DefaultImage = 1
-            WHERE GalleryId = @Id AND Image LIKE '%' + @SelectedDefault + '%';
-        END
-
-        -- Return the Id of the updated gallery
-        SET @OutputId = @Id;
-    END
-    ELSE
-    BEGIN
-        -- Insert new gallery
-        INSERT INTO Galleries (Title, CreatedBy, CreatedOn, EditedOn, Status)
-        VALUES (@Title, @CreatedBy, GETDATE(), GETDATE(), 1);
-
-        -- Get the newly inserted Id and return it
-        SET @OutputId = SCOPE_IDENTITY();
-    END
+        ap.Id,
+        ap.Title,
+        ap.ExtraField as Package,
+		ai.Image
+    FROM AutoParts ap
+    JOIN DistinctAutoParts dap ON dap.Id = ap.Id
+    LEFT JOIN AutoPartImages ai ON ai.AutoPartId = ap.Id AND ai.[Default] = 0
 END
 
 
@@ -176,121 +51,17 @@ END
 
 
 
+New table add
 
-
-
-
-USE sumarautoDb
-GO
-/****** Object:  StoredProcedure [dbo].[GetGalleryDetails]    Script Date: 10/3/2024 1:34:57 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-Create PROCEDURE [dbo].[GetGalleryDetails]
-    @GalleryId INT
-AS
-BEGIN
-    SELECT
-        g.Id AS GalleryId,
-        g.Title
-    FROM
-        Galleries g
-		    LEFT JOIN
-        GalleryImages gi ON gi.GalleryId = g.Id
-    WHERE
-        @GalleryId IS NULL OR g.Id = @GalleryId
-
-    -- Second result set: Associated banner images
-    SELECT
-        bi.Id AS GalleryImgId,
-        bi.Image,
-		bi.DefaultImage
-    FROM
-        GalleryImages bi
-    WHERE
-        bi.GalleryId = @GalleryId;
-END
-
-
-
-
-
-
-
-/*    ==Scripting Parameters==
-
-    Source Server Version : SQL Server 2016 (13.0.4259)
-    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
-    Source Database Engine Type : Standalone SQL Server
-
-    Target Server Version : SQL Server 2017
-    Target Database Engine Edition : Microsoft SQL Server Standard Edition
-    Target Database Engine Type : Standalone SQL Server
-*/
-
-USE [sumarautoDb]
-GO
-/****** Object:  StoredProcedure [dbo].[AuthenticateUser]    Script Date: 10/3/2024 3:29:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER Procedure [dbo].[AuthenticateUser]
-    @UserName NVARCHAR(255),  -- Username or Email for login
-    @Password NVARCHAR(255),  -- Password provided by the user
-    @UserId INT OUTPUT,       -- Output parameter to return the user ID
-    @UserRole NVARCHAR(255) OUTPUT,
-	@Url NVARCHAR(255) OUTPUT
-as begin
- DECLARE @StoredPassword NVARCHAR(255);
-  DECLARE @RoleId INT;
-
-     SELECT @UserId = Id,
-           @StoredPassword = HashPassword
-    FROM Users
-    WHERE Email = @UserName;
-
-	 IF @UserId IS NULL
-	 BEGIN
-        SET @UserRole = 'Invalid user name or password';
-        RETURN;
-    END
-	-- Verify the password
-    IF @StoredPassword <> @Password
-    BEGIN
-        SET @UserRole = 'Invalid user name or password';
-        SET @UserId = NULL;
-        RETURN;
-    END
-
- SELECT @RoleId = RoleId
-    FROM RoleAssigns
-    WHERE UserId = @UserId;
-
-	-- If RoleId is null, return an error
-    IF @RoleId IS NULL
-    BEGIN
-        SET @UserRole = 'Role not assigned';
-        RETURN;
-    END
-
-    -- Fetch the role name from the Roles table using RoleId
-    SELECT @UserRole = Title
-    FROM Roles
-    WHERE Id = @RoleId;
-
-IF @Url IS NOT NULL
-BEGIN
-    SELECT 1;
-END
-ELSE
-BEGIN
-    SELECT 0;
-	If @UserRole = 'SuperAdmin'
-	Begin
-     set @Url = '/Admin'
-	End
-END
-END
-
+ CREATE TABLE FileUpload (
+    Id INT PRIMARY KEY IDENTITY(1,1),  -- Auto-incrementing primary key
+    Title NVARCHAR(255) NOT NULL,      -- Title with a max length of 255 characters
+    FilePath NVARCHAR(500) NOT NULL,   -- File path with a max length of 500 characters
+    CreatedBy NVARCHAR(100),           -- The user who created the record, optional
+    CreatedOn DATETIME NOT NULL,       -- Date and time when the record was created
+    EditedOn DATETIME,                 -- Date and time when the record was last edited
+    Status BIT NOT NULL,               -- Boolean status (1 or 0)
+    UserHostAdd NVARCHAR(50),          -- User's host address, optional
+    DisplayOrder INT NOT NULL,         -- Order for display
+    RewriteUrl NVARCHAR(255)           -- SEO-friendly URL, optional
+);

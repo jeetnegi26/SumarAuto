@@ -1,0 +1,120 @@
+NU1902: Package 'jQuery' 3.4.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-gxr4-xjj5-5px2
+NU1902: Package 'jQuery' 3.4.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-jpcq-cgw6-v4j6
+NU1901: Package 'jQuery.Validation' 1.17.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-j9m2-h2pv-wvph
+NU1903: Package 'jQuery.Validation' 1.17.0 has a known high severity vulnerability,
+
+
+<div id="container_box" class="multipleDetails">
+    <div class="row autoPartItem_container">
+        <div class="col-2">
+            <div class="mb-3">
+                <select class="form-select makeSelected" name="MultipleDetails[0].Make">
+                </select>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="mb-3">
+                <input id="models" class="form-control" name="MultipleDetails[0].Model" placeholder="Model">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="mb-3">
+                <input id="years" class="form-control" name="MultipleDetails[0].Year" placeholder="e.g : 06-12 (2006 - 2012)">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="mb-3">
+                <input id="engines" class="form-control" name="MultipleDetails[0].Engine" placeholder="Engine">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="mb-3">
+                <input id="liter" class="form-control" name="MultipleDetails[0].Liter" placeholder="Liter">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="mb-3">
+                <input id="chassiss" class="form-control" name="MultipleDetails[0].Chassis" placeholder="Chassis">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+newMakeItems.forEach(newMakeItem => {
+    newMakeItem.addEventListener("click", function () {
+        const clonedContainer = autoPartItem_Container.cloneNode(true);
+        
+        // Update name attributes with the correct index
+        const currentIndex = container_box.children.length;  // Get the current number of containers
+        const inputs = clonedContainer.querySelectorAll('input, select');
+        
+        inputs.forEach(input => {
+            let name = input.getAttribute('name');
+            if (name) {
+                input.setAttribute('name', name.replace(/\[\d+\]/, `[${currentIndex}]`)); // Update index
+            }
+        });
+        
+        container_box.appendChild(clonedContainer);
+        $(clonedContainer).slideDown("slow");
+    });
+});
+
+
+document.getElementById("CreateBtn").addEventListener("click", function () {
+    // Serialize form data
+    const formData = new FormData(document.getElementById("Create"));
+    
+    // Send the form data to the controller via AJAX
+    $.ajax({
+        url: '/Controller/Action',  // Update with your controller action
+        type: 'POST',
+        data: formData,
+        processData: false,  // Required for FormData
+        contentType: false,  // Required for FormData
+        success: function (response) {
+            // Handle success
+            alert("Form submitted successfully!");
+        },
+        error: function (error) {
+            // Handle error
+            console.error("Error submitting form: ", error);
+        }
+    });
+});
+
+
+public class ItemViewModel
+{
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public int CategoryId { get; set; }
+    public int DisplayOrder { get; set; }
+    public string Image { get; set; }
+
+    // List to handle multiple cloned details
+    public List<MultipleDetail> MultipleDetails { get; set; }
+}
+
+public class MultipleDetail
+{
+    public string Make { get; set; }
+    public string Model { get; set; }
+    public string Year { get; set; }
+    public string Engine { get; set; }
+    public string Liter { get; set; }
+    public string Chassis { get; set; }
+}
+
+[HttpPost]
+public IActionResult Create(ItemViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        // Handle the form submission here
+        return Json(new { success = true });
+    }
+    return Json(new { success = false });
+}

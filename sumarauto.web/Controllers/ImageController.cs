@@ -324,5 +324,67 @@ namespace sumarauto.web.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<JsonResult> FileUploadAction(IEnumerable<HttpPostedFileBase> Files, string Title,DateTime date, int DisplayOrder = 0,int Id = 0)
+        {
+            JsonResult result = new JsonResult();
+            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            try
+            {
+                var FileUploadModels = new List<FileUploadModel>();
+
+                using (var db = new AppDbContext())
+                {
+                    if (Files != null)
+                    {
+                        foreach (var file in Files)
+                        {
+                            if (file != null && file.ContentLength > 0)
+                            {
+                                // Generate unique file name
+                                var timestampPrefix = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                                var fileName = timestampPrefix + "_" + Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/Content/Brochures/"), fileName);
+                                await Task.Run(() => file.SaveAs(path));
+                                var imgUrl = string.Format("/Content/Brochures/" + fileName);
+                                var data = new FileUploadModel()
+                                {
+                                    FilePath = imgUrl,
+                                    Id = Id,
+                                    Title = Title,
+                                    Date = date,
+                                    CreatedBy = "Admin",
+                                    CreatedOn = DateTime.Now,
+                                    EditedOn = DateTime.Now,
+                                    UserHostAdd = Request.UserHostAddress,
+                                    Status = true
+                                };
+                                if (Id>0)
+                                {
+                                    db.Entry(data).State = System.Data.Entity.EntityState.Modified;
+                                }
+                                else
+                                {
+                                    db.FileUploadModels.Add(data);
+
+                                }
+                                await db.SaveChangesAsync();
+
+                            }
+                        }
+
+
+                    }
+                }
+                result.Data = new { Success = true, Message = "Media and data successfully uploaded." };
+            }
+            catch (Exception ex)
+            {
+                result.Data = new { Success = false, Message = "Oops! The media could not be saved on the server, try again. " + ex.Message };
+            }
+            return result;
+        }
+
+
     }
 }

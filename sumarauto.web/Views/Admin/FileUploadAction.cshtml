@@ -1,0 +1,202 @@
+﻿@using DataModel
+@model Model.FileUploadModel
+@{
+    ViewBag.Title = "FileUploadAction";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<style>
+    .ql-toolbar.ql-snow {
+        background-color: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem .5rem 0 0;
+        padding: 8px;
+    }
+
+    .ql-container.ql-snow {
+        border: 1px solid #cbd5e1;
+        border-radius: 0 0 .5rem .5rem;
+    }
+</style>
+<div class="product-container py-2 dow_page_con">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-between align-items-baseline">
+            <!-- Page header -->
+            <div class="mb-4">
+                <h4 class="mb-0">@(Model != null && Model.Id > 0 ? "Edit - File upload" : "Add - File upload")</h4>
+            </div>
+            <div>
+                <p class="m-0">
+                    <a class="text-danger" href="/admin/FileUpload">Back to List</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div>
+        <form id="Create">
+            <input type="text" class="d-none" id="Id" value="@Model.Id" name="Id" />
+            <div class="row">
+                <div class="col-lg-8 col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" value="@Model.Title" id="Title" name="Title" class="form-control" placeholder="Enter Title">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" value="@Model.Date" id="Date" name="Date" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Image Upload</label>
+                                    <br />
+                                    @if (!string.IsNullOrEmpty(Model.FilePath))
+                                    {
+                                        <label>@Model.FilePath</label>
+                                    }
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="dow_Page" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Display Order</label>
+                                    <input type="text" value="@Model.DisplayOrder" id="DisplayOrder" name="DisplayOrder" class="form-control" placeholder="Enter Display Order">
+                                </div>
+                                <div class="d-grid">
+                                    <button id="CreateBtn" type="button" class="btn btn-primary w-100 p-2">
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $("#Create").validate({
+        rules: {
+            Title: {
+                required: true,
+            },
+            Date: {
+                required: true,
+            },
+        },
+        messages: {
+            Title: {
+                required: '*Title is required',
+            },
+            Date: {
+                required: '*Date is required',
+            },
+        }
+    });
+    const uploadedFile = [];
+
+    const CreateBtn = document.getElementById("CreateBtn");
+    if (CreateBtn) {
+        CreateBtn.addEventListener("click", function () {
+            if (uploadedFile != null && uploadedFile.length > 0) {
+                            const spinnerborder = document.querySelector(".spinner-border");
+            spinnerborder.classList.remove("d-none");
+            CreateBtn.setAttribute("disabled", true);
+
+            const formData = new FormData(document.getElementById('Create'));
+            for (const upFile of uploadedFile) {
+                formData.append('Files', upFile.file);
+            }
+            formData.append("Title", $("#Title").val());
+            formData.append("date", $("#Date").val());
+            formData.append("DisplayOrder", $("#DisplayOrder").val());
+            formData.append("Id", $("#Id").val());
+
+            if ($("#Create").valid()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("FileUploadAction","Image")',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.Success == true) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'File update successfully',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.Message,
+                        })
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                },
+                complete: function (response) {
+                    spinnerborder.classList.add("d-none");
+                    CreateBtn.removeAttribute("disabled");
+                },
+            });
+            }
+            else {
+                spinnerborder.classList.add("d-none");
+                CreateBtn.removeAttribute("disabled");
+            }
+        }
+        });
+    }
+    //File upload
+    document.getElementById('inputGroupFile04').addEventListener('change', function (e) {
+        let fileName = document.getElementById('inputGroupFile04').files[0].name;
+        let customFileLabel = e.target.parentElement.querySelector('.custom-file-label');
+        if (customFileLabel) {
+            customFileLabel.innerText = fileName;
+        }
+        const files = e.target.files;
+
+        if (uploadedFile.length > 0) {
+            const fileId = uploadedFile[0].fileId;
+            const fileIndex = uploadedFile.findIndex(item => item.fileId === fileId);
+            if (fileIndex !== -1) {
+                uploadedFile.splice(fileIndex, 1);
+            } else {
+                console.log(`File with fileId '${fileId}' not found in uploadedFile.`);
+            }
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = `file${i}`;
+                uploadedFile.push({ file, fileId });
+                $("#FilePath").val(file.name);
+            }
+        }
+        else {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = `file${i}`;
+                uploadedFile.push({ file, fileId });
+                $("#FilePath").val(file.name);
+            }
+        }
+    });
+</script>

@@ -18,10 +18,8 @@ namespace sumarauto.web.Controllers
         string connectionString = ConfigurationManager.ConnectionStrings["sumarautoDb"].ConnectionString;
         public ActionResult Index()
         {
-
             return View();
         }
-
         public async Task<ActionResult> GetHomePageData()
         {
             var homeViewModel = new HomeViewModel
@@ -260,7 +258,6 @@ namespace sumarauto.web.Controllers
         }
 
 
-
         [Route("categories")]
         public ActionResult Categories()
         {
@@ -343,10 +340,12 @@ namespace sumarauto.web.Controllers
         }
 
         //Partial Pages
+        [OutputCache(Duration = 3600, VaryByParam = "none")]
         public ActionResult _AboutPartial()
         {
             return PartialView();
         }
+        [OutputCache(Duration = 3600, VaryByParam = "none")]
         public PartialViewResult _BlogsPartial()
         {
 

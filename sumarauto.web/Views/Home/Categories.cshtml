@@ -90,7 +90,7 @@
                                 <img src="@item.Image" alt="@item.Title" />
                                 <h4>@item.Title</h4>
                                 <p>@Html.Raw(@item.Description)</p>
-                                <button class="btn-primary">Find out more</button>
+                                <button class="btn-primary catListHomeBtn" data-id="@item.Id">Find out more</button>
                             </div>
                         </div>
                     }
@@ -99,3 +99,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    const catListHomeBtns = document.querySelectorAll(".catListHomeBtn");
+    if (catListHomeBtns) {
+        catListHomeBtns.forEach(item => {
+            item.addEventListener("click", function () {
+                let id = this.getAttribute('data-id');
+                const catStorageItems = {
+                    "TempCat": id,
+                    "TempMake": makeDrop.value,
+                    "TempModel": modelDrop.value,
+                    "TempYear": yearsDrop.value,
+                    "TempEngine": engineDrop.value,
+                    "TempLiter": litersDrop.value,
+                    "TempChassis": chassisDrop.value,
+                    "TempsearchInput": document.getElementById("searchInput").value
+                };
+                Object.keys(catStorageItems).forEach(key => {
+                    localStorage.removeItem(key);
+                    localStorage.setItem(key, catStorageItems[key]);
+                });
+                window.location.href = `/Products?Category=${catStorageItems.TempCat}&Make=${catStorageItems.TempMake}&Model=${catStorageItems.TempModel}&Years=${catStorageItems.TempYear}&Engine=${catStorageItems.TempEngine}&Liters=${catStorageItems.TempLiter}&Chassis=${catStorageItems.TempChassis}&Search=${catStorageItems.TempsearchInput}`;
+            });
+        });
+    }
+</script>
