@@ -1,8 +1,8 @@
 ﻿@model DataModel.FinalProduct
 @{
-    ViewBag.Title = "Product name here";
-    ViewBag.Description = "description first 100 charactres here + ..";
-    ViewBag.Image = "/Content/Images/Product-1.jpg";
+    ViewBag.Title = Model != null ? Model.Title : "";
+    ViewBag.Description = Model != null && Model.Description != "" ? Model.Description.Length > 100 ? Model.Description.Substring(0,100) + "..." : Model.Description : ""; ;
+    ViewBag.Image = Model != null && Model.FinalProductImgs != null && Model.FinalProductImgs.Count > 0 ? Model.FinalProductImgs.FirstOrDefault()?.Image : "";
 }
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet" />

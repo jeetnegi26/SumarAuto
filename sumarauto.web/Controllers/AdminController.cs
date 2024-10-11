@@ -943,7 +943,7 @@ namespace sumarauto.web.Controllers
         #endregion
 
         #region Contact Form
-        public async Task<ActionResult> ContactFormList()
+        public async Task<ActionResult> ContactList()
         {
             try
             {
@@ -969,6 +969,11 @@ namespace sumarauto.web.Controllers
             {
                 return Json(resultData, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public ActionResult EnquireList()
+        {
+            return View();
         }
         #endregion
 

@@ -192,50 +192,99 @@
 <div class="contact-form cont-bento-box">
     <div class="intro_form_container cont-bento">
         <h2>GET IN TOUCH WITH US</h2>
-        <form action="#" class="intro_form" id="intro_form">
+        <form class="intro_form" id="intro_form">
             <div class="d-flex flex-row align-items-start justify-content-between flex-wrap">
                 <div class="intro_box">
                     <small>Name *</small>
-                    <input type="text" class="intro_input" placeholder="Your Name" required="required">
+                    <input type="text" id="Name" name="Name" class="intro_input" placeholder="Your Name" required="required">
                 </div>
                 <div class="intro_box">
                     <small>Phone No *</small>
-                    <input type="tel" class="intro_input" placeholder="Your Phone" required="required">
+                    <input type="tel" name="Phone" id="Phone" class="intro_input" placeholder="Your Phone" required="required">
                 </div>
                 <div class="w-100">
                     <small>Company Name </small>
-                    <input type="text" class="intro_input" placeholder="Your Company Name" required="required">
+                    <input type="text" name="CompanyName" id="CompanyName" class="intro_input" placeholder="Your Company Name" required="required">
                 </div>
                 <div class="w-100">
                     <small>Email *</small>
-                    <input type="email" class="intro_input" placeholder="Your E-mail" required="required">
+                    <input type="email" name="Email" id="Email" class="intro_input" placeholder="Your E-mail" required="required">
                 </div>
 
                 <div class="intro_box">
                     <small>Country</small>
-                    <input type="text" class="intro_input" placeholder="Your Country" required="required">
+                    <input type="text" name="Country" id="Country" class="intro_input" placeholder="Your Country" required="required">
                 </div>
                 <div class="intro_box">
                     <small>City </small>
-                    <input type="email" class="intro_input" placeholder="Your City" required="required">
+                    <input type="email" name="City" id="City" class="intro_input" placeholder="Your City" required="required">
                 </div>
                 <div class="w-100">
                     <small>Requirements </small>
-                    <textarea type="text" style="height:100px;" class="intro_input" placeholder="Type your message here" required="required"></textarea>
+                    <textarea type="text" name="Comment" id="Comment" style="height:100px;" class="intro_input" placeholder="Type your message here" required="required"></textarea>
                 </div>
 
-                <div class="w-100">
+                <div class="w-100 mb-3">
                     <small>Product: </small>
-                    <p>@Convert.ToString(TempData["Title"])</p>
+                    <input type="text" name="Product" id="Product" value="@Convert.ToString(TempData["Title"])" class="bg-transparent border-0">
                 </div>
-
-
             </div>
-            <button style="width: max-content; padding:8px 20px" class="button button_1 intro_button trans_200">make an appointment</button>
+            <button type="button" id="service-form" style="width: max-content; padding:8px 20px" class="button button_1 intro_button trans_200">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                make an appointment
+            </button>
         </form>
     </div>
 </div>
 
 <script>
+    $("#service-form").click(function () {
+        $("#service-form").prop('disabled', true);
+        $("#service-form").find('.spinner-border').removeClass('d-none');
+        var emailInput = document.getElementById('Email');
+        var email = emailInput.value.trim();
+        var name = $("#Name").val().trim();
+        var phone = $("#Phone").val().trim();
+        var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+        if (email == "" || name == "" || phone == "") {
+            alert('* All fields are required to fill.');
+            $("#service-form").prop('disabled', false);
+            $("#service-form").find('.spinner-border').addClass('d-none');
+        }
+        else if (!emailRegex.test(email)) {
+            alert('* Invalid email format.');
+            $("#service-form").prop('disabled', false);
+            $("#service-form").find('.spinner-border').addClass('d-none');
+        }
+        else {
+            $("#service-form").prop('disabled', true);
+            $.ajax({
+                type: 'POST',
+                url: '/Home/_ServiceForm',
+                data: $("#intro_form").serialize(),
+                success: function (response) {
+                    $("#service-form").prop('disabled', false);
+                    if (response == "true") {
+                        alert("* Your Message Has Been Successfully Sent to Us - Thank You!");
+                        $("#intro_form")[0].reset();
+                        $("#intro_form input[type='text'], #intro_form textarea").val('');
+                        $("#Product").val('@Convert.ToString(TempData["Title"])');
+                    }
+                    else {
+                        alert(response);
+                    }
+                },
+                error: function (response) {
+                    alert("Something went wrong");
+                    $("#service-form").prop('disabled', false);
+                },
+                complete: function () {
+                    $("#service-form").prop('disabled', false);
+                    $("#service-form").find('.spinner-border').addClass('d-none');
+                }
+            });
+        }
 
+        $("#service-form").prop('disabled', false);
+    });
 </script>

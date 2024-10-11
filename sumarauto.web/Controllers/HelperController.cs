@@ -215,6 +215,16 @@ namespace sumarauto.web.Controllers
                             }
                             result = true;
                             break;
+                        case "ContactForm":
+                            var ContactForm = db.ContactForm.Find(Id);
+                            if (ContactForm != null)
+                            {
+                                bool value = ContactForm.Status;
+                                ContactForm.Status = value == true ? false : true;
+                                db.SaveChanges();
+                            }
+                            result = true;
+                            break;
                         default:
                             return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
                     }
@@ -699,6 +709,74 @@ namespace sumarauto.web.Controllers
             catch (Exception)
             {
                 throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult GetEnquireList(int draw, int start, int length, int dropdownId, int formType = 1)
+        {
+            try
+            {
+                var sortColumnIndex = Request.Form.GetValues("order[0][column]")?.FirstOrDefault();
+                var sortColumnDirection = Request.Form.GetValues("order[0][dir]")?.FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetEnquireList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    // Adding parameters
+                    command.Parameters.AddWithValue("@Start", start);
+                    command.Parameters.AddWithValue("@Length", length);
+                    command.Parameters.AddWithValue("@dropdownId", dropdownId);
+                    command.Parameters.AddWithValue("@formType", formType);
+                    command.Parameters.AddWithValue("@sortColumnIndex", sortColumnIndex);
+                    command.Parameters.AddWithValue("@sortColumnDirection", sortColumnDirection);
+                    command.Parameters.AddWithValue("@SearchValue", string.IsNullOrEmpty(searchValue) ? (object)DBNull.Value : searchValue);
+                    connection.Open();
+                    // Execute the command and read the results
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var ContactForms = new List<ContactForm>();
+                        while (reader.Read())
+                        {
+                            var ContactForm = new ContactForm
+                            {
+                                Id = (int)reader["Id"],
+                                Name = Convert.ToString(reader["Name"]),
+                                Phone = Convert.ToString(reader["Phone"]),
+                                Email = Convert.ToString(reader["Email"]),
+                                CompanyName = Convert.ToString(reader["CompanyName"]),
+                                Comment = Convert.ToString(reader["Comment"]),
+                                Country = Convert.ToString(reader["Country"]),
+                                City = Convert.ToString(reader["City"]),
+                                CreatedOn = Convert.ToDateTime(reader["CreatedOn"]),
+                                Product = Convert.ToString(reader["Product"]),
+                                Status = Convert.ToBoolean(reader["Status"]),
+                                CreatedOnString = Convert.ToDateTime(reader["CreatedOn"]).ToString("MMM dd, yyyy")
+                            };
+                            ContactForms.Add(ContactForm);
+                        }
+                        // Move to the second result set to get the total count
+                        reader.NextResult();
+                        int totalRecords = 0;
+                        if (reader.Read())
+                        {
+                            totalRecords = reader.GetInt32(0);
+                        }
+                        var result = new
+                        {
+                            draw = draw,
+                            recordsTotal = totalRecords,
+                            recordsFiltered = totalRecords,
+                            data = ContactForms.OrderByDescending(x => x.DisplayOrder)
+                        };
+                        return Json(result, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion

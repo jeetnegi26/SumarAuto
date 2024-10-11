@@ -30,7 +30,7 @@ namespace Service
             {
                 using (var db = new AppDbContext())
                 {
-                    var data = await db.ContactForm.OrderByDescending(x => x.Id).ToListAsync();
+                    var data = await db.ContactForm.AsNoTracking().Where(x=>x.Enquiry == false).OrderByDescending(x => x.CreatedOn).ToListAsync();
                     return data;
                 }
             }

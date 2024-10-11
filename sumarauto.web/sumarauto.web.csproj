@@ -379,7 +379,7 @@
     <Content Include="Views\Admin\BannerList.cshtml" />
     <Content Include="Views\Admin\BlogAction.cshtml" />
     <Content Include="Views\Admin\Blogs.cshtml" />
-    <Content Include="Views\Admin\ContactFormList.cshtml" />
+    <Content Include="Views\Admin\ContactList.cshtml" />
     <Content Include="Views\Admin\Gallery.cshtml" />
     <Content Include="Views\Admin\GalleryAction.cshtml" />
     <Content Include="Views\Admin\InfoAdd.cshtml" />
@@ -392,6 +392,7 @@
     <Content Include="Views\DataUpdate\UploadCsv.cshtml" />
     <Content Include="Views\Home\_ServiceForm.cshtml" />
     <Content Include="Views\Home\Catalogues.cshtml" />
+    <Content Include="Views\Admin\EnquireList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

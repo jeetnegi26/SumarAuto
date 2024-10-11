@@ -875,25 +875,6 @@
 
         <div class="category-list">
             <div class="row" id="catList-home">
-                @*<div class="col-xl-4 col-lg-6 col-md-6 col-12 category-box">
-                <div class="category-item">
-                    <img src="~/Content/Images/pl_boot.png" />
-                    <h4>CV Boots</h4>
-                    <p>Torn boots result in grease leaking. Have your vehicle’s CV joints protected by Tenacity Boots.</p>
-                    <button class="
-                            ">Found out more</button>
-                </div>
-            </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                    <div class="category-item">
-                        <img src="~/Content/Images/pl_boot.png" />
-                        <h4>Strut Mounts</h4>
-                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                        <button class="btn-primary">Found out more</button>
-                    </div>
-                </div>*@
-
             <div class="text-center">
                 <a href="/categories" class="btn-primary">See all categories</a>
             </div>
@@ -997,7 +978,8 @@
                     <div class="category-item">
                         <img src="${Item.Image}" alt="${Item.Title}"/>
                         <h4>${Item.Title}</h4>
-                        <p>${Item.Description}</button>
+                        <p>${Item.Description}</p>
+                        <button class="btn-primary catListHomeBtn" data-id="${Item.Id}">Find out more</button>
                     </div>
                 </div>`;
                 });
@@ -1029,12 +1011,35 @@
                 data.Makes.forEach(Item => {
                     makeListHome.innerHTML += ` 
                 <div class="custom-col col-md-4 col-6 client-item">
-                    <a class="brand-anchor">
+                    <a class="brand-anchor makeListHomeBtn" style="cursor:pointer;" data-id="${Item.MakeId}">
                         <img src="${Item.Image}" alt = "${Item.Title}" />
                         <h4>${Item.Title}</h4>
                     </a>
                 </div>`;
                 });
+                const makeListHomeBtns = document.querySelectorAll(".makeListHomeBtn");
+                if (makeListHomeBtns) {
+                    makeListHomeBtns.forEach(item => {
+                        item.addEventListener("click", function () {
+                            let id = this.getAttribute('data-id');
+                            const makeStorageItems = {
+                                "TempCat": categoryDrop.value,
+                                "TempMake": id,
+                                "TempModel": modelDrop.value,
+                                "TempYear": yearsDrop.value,
+                                "TempEngine": engineDrop.value,
+                                "TempLiter": litersDrop.value,
+                                "TempChassis": chassisDrop.value,
+                                "TempsearchInput": document.getElementById("searchInput").value
+                            };
+                            Object.keys(makeStorageItems).forEach(key => {
+                                localStorage.removeItem(key);
+                                localStorage.setItem(key, makeStorageItems[key]);
+                            });
+                            window.location.href = `/Products?Category=${makeStorageItems.TempCat}&Make=${makeStorageItems.TempMake}&Model=${makeStorageItems.TempModel}&Years=${makeStorageItems.TempYear}&Engine=${makeStorageItems.TempEngine}&Liters=${makeStorageItems.TempLiter}&Chassis=${makeStorageItems.TempChassis}&Search=${makeStorageItems.TempsearchInput}`;
+                        });
+                    });
+                }
             }
         } catch (error) {
             console.error('Error fetching page data:', error);
