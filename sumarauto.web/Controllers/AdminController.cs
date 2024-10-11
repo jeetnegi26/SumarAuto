@@ -70,6 +70,7 @@ namespace sumarauto.web.Controllers
                     cmd.Parameters.AddWithValue("@IsFeatured", model.IsFeatured);
                     cmd.Parameters.AddWithValue("@Status", model.Status);
                     cmd.Parameters.AddWithValue("@CreatedBy", "Admin");
+                    cmd.Parameters.AddWithValue("@RewriteUrl", model.RewriteUrl);
                     cmd.Parameters.AddWithValue("@UserHostAddress", Request.UserHostAddress);
 
                     // Table-valued parameter for multiple details
@@ -113,7 +114,6 @@ namespace sumarauto.web.Controllers
             {
                 return Json(new { success = result, message = Message + " "+ ex.Message});
             }
-
         }
 
         public ActionResult AutoPartEdit(int Id = 0)
@@ -169,7 +169,6 @@ namespace sumarauto.web.Controllers
             return View(makeDetails.OrderBy(x => x.DisplayOrder).ThenByDescending(x=>x.Id)
                       .ToList());
         }
-
         public ActionResult AutoMakeAction(int autoId,int Id=0)
         {
             ViewBag.AutoPartId = autoId;

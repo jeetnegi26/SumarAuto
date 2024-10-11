@@ -13,7 +13,11 @@
     .product-gallery {
         padding: 5rem 0;
     }
-
+    .search-box .bootstrap-select {
+        border: 1px solid var(--bg);
+        width: 100% !important;
+        color: var(--bg);
+    }
     /*USE CSS for Slider*/
 
     .vehicle-detail-banner .car-slider-desc {
@@ -434,7 +438,6 @@
 </style>
 
 
-
 <div class="product-gallery container">
     <div class="row">
         <div class="col-lg-6 col-md-8 col-12">
@@ -595,7 +598,6 @@
         $(Id).addClass("fade");
         $(Id).addClass("active");
         if (Id === "#profile") {
-            debugger
             const firstRow = document.querySelector("#productTable tbody tr");
             if (firstRow) {
                 const make = firstRow.cells[0].textContent;
@@ -666,8 +668,8 @@
             url: urlVal,
         })
             .done(function (response) {
+                let proPartsAdd = document.getElementById("proPartsAdd");
                 if (response.products && response.products.length > 0) {
-                    let proPartsAdd = document.getElementById("proPartsAdd");
                     proPartsAdd.innerHTML = "";
                     response.products.forEach(item => {
                         proPartsAdd.innerHTML += ` <div class="col-lg-4 col-md-6 col-12 product-box">
@@ -688,7 +690,7 @@
                     });
                 }
                 else {
-                    productContainer.innerHTML = '<h6 class="text-center">No data available!</h6>';
+                    proPartsAdd.innerHTML = '<h6 class="text-center">No data available!</h6>';
                 }
             })
             .fail(function (XMLHttpRequest, textStatus, errorThrown) {

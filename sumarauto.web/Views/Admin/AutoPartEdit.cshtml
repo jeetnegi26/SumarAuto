@@ -118,7 +118,10 @@
                                         <option value="false" @(!Model.Status ? "selected" : "")>UnPublished</option>
                                     </select>
                                 </div>
-
+                                <div class="mb-3">
+                                    <label class="form-label">ReWrite Url</label>
+                                    <input type="text" name="RewriteUrl" value="@Model.RewriteUrl" class="form-control">
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Extra</label>
                                     <input type="text" name="ExtraField" value="@Model.ExtraField" class="form-control">

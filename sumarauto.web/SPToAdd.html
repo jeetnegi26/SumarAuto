@@ -1,4 +1,332 @@
-﻿USE [sumarautoDb]
+﻿-------------------few change
+
+    Source Server Version : SQL Server 2016 (13.0.4259)
+    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
+    Source Database Engine Type : Standalone SQL Server
+
+    Target Server Version : SQL Server 2017
+    Target Database Engine Edition : Microsoft SQL Server Standard Edition
+    Target Database Engine Type : Standalone SQL Server
+*/
+
+USE [sumarautoDb]
+GO
+/****** Object:  StoredProcedure [dbo].[saveOrUpdateAutoParts]    Script Date: 10/11/2024 4:03:42 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[saveOrUpdateAutoParts]
+    @ItemId INT = NULL,  -- If NULL, it means this is an insert
+    @Title NVARCHAR(255),
+	@ExtraField NVARCHAR(255),
+	@DefaultImage NVARCHAR(255) = Null,
+    @Description NVARCHAR(MAX),
+    @CategoryId INT,
+    @DisplayOrder INT = 0,
+    @CreatedBy NVARCHAR(100),
+    @UserHostAddress NVARCHAR(100),
+	@IsFeatured bit,
+	@Status bit,
+	--Add New 10 11 2024
+	@RewriteUrl NVARCHAR(100),
+    -- Table-valued parameter for multiple details
+    @MultipleDetails dbo.MultipleDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @NewAutoPartId NVARCHAR(255);
+    DECLARE @NextNumber INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Check if we are inserting or updating
+        IF @ItemId IS NULL
+        BEGIN
+            -- Generate the next AutoPartSId
+            SELECT @NextNumber = ISNULL(MAX(CAST(SUBSTRING(AutoPartSId, 5, LEN(AutoPartSId)) AS INT)), 999) + 1
+            FROM AutoParts
+            WHERE ISNUMERIC(SUBSTRING(AutoPartSId, 5, LEN(AutoPartSId))) = 1;  -- Ensures it's a valid number
+
+            -- Set the new AutoPartSId
+            SET @NewAutoPartId = 'APID' + CAST(@NextNumber AS NVARCHAR(50));
+
+            -- Insert the main item with AutoPartSId
+            INSERT INTO AutoParts (Title,ExtraField, Description, Category_Id, DisplayOrder, Status,IsFeatured, UserHostAdd, CreatedBy, CreatedOn, EditedOn, Price, AutoPartSId,RewriteUrl)
+            VALUES (@Title,@ExtraField, @Description, @CategoryId, @DisplayOrder, @Status,@IsFeatured, @UserHostAddress, @CreatedBy, GETDATE(), GETDATE(), 0, @NewAutoPartId,@RewriteUrl);
+
+            -- Get the newly inserted ItemId
+            SET @ItemId = SCOPE_IDENTITY();
+
+            -- Insert the multiple details for the item
+            INSERT INTO AutoPartMakes (AutoPart_Id, Make_Id, Model_Title, Year_Title, Engine_Title, Liter_Title, Chassis_Title, Status, UserHostAdd, CreatedBy, CreatedOn, EditedOn,DisplayOrder)
+            SELECT @ItemId, Make, Model, Year, Engine, Liter, Chassis, 1, @UserHostAddress, @CreatedBy, GETDATE(), GETDATE(),DisplayOrder
+            FROM @MultipleDetails;
+        END
+        ELSE
+        BEGIN
+            -- Update the existing item
+            UPDATE AutoParts
+            SET Title = @Title,
+                Description = @Description,
+                Category_Id = @CategoryId,
+                DisplayOrder = @DisplayOrder,
+                UserHostAdd = @UserHostAddress,
+				ExtraField = @ExtraField,
+				RewriteUrl = @RewriteUrl
+            WHERE Id = @ItemId;
+
+			If @DefaultImage Is NOT Null
+			Begin
+			UPDATE AutoPartImages
+            SET [Default] = 0  -- Remove default from all images for the current AutoPart
+            WHERE AutoPartId = @ItemId;
+
+            -- Set the new image as Default
+            UPDATE AutoPartImages
+            SET [Default] = 1
+            WHERE Image = @DefaultImage;
+			END
+        END
+
+        -- Commit transaction
+        COMMIT TRANSACTION;
+
+        -- Return the ItemId for reference
+        SELECT @ItemId AS ItemId;
+
+    END TRY
+    BEGIN CATCH
+        -- Rollback the transaction on error
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+
+
+
+
+
+
+
+
+/*    ==Scripting Parameters==
+
+    Source Server Version : SQL Server 2016 (13.0.4259)
+    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
+    Source Database Engine Type : Standalone SQL Server
+
+    Target Server Version : SQL Server 2017
+    Target Database Engine Edition : Microsoft SQL Server Standard Edition
+    Target Database Engine Type : Standalone SQL Server
+*/
+
+USE [sumarautoDb]
+GO
+/****** Object:  StoredProcedure [dbo].[GetAllFilterProducts]    Script Date: 10/11/2024 4:15:19 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetAllFilterProducts]
+    @Start INT,
+    @Length INT,
+	@CatId INT = NULL,
+    @MakeId INT = NULL,
+    @ModelTitle NVARCHAR(100) = '0',
+    @YearTitle NVARCHAR(100) = '0',
+    @EngineTitle NVARCHAR(100) = '0',
+    @LitersTitle NVARCHAR(100) = '0',
+    @ChassisTitle NVARCHAR(100) = '0',
+    @Search NVARCHAR(100) = '0'
+AS
+BEGIN
+DECLARE @IdTable TABLE (
+    Id INT,
+    DisplayOrder INT,
+    CreatedOn DATETIME
+);
+    DECLARE @TotalCount INT;
+
+    SELECT @TotalCount = COUNT(DISTINCT ap.Id)
+    FROM AutoParts ap
+	LEFT JOIN
+	AutoPartMakes apm on apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+					AND (@MakeId IS NULL Or @MakeId = 0 OR apm.Make_Id = @MakeId)               -- Filter by Make if provided
+            AND (@ModelTitle IS NULL Or @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)   -- Filter by Model if provided
+            AND (
+               @YearTitle IS NULL
+               OR @YearTitle = '0'
+            OR (
+                    -- Check if selected year is within the year range in the Year_Title field
+               TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+                   AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+               )
+             )  -- Filter by year
+            AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle) -- Filter by EngineTitle if valid
+            AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)  -- Filter by LitersTitle if valid
+            AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle) -- Filter by ChassisTitle if valid
+			AND (@Search IS NULL OR @Search = '0' OR ap.Title LIKE '%' + @Search + '%') -- Search filter
+AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+
+
+    -- Select all columns from AutoParts and store Id in the table variable
+ INSERT INTO @IdTable (Id,DisplayOrder,CreatedOn)
+    SELECT DISTINCT ap.Id, ap.DisplayOrder, ap.CreatedOn -- Add DisplayOrder and CreatedOn to satisfy ORDER BY
+    FROM AutoParts ap
+    LEFT JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR @MakeId = 0 OR apm.Make_Id = @MakeId)
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)
+        AND (@YearTitle IS NULL OR @YearTitle = '0' OR
+            (TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+            AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)))
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle)
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle)
+   AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+    ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+    OFFSET @Start ROWS
+    FETCH NEXT @Length ROWS ONLY;
+
+    -- Select all columns, based on pagination logic
+;WITH DistinctParts AS (
+    SELECT DISTINCT ap.Id AS AutoPartId
+    FROM AutoParts ap
+    left JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR @MakeId = 0 OR apm.Make_Id = @MakeId)
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)
+        AND (@YearTitle IS NULL OR @YearTitle = '0' OR
+            (TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+            AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)))
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle)
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle)
+               AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+)
+
+SELECT
+    ap.Id AS AutoPartId,
+    ap.Title AS Title,
+    ap.Description AS Description,
+    ap.Category_Id,
+    ap.ExtraField AS Package,
+    ap.DisplayOrder,
+    ap.CreatedOn,
+    img.ImageUrl,
+	ap.RewriteUrl --------new add
+FROM DistinctParts dp
+JOIN AutoParts ap ON ap.Id = dp.AutoPartId
+LEFT JOIN (
+    SELECT
+        ai.AutoPartId,
+        ai.Image AS ImageUrl,
+        ROW_NUMBER() OVER (PARTITION BY ai.AutoPartId ORDER BY CASE WHEN ai.[Default] = 1 THEN 0 ELSE 1 END, ai.Id) AS ImageRank
+    FROM AutoPartImages ai
+) img ON img.AutoPartId = ap.Id AND img.ImageRank = 1
+ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+OFFSET @Start ROWS
+FETCH NEXT @Length ROWS ONLY;
+
+
+	SELECT
+     	pm.AutoPart_Id as ProductId,
+        pm.Model_Title,
+        pm.Year_Title,
+        m.Title AS Make_Title
+    FROM
+        AutoPartMakes pm
+    LEFT JOIN
+        Makes m ON m.MakeId = pm.Make_Id
+    INNER JOIN
+	    @IdTable it ON pm.AutoPart_Id = it.Id
+		where
+		 (@MakeId IS NULL OR @MakeId = '0' OR pm.Make_Id = @MakeId) -- Filter by Make
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR pm.Model_Title = @ModelTitle) -- Filter by Model
+        AND (
+    @YearTitle IS NULL
+    OR @YearTitle = '0'
+    OR (
+        -- Ensure CHARINDEX finds the hyphen before proceeding
+        CHARINDEX('-', pm.Year_Title) > 0 AND
+        TRY_CAST(SUBSTRING(pm.Year_Title, 1, CHARINDEX('-', pm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+        AND TRY_CAST(SUBSTRING(pm.Year_Title, CHARINDEX('-', pm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+    )
+)
+
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR pm.Engine_Title = @EngineTitle) -- Filter by Engine Title
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR pm.Liter_Title = @LitersTitle) -- Filter by Liters
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR pm.Chassis_Title = @ChassisTitle) -- Filter by Chassis
+
+		  SELECT @TotalCount AS TotalCount;
+END
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetFinalProduct]
+    @Title NVARCHAR(100)
+AS
+BEGIN
+    -- Declare variable to store AutoPart Id
+    DECLARE @Id INT;
+
+    -- Retrieve the AutoPart Id based on the provided Title
+    SELECT @Id = ap.Id
+    FROM AutoParts ap
+    WHERE LOWER(LTRIM(RTRIM(ap.RewriteUrl))) = LOWER(LTRIM(RTRIM(@Title))); -------new add
+
+    -- If no AutoPart is found, return early
+    IF @Id IS NULL
+    BEGIN
+        PRINT 'No matching AutoPart found.';
+        RETURN;
+    END
+
+    -- Select details of the AutoPart
+    SELECT
+        ap.Id AS AutoPartId,
+        ap.Title,
+        ap.Description,
+        ap.Category_Id,
+        ap.ExtraField AS Package
+    FROM AutoParts ap
+    WHERE ap.Id = @Id;
+
+    -- Select images related to the AutoPart
+    SELECT
+	Image,
+	[Default]
+    FROM AutoPartImages
+    WHERE AutoPartId = @Id;
+
+	select
+	apm.Id as AutoPArtMakeID,
+	m.Title as Make,
+	apm.Model_Title as Model,
+	apm.Year_Title  as Year,
+	apm.Engine_Title as Engine,
+	apm.Chassis_Title as Chassis,
+	apm.CreatedOn,
+	apm.DisplayOrder
+	from AutoPartMakes apm
+	left join
+	Makes m on m.MakeId = apm.Make_Id
+
+	Where AutoPart_Id = @Id order By apm.DisplayOrder,apm.CreatedOn Desc;
+END;
+
+
+
+
+ ---------------------------------------------end
 GO
 /****** Object:  UserDefinedTableType [dbo].[MultipleDetailType]    Script Date: 11-10-2024 08:16:45 ******/
 CREATE TYPE [dbo].[MultipleDetailType] AS TABLE(

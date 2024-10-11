@@ -100,55 +100,19 @@
     </div>
 
     <script>
-        // Function to set the active nav item based on the current URL (ignoring query parameters)
         function setActiveNavItem() {
-            debugger
-            // Get the current path of the page (this will exclude the query string)
             const currentPath = window.location.pathname;
-
-            // Remove the 'nav-active' class from all nav items
             document.querySelectorAll('nav ul li a').forEach(navItem => {
                 navItem.classList.remove('nav-active');
             });
-
-            // Find the nav item that matches the current path (ignores query params)
             const activeElement = document.querySelector(`nav ul li a[href="${currentPath}"]`);
             if (activeElement) {
                 activeElement.classList.add('nav-active');
             }
         }
-
-        // Run the function to set the active nav item when the page loads
         window.addEventListener('DOMContentLoaded', (event) => {
             setActiveNavItem();
         });
-
-        // Function to handle nav item click
-        //document.querySelectorAll('nav ul li a').forEach(navItem => {
-        //    navItem.addEventListener('click', function () {
-        //        // Store the clicked nav item's href in localStorage
-        //        localStorage.setItem('activeNavItem', this.getAttribute('href'));
-        //    });
-        //});
-
-        //// Function to apply the active class on page load
-        //window.addEventListener('DOMContentLoaded', (event) => {
-        //    // Get the stored href from localStorage
-        //    const activeNavItem = localStorage.getItem('activeNavItem');
-
-        //    if (activeNavItem) {
-        //        // Remove the 'nav-active' class from all nav items
-        //        document.querySelectorAll('nav ul li a').forEach(navItem => {
-        //            navItem.classList.remove('nav-active');
-        //        });
-
-        //        // Find the nav item with the stored href and add 'nav-active' class
-        //        const activeElement = document.querySelector(`nav ul li a[href="${activeNavItem}"]`);
-        //        if (activeElement) {
-        //            activeElement.classList.add('nav-active');
-        //        }
-        //    }
-        //});
 
         $('.navbar-icon').click(function () {
             $(this).toggleClass("active");

@@ -90,6 +90,7 @@ namespace sumarauto.web.Controllers
                                 }
                             }
                         }
+                        TempData["Title"] = product.Title;
                         return View(product);
                     }
 
@@ -137,6 +138,7 @@ namespace sumarauto.web.Controllers
                                 Description = Convert.ToString(reader["Description"]),
                                 ImageUrl = Convert.ToString(reader["ImageUrl"]),
                                 Package = Convert.ToString(reader["Package"]),
+                                RewriteUrl = Convert.ToString(reader["RewriteUrl"]),
                                 ProductMake = new List<ProductMake>()
                             };
                             products.Add(product);

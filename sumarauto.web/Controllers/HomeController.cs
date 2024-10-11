@@ -257,7 +257,6 @@ namespace sumarauto.web.Controllers
             }
         }
 
-
         [Route("categories")]
         public ActionResult Categories()
         {
@@ -371,7 +370,11 @@ namespace sumarauto.web.Controllers
 
         public ActionResult Catalogues()
         {
-            return View();
+            using (var db = new AppDbContext())
+            {
+                var data = db.FileUploadModels.AsNoTracking().ToList();
+                return View(data);
+            }
         }
     }
 }

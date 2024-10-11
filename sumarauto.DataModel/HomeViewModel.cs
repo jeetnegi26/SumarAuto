@@ -64,6 +64,7 @@ namespace DataModel
         public string Title { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
+        public string RewriteUrl { get; set; }
         public string Package { get; set; }
         public List<ProductMake> ProductMake { get; set; }
     }
