@@ -368,5 +368,10 @@ namespace sumarauto.web.Controllers
         {
             return PartialView();
         }
+
+        public ActionResult Catalogues()
+        {
+            return View();
+        }
     }
 }

@@ -163,12 +163,6 @@
         color: #FFFFFF;
     }
 
-@@media (max-width: 500px){
-    .intro_box {
-        width: 100%;
-    }
-}
-
     .gmap-iframe {
         height: 51.5vh;
     }
@@ -216,12 +210,39 @@
     .cont-right{
         padding-left:0;
     }
+
+    @@media (max-width: 1024px) {
+        .gmap-iframe {
+            height: 17.5vh;
+        }
+    }
+
+    @@media (max-width: 770px) {
+        .cont-box {
+            padding: 0rem;
+        }
+
+        .cont-bento {
+            padding: 2rem 2rem;
+        }
+    }
+
+
+    @@media (max-width: 500px) {
+        .intro_box {
+            width: 100%;
+        }
+
+        .cont-right {
+            padding: 0 1.5rem 1rem;
+        }
+    }
 </style>
 
 <div class="row cont-box">
     <div class="col-xl-8 col-lg-7 col-md-6 col-12">
         <div class="row h-100">
-            <div class="col-xl-7 col-lg-7 col-md-7 col-12 cont-bento-box">
+            <div class="col-xl-7 col-lg-12 col-md-12 col-12 cont-bento-box">
                 <div class="contact-head cont-bento">
                     <h2>CONTACT US</h2>
                     <p>
@@ -232,7 +253,7 @@
                     </p>
                 </div>
             </div>
-            <div class="col-xl-5 col-lg-5 col-md-5 col-12 contact-info-box cont-bento-box">
+            <div class="col-xl-5 col-lg-12 col-md-12 col-12 contact-info-box cont-bento-box">
                 <div class="contact-info cont-bento" id="BrandInfo-List">
                     <h2>REACH OUT TO US</h2>
                     <p id="telephone"></p>
@@ -289,7 +310,7 @@
                     </div>
                     <button type="button" style="width: max-content; padding:8px 20px" class="button button_1 intro_button trans_200" id="Contact-form">
                         <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                        make an appointment
+                        Send Enquiry
                     </button>
                 </form>
             </div>

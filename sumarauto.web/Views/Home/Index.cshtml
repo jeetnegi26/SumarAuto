@@ -9,6 +9,18 @@
 
     /*banner css starts*/
 
+    .img-fill {
+        width: 100%;
+        overflow: hidden; /* Ensures the image is cropped */
+    }
+
+        .img-fill img {
+            width: 100%; /* Responsive width */
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the container, cropping when needed */
+        }
+
+    /*banner css starts*/
     /* Arrows */
     .slick-prev,
     .slick-next {
@@ -557,14 +569,13 @@
     }
 
         .search-box .bootstrap-select {
-            border: 1px solid var(--bg);
             width: 100% !important;
             color: var(--bg);
         }
 
 /*            .search-box .bootstrap-select .dropdown-toggle {
                 color: var(--bg);
-            }*/
+            }
 
     .bootstrap-select .dropdown-toggle .filter-option {
         font-size: 12px;
@@ -717,10 +728,11 @@
 
     .search-text {
         background-color: var(--text);
-        padding: 6px 2px;
+        padding: 5px 6px;
         border: 1px solid var(--bg);
         color: var(--bg);
-        width: 100%
+        width: 100%;
+        border-radius: 5px;
     }
 
     @@media (min-width: 1200px) {
@@ -873,15 +885,15 @@
                 </div>
             </div>
 
-            <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
-                <div class="category-item">
-                    <img src="~/Content/Images/pl_boot.png" />
-                    <h4>Strut Mounts</h4>
-                    <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
-                    <button class="btn-primary">Found out more</button>
-                </div>
-            </div>*@
-            </div>
+                <div class="col-xl-4 col-lg-6 col-md-6  col-12 category-box">
+                    <div class="category-item">
+                        <img src="~/Content/Images/pl_boot.png" />
+                        <h4>Strut Mounts</h4>
+                        <p>Dampening vibration and noise, Maintaining suspension alignment and consistent steering response properly by Tenacity Strut Mounts.</p>
+                        <button class="btn-primary">Found out more</button>
+                    </div>
+                </div>*@
+
             <div class="text-center">
                 <a href="/categories" class="btn-primary">See all categories</a>
             </div>
@@ -898,7 +910,7 @@
         </div>
 
         <div class="clients-list">
-            <div class="row" id="makeList-home">
+            <div class="row justify-content-center" id="makeList-home">
             </div>
         </div>
     </div>
@@ -986,7 +998,6 @@
                         <img src="${Item.Image}" alt="${Item.Title}"/>
                         <h4>${Item.Title}</h4>
                         <p>${Item.Description}</button>
-                        <button class="btn-primary catListHomeBtn" data-id="${Item.Id}">Found out more</button>
                     </div>
                 </div>`;
                 });
