@@ -127,22 +127,16 @@ footer img {
     transition: all 0.3s ease;
 }
 
+/* Sticky behavior */
 .sticky {
-    position: -webkit-sticky; /* For Safari */
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 1000;
-    transition: all 0.3s ease;
-}
-
-/* Change the size of the logo when scrolled */
-.sticky-logo-hidden {
-    opacity: 0; /* Logo will fade away when scrolled */
-}
-
-/* For smooth transition of sticky navbar */
-.sticky-active nav ul li a {
-    font-size: 14px;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    justify-content: center;
+    background-color: var(--bg);
+    box-shadow: 0px 11px 20px -20px rgba(0,0,0,0.45);
 }
 
 
