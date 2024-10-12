@@ -1,3 +1,4 @@
+﻿@model List<Model.FileUploadModel>
 ﻿@{
     ViewBag.Title = "Catalogues";
     ViewBag.Description = "Sumar is a professional auto parts supplier in Dubai. Base on years experiences in the Auto parts field, we know what our customers’ demand and can offer our best service.";
@@ -5,54 +6,59 @@
 }
 
 <style>
+    .search-box .bootstrap-select {
+        border: 1px solid var(--bg);
+        width: 100% !important;
+        color: var(--bg);
+    }
     .cat-cont {
         padding: 4rem 0;
         min-height: 60.5vh;
     }
 
-    .catalogues-container{
-        padding-top:3rem;
+    .catalogues-container {
+        padding-top: 3rem;
     }
 
-    .catalogue-card{
-        border:2px solid var(--text);
-        padding:1rem;
-        border-radius:1rem;
+    .catalogue-card {
+        border: 2px solid var(--text);
+        padding: 1rem;
+        border-radius: 1rem;
     }
 
-    .catalogue-card h1 {
-        font-size: 4rem;
-    }
-
-    .catalogue-card h3{
-        font-size: 1.3rem;
-    }
-    
-    .catalogue-card p{
-        margin-bottom: 0;
-    }
-
-    .catalogue-card button {
-        font-size: 2rem;
-        border: none;
-        background-color: transparent;
-        transition: 0.3s;
-    }
-
-        .catalogue-card button:hover {
-            color: var(--primary);
+        .catalogue-card h1 {
+            font-size: 4rem;
         }
 
-    .catalog-box{
-        padding:1rem;
+        .catalogue-card h3 {
+            font-size: 1.3rem;
+        }
+
+        .catalogue-card p {
+            margin-bottom: 0;
+        }
+
+        .catalogue-card button {
+            font-size: 2rem;
+            border: none;
+            background-color: transparent;
+            transition: 0.3s;
+        }
+
+            .catalogue-card button:hover {
+                color: var(--primary);
+            }
+
+    .catalog-box {
+        padding: 1rem;
     }
 
-    .bi-file-earmark-pdf{
+    .bi-file-earmark-pdf {
         color: var(--primary)
     }
 
 
-    @@media(max-width:1024px){
+    @@media(max-width:1024px) {
         .cat-cont {
             padding: 4rem 0;
             min-height: 76vh;
@@ -70,71 +76,93 @@
 
     <div class="catalogues-container">
         <div class="row">
-            <div class="col-lg-4 col-md-6 col-12 catalog-box">
-                <div class="catalogue-card d-flex justify-content-around">
-                    <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
-                    <div class="catalogue-card-info align-self-center">
-                        <h3>LEVLAR CATALOGUE</h3>
-                        <p>12.15.2024</p>
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6 col-12 catalog-box">
+                    <div class="catalogue-card d-flex justify-content-around">
+                        <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
+                        <div class="catalogue-card-info align-self-center">
+                            <h3>@item.Title</h3>
+                            <p> @item.Date.ToString("mm.dd.yyyy")</p>
+                        </div>
+                        <button class="align-self-center download-btn" data-id="@item.FilePath">
+                            <i class="bi bi-download"></i> Download
+                        </button>
                     </div>
-                    <button class="align-self-center"><i class="bi bi-download"></i></button>
                 </div>
-            </div>
+            }
 
-            <div class="col-lg-4 col-md-6 col-12 catalog-box">
-                <div class="catalogue-card d-flex justify-content-around">
-                    <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
-                    <div class="catalogue-card-info align-self-center">
-                        <h3>LEVLAR CATALOGUE</h3>
-                        <p>12.15.2024</p>
-                    </div>
-                    <button class="align-self-center"><i class="bi bi-download"></i></button>
-                </div>
-            </div>
 
-            <div class="col-lg-4 col-md-6 col-12 catalog-box">
-                <div class="catalogue-card d-flex justify-content-around">
-                    <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
-                    <div class="catalogue-card-info align-self-center">
-                        <h3>LEVLAR CATALOGUE</h3>
-                        <p>12.15.2024</p>
-                    </div>
-                    <button class="align-self-center"><i class="bi bi-download"></i></button>
+            @*<div class="col-lg-4 col-md-6 col-12 catalog-box">
+            <div class="catalogue-card d-flex justify-content-around">
+                <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
+                <div class="catalogue-card-info align-self-center">
+                    <h3>LEVLAR CATALOGUE</h3>
+                    <p>12.15.2024</p>
                 </div>
+                <button class="align-self-center"><i class="bi bi-download"></i></button>
             </div>
+        </div>
 
-            <div class="col-lg-4 col-md-6 col-12 catalog-box">
-                <div class="catalogue-card d-flex justify-content-around">
-                    <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
-                    <div class="catalogue-card-info align-self-center">
-                        <h3>LEVLAR CATALOGUE</h3>
-                        <p>12.15.2024</p>
-                    </div>
-                    <button class="align-self-center"><i class="bi bi-download"></i></button>
+        <div class="col-lg-4 col-md-6 col-12 catalog-box">
+            <div class="catalogue-card d-flex justify-content-around">
+                <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
+                <div class="catalogue-card-info align-self-center">
+                    <h3>LEVLAR CATALOGUE</h3>
+                    <p>12.15.2024</p>
                 </div>
+                <button class="align-self-center"><i class="bi bi-download"></i></button>
             </div>
+        </div>
 
-            <div class="col-lg-4 col-md-6 col-12 catalog-box">
-                <div class="catalogue-card d-flex justify-content-around">
-                    <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
-                    <div class="catalogue-card-info align-self-center">
-                        <h3>LEVLAR CATALOGUE</h3>
-                        <p>12.15.2024</p>
-                    </div>
-                    <button class="align-self-center"><i class="bi bi-download"></i></button>
+        <div class="col-lg-4 col-md-6 col-12 catalog-box">
+            <div class="catalogue-card d-flex justify-content-around">
+                <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
+                <div class="catalogue-card-info align-self-center">
+                    <h3>LEVLAR CATALOGUE</h3>
+                    <p>12.15.2024</p>
                 </div>
+                <button class="align-self-center"><i class="bi bi-download"></i></button>
             </div>
+        </div>
 
-            <div class="col-lg-4 col-md-6 col-12 catalog-box">
-                <div class="catalogue-card d-flex justify-content-around">
-                    <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
-                    <div class="catalogue-card-info align-self-center">
-                        <h3>LEVLAR CATALOGUE</h3>
-                        <p>12.15.2024</p>
-                    </div>
-                    <button class="align-self-center"><i class="bi bi-download"></i></button>
+        <div class="col-lg-4 col-md-6 col-12 catalog-box">
+            <div class="catalogue-card d-flex justify-content-around">
+                <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
+                <div class="catalogue-card-info align-self-center">
+                    <h3>LEVLAR CATALOGUE</h3>
+                    <p>12.15.2024</p>
                 </div>
+                <button class="align-self-center"><i class="bi bi-download"></i></button>
             </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-12 catalog-box">
+            <div class="catalogue-card d-flex justify-content-around">
+                <h1 class="align-self-center m-0"><i class="bi bi-file-earmark-pdf"></i></h1>
+                <div class="catalogue-card-info align-self-center">
+                    <h3>LEVLAR CATALOGUE</h3>
+                    <p>12.15.2024</p>
+                </div>
+                <button class="align-self-center"><i class="bi bi-download"></i></button>
+            </div>
+        </div>*@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const filePath = this.getAttribute('data-id');
+            const anchor = document.createElement('a');
+            anchor.href = filePath;
+            anchor.target = '_blank';
+            anchor.download = '';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+        });
+    });
+
+</script>

@@ -108,85 +108,60 @@
                 <div class="row">
                     <div class="col-lg-2 col-md-3 col-12 search-box mobile">
                         <h6 class="date">Category</h6>
-                        <select name="Category" id="Category" class="selectpicker" data-live-search="true">
-                            <option value="Air hose"> Air hose</option>
-                            <option value="Air hose"> Air hose</option>
-                            <option value="Air hose"> Air hose</option>
-                            <option value="Air hose"> Air hose</option>
+                        <select name="Category" id="CategoryDrop" class="selectpicker" data-live-search="true">
+                            <option value="0"> Category</option> 
                         </select>
                     </div>
                     <div class="col-lg-2 col-md-4 col-12 search-box">
                         <h6 class="date">Make</h6>
-                        <select name="Make" id="Make" class="selectpicker" data-live-search="true">
-                            <option value="Air hose"> Alfa Romeo</option>
-                            <option value="Air hose"> Audi</option>
-                            <option value="Air hose"> Aston Martin</option>
-                            <option value="Air hose"> Mazda Japan Ford</option>
+                        <select name="Make" id="MakeDrop" class="selectpicker" data-live-search="true">
+                            <option value="0"> Make</option>
                         </select>
                     </div>
 
                     <div class="col-lg-1 col-md-3 col-12 search-box mobile" >
                         <h6 class="date">Model</h6>
-                        <select name="Make" id="Make" class="selectpicker" data-live-search="true">
-                            <option value="Air hose"> RSX-TYPE-S</option>
-                            <option value="Air hose"> RL</option>
-                            <option value="Air hose"> TSX</option>
-                            <option value="Air hose"> TS215</option>
+                        <select name="Model" id="ModelDrop" class="selectpicker" data-live-search="true" disabled>
+                            <option value="0"> Model</option>
                         </select>
                     </div>
 
                     <div class="col-lg-1 col-md-2 col-12 search-box mobile">
                         <h6 class="date">Years</h6>
-                        <select name="Years" id="Years" class="selectpicker" data-live-search="true">
-                            <option value="Air hose"> 2020</option>
-                            <option value="Air hose"> 2021</option>
-                            <option value="Air hose"> 2022</option>
-                            <option value="Air hose"> 2023</option>
-                            <option value="Air hose"> 2024</option>
+                        <select name="Years" id="YearsDrop" class="selectpicker" data-live-search="true" disabled>
+                            <option value="0"> Years</option>
                         </select>
                     </div>
 
                     <div class="col-lg-1 col-md-2 col-12 search-box mobile">
                         <h6 class="date">Engine</h6>
-                        <select name="Engine" id="Engine" class="selectpicker" data-live-search="true">
-                            <option value="Air hose"> K24W7</option>
-                            <option value="Air hose"> K44W8</option>
-                            <option value="Air hose"> L24W7</option>
-                            <option value="Air hose"> A24W7</option>
-                            <option value="Air hose"> G24W7</option>
+                        <select name="Engine" id="EngineDrop" class="selectpicker" data-live-search="true" disabled>
+                            <option value="0"> Engine</option>
                         </select>
                     </div>
 
                     <div class="col-lg-1 col-md-1 col-12 search-box mobile">
                         <h6 class="date">Liters</h6>
-                        <select name="Liters" id="Liters" class="selectpicker"  data-live-search="true">
-                            <option value="Air hose">  2.4L</option>
-                            <option value="Air hose">  3.4L</option>
-                            <option value="Air hose">  1.4L</option>
-                            <option value="Air hose">  2.5L</option>
-                            <option value="Air hose">  3.4L</option>
+                        <select name="Liters" id="LitersDrop" class="selectpicker" data-live-search="true" disabled>
+                            <option value="0"> Liter</option>
                         </select>
                     </div>
 
 
                     <div class="col-lg-1 col-md-2 col-12 search-box mobile">
                         <h6 class="date">Chassis</h6>
-                        <select name="Chassis" id="Chassis" @*class="selectpicker"*@>
-                            <option value="Air hose"> DE2F</option>
-                            <option value="Air hose"> 4D2F</option>
-                            <option value="Air hose"> PE2F</option>
-                            <option value="Air hose"> DL2F</option>
-                            <option value="Air hose"> DE4O</option>
+                        <select name="Chassis" id="ChassisDrop" class="selectpicker" data-live-search="true" disabled>
+                            <option value="0"> Chassis</option>
                         </select>
                     </div>
 
                     <div class="col-lg-2 col-md-5 col-12 search-box">
                         <h6 class="date">Search</h6>
-                        <input class="search-text form-control" type="text" id="" placeholder="Search by parts">
+                        <input class="search-text form-control" type="text" id="searchInput">
                     </div>
 
                     <div class="col-lg-1 col-md-2 col-12 boo-btn search-box">
-                        <button class="book_btn" type="button"><i class="bi bi-search"></i></button>
+                        <button class="book_btn" id="bookBtn" type="button"><i class="bi bi-search"></i></button>
                     </div>
                 </div>
             </form>
@@ -194,28 +169,207 @@
     </div>
 </div>
 <script>
+    let StoredValue_Cat = '@TempData["Category"]' || localStorage.getItem("TempCat") || "0";
+    let StoredValue_Make = '@TempData["Make"]' || localStorage.getItem("TempMake") || "0";
+    let StoredValue_Model = '@TempData["Model"]' || localStorage.getItem("TempModel") || "0";
+    let StoredValue_Year = '@TempData["Year"]' || localStorage.getItem("TempYear") || "0";
+    let StoredValue_Engine = '@TempData["Engine"]' || localStorage.getItem("TempEngine") || "0";
+    let StoredValue_Liter = '@TempData["Liters"]' || localStorage.getItem("TempLiter") || "0";
+    let StoredValue_Chassis = '@TempData["Chassis"]' || localStorage.getItem("TempChassis") || "0";
+    let StoredValue_searchInput = '@TempData["Search"]' || localStorage.getItem("TempsearchInput") || "";
+    const bookBtn = document.getElementById("bookBtn");
+    bookBtn.addEventListener("click", function () {
+        const storageItems = {
+            "TempCat": categoryDrop.value,
+            "TempMake": makeDrop.value,
+            "TempModel": modelDrop.value,
+            "TempYear": yearsDrop.value,
+            "TempEngine": engineDrop.value,
+            "TempLiter": litersDrop.value,
+            "TempChassis": chassisDrop.value,
+            "TempsearchInput": document.getElementById("searchInput").value
+        };
+        Object.keys(storageItems).forEach(key => {
+            localStorage.removeItem(key);
+            localStorage.setItem(key, storageItems[key]);
+        });
+        // Redirect to Products page with search parameters
+        window.location.href = `/Products?Category=${storageItems.TempCat}&Make=${storageItems.TempMake}&Model=${storageItems.TempModel}&Years=${storageItems.TempYear}&Engine=${storageItems.TempEngine}&Liters=${storageItems.TempLiter}&Chassis=${storageItems.TempChassis}&Search=${storageItems.TempsearchInput}`;
+    });
     $(document).ready(function () {
-        $('.search-bar').empty();
         $(function () {
             $('.selectpicker').selectpicker();
-        });
-
-        // Initially hide the filters on mobile
-        $('#show-filters').click(function () {
-            // Toggle the visibility of the filters with a slide down/up effect
-            $('.mobile').slideToggle('slow');
-
-            if ($(this).html().includes('bi-funnel')) {
-                // Change to Close button with padding adjustment
-                $(this).html('<i class="bi bi-x"></i>').css({
-                    padding: '5px 8px'
-                });
-            } else {
-                // Change back to Filters button with default padding
-                $(this).html('<i class="bi bi-funnel"></i> Filters').css({
-                    padding: '5px 11px'
-                });
+            if (StoredValue_searchInput != "" && StoredValue_searchInput != "0") {
+                $("#searchInput").val(StoredValue_searchInput);
             }
         });
-    })
+    });
+    // Declare the elements only once outside the event listener
+    const categoryDrop = document.getElementById("CategoryDrop");
+    const makeDrop = document.getElementById("MakeDrop");
+    const modelDrop = document.getElementById("ModelDrop");
+    const yearsDrop = document.getElementById("YearsDrop");
+    const engineDrop = document.getElementById("EngineDrop");
+    const litersDrop = document.getElementById("LitersDrop");
+    const chassisDrop = document.getElementById("ChassisDrop");
+    document.addEventListener("DOMContentLoaded", () => {
+        const fetchData = async (url) => {
+            try {
+                const response = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+                if (!response.ok) throw new Error('Something went wrong!');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        const populateDropdown = (dropdown, data, defaultOption, selectedVal) => {
+            dropdown.innerHTML = `<option value="0">${defaultOption}</option>`;
+            data.forEach(item => {
+                dropdown.innerHTML += `<option value="${item.Value}" ${selectedVal === item.Value ? 'selected' : "" }>${item.Text || item.Value}</option>`;
+            });
+            $(`#${dropdown.id}`).selectpicker('refresh');
+        };
+        const populateDropdownYELC = (dropdownElement, dataArray, placeholder) => {
+            dropdownElement.innerHTML = "";
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "0"; 
+            defaultOption.textContent = placeholder;
+            dropdownElement.appendChild(defaultOption);
+            dataArray.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item; 
+                option.textContent = item;
+                dropdownElement.appendChild(option);
+            });
+        };
+        const getDropYELC = async (modelTitle) => {
+            const selectedValueCat = categoryDrop.value;
+            const selectedValueMake = makeDrop.value;
+            const selectedYear = yearsDrop.value;
+            const selectedEngine = engineDrop.value;
+            const selectedLiter = litersDrop.value;
+            const selectedChassis = chassisDrop.value;
+
+            const url = `/Helper/GetDropYELC?CatId=${selectedValueCat}&MakeId=${selectedValueMake}&ModelTitle=${modelTitle}&YearTitle=${selectedYear}&EngineTitle=${selectedEngine}&LitersTitle=${selectedLiter}&ChassisTitle=${selectedChassis}`;
+
+            const yelcData = await fetchData(url);
+            if (yelcData) {
+                // Repopulate the dropdowns
+                populateDropdownYELC(yearsDrop, yelcData.YearsSelect, 'Years');
+                populateDropdownYELC(engineDrop, yelcData.Engines, 'Engine');
+                populateDropdownYELC(litersDrop, yelcData.Liters, 'Liters');
+                populateDropdownYELC(chassisDrop, yelcData.Chassis, 'Chassis');
+                // Reapply previous selections
+                if (!selectedEngine || selectedEngine === "0") {
+                    engineDrop.value = !StoredValue_Engine || StoredValue_Engine === "0" ? "0" : StoredValue_Engine;
+                } else {
+                    engineDrop.value = selectedEngine;
+                }
+                if (!selectedYear || selectedYear === "0") {
+                    yearsDrop.value = (!StoredValue_Year || StoredValue_Year === "0") ? "0" : StoredValue_Year;
+                } else {
+                    yearsDrop.value = selectedYear;
+                }
+                if (!selectedLiter || selectedLiter === "0") {
+                    litersDrop.value = (!StoredValue_Liter || StoredValue_Liter === "0") ? "0" : StoredValue_Liter;
+                } else {
+                    litersDrop.value = selectedLiter;
+                }
+                if (!selectedChassis || selectedChassis === "0") {
+                    chassisDrop.value = (!StoredValue_Chassis || StoredValue_Chassis === "0") ? "0" : StoredValue_Chassis;
+                } else {
+                    chassisDrop.value = selectedChassis;
+                }
+                //yearsDrop.value = selectedYear || "0";
+                //litersDrop.value = selectedLiter || "0";
+                //chassisDrop.value = selectedChassis || "0";
+                // Refresh the dropdowns for UI consistency
+                $("#YearsDrop").selectpicker('refresh');
+                $("#EngineDrop").selectpicker('refresh');
+                $("#LitersDrop").selectpicker('refresh');
+                $("#ChassisDrop").selectpicker('refresh');
+
+                addDropdownListeners();
+            }
+        };
+        // Function to add event listeners for each dropdown
+        const addDropdownListeners = () => {
+            yearsDrop.addEventListener('change', handleDropdownChange);
+            engineDrop.addEventListener('change', handleDropdownChange);
+            litersDrop.addEventListener('change', handleDropdownChange);
+            chassisDrop.addEventListener('change', handleDropdownChange);
+        };
+        // Function to handle dropdown change events
+        const handleDropdownChange = (event) => {
+            // No need to redeclare modelDrop; just use it directly
+            getDropYELC(modelDrop.value);
+        };
+        const getDropModel = async (makeId, selectedValModel) => {
+            const selectedCatId = categoryDrop.value;
+            const url = `/Helper/GetDropModel?MakeId=${makeId}&CatId=${selectedCatId}`;
+            const modelData = await fetchData(url);
+            if (modelData) {
+                populateDropdown(modelDrop, modelData, 'Model', selectedValModel);
+                if (StoredValue_Model && StoredValue_Model != "0") {
+                    yearsDrop.removeAttribute("disabled");
+                    engineDrop.removeAttribute("disabled");
+                    litersDrop.removeAttribute("disabled");
+                    chassisDrop.removeAttribute("disabled");
+                    getDropYELC(modelDrop.value);
+                }
+                modelDrop.addEventListener("change", () => {
+                    yearsDrop.removeAttribute("disabled");
+                    engineDrop.removeAttribute("disabled");
+                    litersDrop.removeAttribute("disabled");
+                    chassisDrop.removeAttribute("disabled");
+                    getDropYELC(modelDrop.value);
+                });
+            }
+        };
+        //make category
+        const getDropCatMake = async () => {
+            const data = await fetchData('/Helper/GetDropCatMake');
+            if (data) {
+                if (categoryDrop) populateDropdown(categoryDrop, data.SelectCategories, 'Category', StoredValue_Cat);
+                if (makeDrop) {
+                    populateDropdown(makeDrop, data.SelectMakes, 'Make', StoredValue_Make);
+                    if (StoredValue_Make && StoredValue_Make != "0") {
+                        modelDrop.removeAttribute("disabled");
+                        yearsDrop.setAttribute("disabled", true);
+                        engineDrop.setAttribute("disabled", true);
+                        litersDrop.setAttribute("disabled", true);
+                        chassisDrop.setAttribute("disabled", true);
+                        yearsDrop.value = "0";
+                        engineDrop.value = "0";
+                        litersDrop.value = "0";
+                        chassisDrop.value = "0";
+
+                        $("#YearsDrop").selectpicker('refresh');
+                        $("#EngineDrop").selectpicker('refresh');
+                        $("#LitersDrop").selectpicker('refresh');
+                        $("#ChassisDrop").selectpicker('refresh');
+                        getDropModel(StoredValue_Make, StoredValue_Model); // Pass both stored values
+                    }
+                    makeDrop.addEventListener("change", () => {
+                        modelDrop.removeAttribute("disabled");
+                        yearsDrop.setAttribute("disabled", true);
+                        engineDrop.setAttribute("disabled", true);
+                        litersDrop.setAttribute("disabled", true);
+                        chassisDrop.setAttribute("disabled", true);
+                        yearsDrop.value = "0";
+                        engineDrop.value = "0";
+                        litersDrop.value ="0";
+                        chassisDrop.value = "0";
+
+                        $("#YearsDrop").selectpicker('refresh');
+                        $("#EngineDrop").selectpicker('refresh');
+                        $("#LitersDrop").selectpicker('refresh');
+                        $("#ChassisDrop").selectpicker('refresh');
+                        getDropModel(makeDrop.value);
+                    });
+                }
+            }
+        };
+        getDropCatMake();
+    });
 </script>

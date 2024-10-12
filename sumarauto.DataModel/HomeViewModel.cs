@@ -41,4 +41,63 @@ namespace DataModel
         public string Title { get; set; }
         public string Value { get; set; }
     }
+    public class DropCatMake
+    {
+        public List<SelectListItem> SelectCategories { get; set; }
+        public List<SelectListItem> SelectMakes { get; set; }
+    }
+    public class DropModel
+    {
+        public string Value  { get; set; }
+    }
+    public class DropYELC
+    {
+        public List<string> YearsSelect  { get; set; }
+        public List<string> Engines  { get; set; }
+        public List<string> Liters  { get; set; }
+        public List<string> Chassis  { get; set; }
+    }
+
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public string RewriteUrl { get; set; }
+        public string Package { get; set; }
+        public List<ProductMake> ProductMake { get; set; }
+    }
+    public class ProductMake
+    {
+        public int ProductId { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public string Year { get; set; }
+    }
+
+    public class FinalProduct
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public string Package { get; set; }
+        public List<FinalProductMake> FinalProductMake { get; set; }
+        public List<FinalProductImgs> FinalProductImgs { get; set; }
+    }
+    public class FinalProductMake
+    {
+        public int AutoPArtMakeID { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public string Year { get; set; }
+        public string Engine { get; set; }
+        public string Chassis { get; set; }
+    }
+    public class FinalProductImgs
+    {
+        public string Image { get; set; }
+        public bool Default { get; set; }
+    }
 }

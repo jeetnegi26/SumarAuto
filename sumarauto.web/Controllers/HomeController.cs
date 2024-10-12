@@ -18,10 +18,8 @@ namespace sumarauto.web.Controllers
         string connectionString = ConfigurationManager.ConnectionStrings["sumarautoDb"].ConnectionString;
         public ActionResult Index()
         {
-
             return View();
         }
-
         public async Task<ActionResult> GetHomePageData()
         {
             var homeViewModel = new HomeViewModel
@@ -217,6 +215,7 @@ namespace sumarauto.web.Controllers
                     {
                         model.CreatedOn = DateTime.Now;
                         model.EditedOn = DateTime.Now;
+                        model.Status = true;
                         model.UserHostAdd = Request.UserHostAddress;
                         context.ContactForm.Add(model);
                         await context.SaveChangesAsync();
@@ -258,8 +257,6 @@ namespace sumarauto.web.Controllers
                 return Json("Sorry! Something went wrong.");
             }
         }
-
-
 
         [Route("categories")]
         public ActionResult Categories()
@@ -343,10 +340,12 @@ namespace sumarauto.web.Controllers
         }
 
         //Partial Pages
+        [OutputCache(Duration = 3600, VaryByParam = "none")]
         public ActionResult _AboutPartial()
         {
             return PartialView();
         }
+        [OutputCache(Duration = 3600, VaryByParam = "none")]
         public PartialViewResult _BlogsPartial()
         {
 
@@ -369,10 +368,84 @@ namespace sumarauto.web.Controllers
         {
             return PartialView();
         }
+        [HttpPost]
+        public async Task<ActionResult> _ServiceForm(ContactForm model)
+        {
+            var result = "* All fields are required to fill.";
+            if (!string.IsNullOrEmpty(model.Email) && !string.IsNullOrEmpty(model.Name) && !string.IsNullOrEmpty(model.Phone))
+            {
+                using (var context = new AppDbContext())
+                {
+                    model.CreatedOn = DateTime.Now;
+                    model.EditedOn = DateTime.Now;
+                    model.UserHostAdd = Request.UserHostAddress;
+                    context.ContactForm.Add(model);
+                    model.Enquiry = true;
+                    model.Status = true;
+                    await context.SaveChangesAsync();
+                }
+                result = "true";
+                if (result == "true")
+                {
+                    var brand = "St. Jude Elite Care";
+                    var helperController = new HelperController();
+                    string messageForUser = "<p>Thank you for reaching out to us! Your message has been received. If you're an existing member, we appreciate your continued engagement. Our team will review your inquiry and respond as soon as possible.</p>";
+                    EmailTemplateModel RegisteremailUser = new EmailTemplateModel()
+                    {
+                        Message = messageForUser,
+                        Destination = model.Email,
+                        Subject = "Thank You for Contacting " + brand + "- We've Received Your Message!"
+                    };
+                    await helperController.SendEmail(RegisteremailUser);
 
+                    string messageForAdmin = "<p>Name: " + model.Name +
+                        "<br/>Phone No: " + model.Phone +
+                        "<br/>Email: <a href=\"mailto:" + model.Email + "\">" + model.Email +
+                        "<br/>Company: " + model.CompanyName +
+                        "<br/>Country: " + model.Country +
+                        "<br/>City: " + model.City +
+                        "<br/>Product: " + model.Product +
+                        "<br/>Message: " + model.Comment +
+                        " </p>";
+                    EmailTemplateModel RegisteremailAdmin = new EmailTemplateModel()
+                    {
+                        Message = messageForAdmin,
+                        Destination = ConfigurationManager.AppSettings["email"].ToString(),
+                        Subject = "Contact form from" + model.Name,
+                    };
+                    await helperController.SendEmail(RegisteremailAdmin);
+                }
+            }
+            return Json(result);
+        }
+        [Route("catalogues")]
         public ActionResult Catalogues()
         {
-            return View();
+            List<FileUploadModel> catalogues = new List<FileUploadModel>();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                using(var command = new SqlCommand("GetCatalogues", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var catalogue = new FileUploadModel
+                            {
+                                Id = (int)reader["Id"],
+                                Title = Convert.ToString(reader["Title"]),
+                                FilePath = Convert.ToString(reader["FilePath"]),
+                                Date = Convert.ToDateTime(reader["Date"]),
+                                CreatedOnString = Convert.ToDateTime(reader["Date"]).ToString("mm.dd.yyyy")
+                            };
+                            catalogues.Add(catalogue);
+                        }
+                    }
+                }
+            }
+            return View(catalogues);
         }
     }
 }

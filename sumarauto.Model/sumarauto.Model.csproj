@@ -74,6 +74,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="ContactForm.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="FileUpload.cs" />
     <Compile Include="Gallery.cs" />
     <Compile Include="GalleryImage.cs" />
     <Compile Include="Key.cs" />

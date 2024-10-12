@@ -22,6 +22,7 @@ namespace DataModel
         public string AutoPartSId { get; set; }
         public string Category { get; set; }
         public string DefaultImage { get; set; }
+        public string RewriteUrl { get; set; }
         public bool Status { get; set; }
         public bool IsFeatured { get; set; }
 

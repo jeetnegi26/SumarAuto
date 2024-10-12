@@ -34,14 +34,10 @@
     <script src="~/Scripts/jquery-ui.min.js"></script>
     <script src="~/Scripts/owl.carousel.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
-
-
     <style>
-
         .navbar a {
             color: var(--text)
         }
-
         .nav-active{
             color:var(--primary) !important;
             font-weight:500;
@@ -57,11 +53,11 @@
                     <nav class="">
                         <ul>
                             <li><a class="nav-active" href="/">HOME</a></li>
-                            <li><a href="/Property/PropertyList">PRODUCTS</a></li>
+                            <li><a href="/Products">PRODUCTS</a></li>
                             <li><a href="/about">ABOUT US</a></li>
                             <li><a href="/contact-us">CONTACT</a></li>
-                            <li><a href="@Url.Action("Blogs")">BLOGS</a></li>
-
+                            <li><a href="/blogs">BLOGS</a></li>
+                            <li><a href="/catalogues">CATALOGUES</a></li>
                         </ul>
                     </nav>
                     <div class="navbar-icon">
@@ -72,7 +68,7 @@
         </div>
     </div>
 
-    <div class="search-bar">
+    <div class="search-bar" id="s-bar">
         @Html.Partial("_Search")
     </div>
 
@@ -105,6 +101,20 @@
     </div>
 
     <script>
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('nav ul li a').forEach(navItem => {
+                navItem.classList.remove('nav-active');
+            });
+            const activeElement = document.querySelector(`nav ul li a[href="${currentPath}"]`);
+            if (activeElement) {
+                activeElement.classList.add('nav-active');
+            }
+        }
+        window.addEventListener('DOMContentLoaded', (event) => {
+            setActiveNavItem();
+        });
+
         $('.navbar-icon').click(function () {
             $(this).toggleClass("active");
             $(".navbar-menu nav").toggleClass("active");
@@ -134,13 +144,9 @@
                     }
                     const data = await response.json();
                     if (data != null) {
-                        let socialMediaKeys = data.filter(item => item.Type === 'SocialMedia' && item.Value != "");
-                        let htmlString1 = "";
-                        socialMediaKeys.forEach(item => {
-                            htmlString1 += `<a class="pr-1" href="${item.Value}" target="_blank"><i class="bi bi-${item.Title}"></i></a>`;
+                        data.filter(item => item.Type === 'SocialMedia' && item.Value != "").forEach(item => {
+                            footerSocialMedia.innerHTML += `<a class="pr-1" href="${item.Value}" target="_blank"><i class="bi bi-${item.Title}"></i></a>`;
                         });
-                        footerSocialMedia.innerHTML = htmlString1;
-
                         //Contact Form
                         const BrandInfo = document.getElementById("BrandInfo-List");
                         if (BrandInfo) {
@@ -173,7 +179,6 @@
                     console.error('Error fetching page data:', error);
                 }
             }
-
         });
     </script>
 </body>

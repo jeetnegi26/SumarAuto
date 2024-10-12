@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Services.Description;
+using System.Web.UI.WebControls;
 using DataModel;
 using Model;
 using Service;
@@ -69,6 +70,7 @@ namespace sumarauto.web.Controllers
                     cmd.Parameters.AddWithValue("@IsFeatured", model.IsFeatured);
                     cmd.Parameters.AddWithValue("@Status", model.Status);
                     cmd.Parameters.AddWithValue("@CreatedBy", "Admin");
+                    cmd.Parameters.AddWithValue("@RewriteUrl", model.RewriteUrl);
                     cmd.Parameters.AddWithValue("@UserHostAddress", Request.UserHostAddress);
 
                     // Table-valued parameter for multiple details
@@ -112,7 +114,6 @@ namespace sumarauto.web.Controllers
             {
                 return Json(new { success = result, message = Message + " "+ ex.Message});
             }
-
         }
 
         public ActionResult AutoPartEdit(int Id = 0)
@@ -168,7 +169,6 @@ namespace sumarauto.web.Controllers
             return View(makeDetails.OrderBy(x => x.DisplayOrder).ThenByDescending(x=>x.Id)
                       .ToList());
         }
-
         public ActionResult AutoMakeAction(int autoId,int Id=0)
         {
             ViewBag.AutoPartId = autoId;
@@ -943,7 +943,7 @@ namespace sumarauto.web.Controllers
         #endregion
 
         #region Contact Form
-        public async Task<ActionResult> ContactFormList()
+        public async Task<ActionResult> ContactList()
         {
             try
             {
@@ -969,6 +969,11 @@ namespace sumarauto.web.Controllers
             {
                 return Json(resultData, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        public ActionResult EnquireList()
+        {
+            return View();
         }
         #endregion
 
@@ -1058,6 +1063,65 @@ namespace sumarauto.web.Controllers
             catch (Exception)
             {
                 return Json(new { Success = false, Message = "Something went wrong!" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region FileUpload
+        public ActionResult FileUpload()
+        {
+            List<FileUploadModel> fileUploadModels = new List<FileUploadModel>();
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var command = new SqlCommand("GetFileUploadList", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            FileUploadModel fileUploadModel = new FileUploadModel
+                            {
+                                Id = (int)reader["Id"],
+                                Title = Convert.ToString(reader["Title"]),
+                                FilePath = Convert.ToString(reader["FilePath"]),
+                                Status = (bool)reader["Status"],
+                                Date = (DateTime)reader["Date"],
+                                CreatedOnString = ((DateTime)reader["Date"]).ToString("dd MMM yyyy"),
+                            };
+                            fileUploadModels.Add(fileUploadModel);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View(fileUploadModels.OrderBy(x => x.DisplayOrder)
+                      .ThenBy(x => x.CreatedOn)
+                      .ToList());
+        }
+        public ActionResult FileUploadAction(int Id = 0)
+        {
+            var data = new FileUploadModel();
+            try
+            {
+                if (Id > 0)
+                {
+                    using (var db = new AppDbContext())
+                    {
+                        data = db.FileUploadModels.FirstOrDefault(x => x.Id == Id);
+                    }
+                    return View(data);
+                }
+                return View(data);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
         #endregion

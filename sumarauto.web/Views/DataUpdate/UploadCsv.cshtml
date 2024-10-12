@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "UploadCsv";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<h2>Upload CSV</h2>
+
+@using (Html.BeginForm("UploadExcel", "DataUpdate", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div>
+        <label>Select CSV file to upload</label><br />
+        <input type="file" name="file" id="file" /><br /><br />
+        <input type="submit" value="Upload" />
+    </div>
+}
+
+@if (ViewBag.Message != null)
+{
+    <div style="color: green;">
+        <strong>@ViewBag.Message</strong>
+    </div>
+}
+
+

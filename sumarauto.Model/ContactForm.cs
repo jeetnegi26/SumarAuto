@@ -17,5 +17,9 @@ namespace Model
         public string Country { get; set; }
         public string Phone { get; set; }
         public string Comment { get; set; }
+        public string Product { get; set; }
+        public bool Enquiry { get; set; }
+        public string City { get; set; }
+
     }
 }

@@ -1,11 +1,16 @@
 ﻿@model Model.Blogs
 @{
-    ViewBag.Title = "Name of the blog here";
-    ViewBag.Description = "description first 100 charactres here + ..";
-    ViewBag.Image = "/Content/Images/blog-1.jpg";
+    ViewBag.Title = Model.Title;
+    ViewBag.Description = !string.IsNullOrEmpty(Model?.Description) ? (Model.Description.Length > 100 ? Model.Description.Substring(0, 100) + "...": Model.Description): string.Empty;
+    ViewBag.Image = Model.Image;
 }
 
 <style>
+    .search-box .bootstrap-select {
+        border: 1px solid var(--bg);
+        width: 100% !important;
+        color: var(--bg);
+    }
     .blog-head {
         padding: 3rem 0 1.5rem;
     }

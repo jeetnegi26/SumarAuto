@@ -115,7 +115,10 @@
                                         <option value="false">UnPublished</option>
                                     </select>
                                 </div>
-
+                                <div class="mb-3">
+                                    <label class="form-label">ReWrite Url</label>
+                                    <input type="text" name="RewriteUrl" id="RewriteUrl" class="form-control" required>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Extra</label>
                                     <input type="text" name="ExtraField" class="form-control">
@@ -171,7 +174,7 @@
                                             <div class="col-2">
                                                 <div class="mb-3">
                                                     <div class="ui-widget">
-                                                        <input id="years" class="form-control" name="MultipleDetails[0].Year" placeholder="e.g : 06-12 (2006 - 2012)">
+                                                        <input id="years" class="form-control" name="MultipleDetails[0].Year" placeholder="e.g : 2006-2012">
                                                     </div>
                                                 </div>
                                             </div>
@@ -341,6 +344,9 @@
             DisplayOrder: {
                 required: true,
             },
+            RewriteUrl: {
+                required: true,
+            },
         },
         messages: {
             Title: {
@@ -348,6 +354,9 @@
             },
             DisplayOrder: {
                 required: '*Display Order is required',
+            },
+            RewriteUrl: {
+                required: '*Rewrite Url Order is required',
             },
         }
     });

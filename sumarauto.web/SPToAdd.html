@@ -1,4 +1,4 @@
-﻿/*    ==Scripting Parameters==
+﻿-------------------few change
 
     Source Server Version : SQL Server 2016 (13.0.4259)
     Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
@@ -11,13 +11,1665 @@
 
 USE [sumarautoDb]
 GO
-/****** Object:  StoredProcedure [dbo].[GetGalleryData]    Script Date: 10/3/2024 1:23:15 PM ******/
+/****** Object:  StoredProcedure [dbo].[saveOrUpdateAutoParts]    Script Date: 10/11/2024 4:03:42 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[saveOrUpdateAutoParts]
+    @ItemId INT = NULL,  -- If NULL, it means this is an insert
+    @Title NVARCHAR(255),
+	@ExtraField NVARCHAR(255),
+	@DefaultImage NVARCHAR(255) = Null,
+    @Description NVARCHAR(MAX),
+    @CategoryId INT,
+    @DisplayOrder INT = 0,
+    @CreatedBy NVARCHAR(100),
+    @UserHostAddress NVARCHAR(100),
+	@IsFeatured bit,
+	@Status bit,
+	--Add New 10 11 2024
+	@RewriteUrl NVARCHAR(100),
+    -- Table-valued parameter for multiple details
+    @MultipleDetails dbo.MultipleDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @NewAutoPartId NVARCHAR(255);
+    DECLARE @NextNumber INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Check if we are inserting or updating
+        IF @ItemId IS NULL
+        BEGIN
+            -- Generate the next AutoPartSId
+            SELECT @NextNumber = ISNULL(MAX(CAST(SUBSTRING(AutoPartSId, 5, LEN(AutoPartSId)) AS INT)), 999) + 1
+            FROM AutoParts
+            WHERE ISNUMERIC(SUBSTRING(AutoPartSId, 5, LEN(AutoPartSId))) = 1;  -- Ensures it's a valid number
+
+            -- Set the new AutoPartSId
+            SET @NewAutoPartId = 'APID' + CAST(@NextNumber AS NVARCHAR(50));
+
+            -- Insert the main item with AutoPartSId
+            INSERT INTO AutoParts (Title,ExtraField, Description, Category_Id, DisplayOrder, Status,IsFeatured, UserHostAdd, CreatedBy, CreatedOn, EditedOn, Price, AutoPartSId,RewriteUrl)
+            VALUES (@Title,@ExtraField, @Description, @CategoryId, @DisplayOrder, @Status,@IsFeatured, @UserHostAddress, @CreatedBy, GETDATE(), GETDATE(), 0, @NewAutoPartId,@RewriteUrl);
+
+            -- Get the newly inserted ItemId
+            SET @ItemId = SCOPE_IDENTITY();
+
+            -- Insert the multiple details for the item
+            INSERT INTO AutoPartMakes (AutoPart_Id, Make_Id, Model_Title, Year_Title, Engine_Title, Liter_Title, Chassis_Title, Status, UserHostAdd, CreatedBy, CreatedOn, EditedOn,DisplayOrder)
+            SELECT @ItemId, Make, Model, Year, Engine, Liter, Chassis, 1, @UserHostAddress, @CreatedBy, GETDATE(), GETDATE(),DisplayOrder
+            FROM @MultipleDetails;
+        END
+        ELSE
+        BEGIN
+            -- Update the existing item
+            UPDATE AutoParts
+            SET Title = @Title,
+                Description = @Description,
+                Category_Id = @CategoryId,
+                DisplayOrder = @DisplayOrder,
+                UserHostAdd = @UserHostAddress,
+				ExtraField = @ExtraField,
+				RewriteUrl = @RewriteUrl
+            WHERE Id = @ItemId;
+
+			If @DefaultImage Is NOT Null
+			Begin
+			UPDATE AutoPartImages
+            SET [Default] = 0  -- Remove default from all images for the current AutoPart
+            WHERE AutoPartId = @ItemId;
+
+            -- Set the new image as Default
+            UPDATE AutoPartImages
+            SET [Default] = 1
+            WHERE Image = @DefaultImage;
+			END
+        END
+
+        -- Commit transaction
+        COMMIT TRANSACTION;
+
+        -- Return the ItemId for reference
+        SELECT @ItemId AS ItemId;
+
+    END TRY
+    BEGIN CATCH
+        -- Rollback the transaction on error
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+
+
+
+
+
+
+
+
+/*    ==Scripting Parameters==
+
+    Source Server Version : SQL Server 2016 (13.0.4259)
+    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
+    Source Database Engine Type : Standalone SQL Server
+
+    Target Server Version : SQL Server 2017
+    Target Database Engine Edition : Microsoft SQL Server Standard Edition
+    Target Database Engine Type : Standalone SQL Server
+*/
+
+USE [sumarautoDb]
+GO
+/****** Object:  StoredProcedure [dbo].[GetAllFilterProducts]    Script Date: 10/11/2024 4:15:19 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetAllFilterProducts]
+    @Start INT,
+    @Length INT,
+	@CatId INT = NULL,
+    @MakeId INT = NULL,
+    @ModelTitle NVARCHAR(100) = '0',
+    @YearTitle NVARCHAR(100) = '0',
+    @EngineTitle NVARCHAR(100) = '0',
+    @LitersTitle NVARCHAR(100) = '0',
+    @ChassisTitle NVARCHAR(100) = '0',
+    @Search NVARCHAR(100) = '0'
+AS
+BEGIN
+DECLARE @IdTable TABLE (
+    Id INT,
+    DisplayOrder INT,
+    CreatedOn DATETIME
+);
+    DECLARE @TotalCount INT;
+
+    SELECT @TotalCount = COUNT(DISTINCT ap.Id)
+    FROM AutoParts ap
+	LEFT JOIN
+	AutoPartMakes apm on apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+					AND (@MakeId IS NULL Or @MakeId = 0 OR apm.Make_Id = @MakeId)               -- Filter by Make if provided
+            AND (@ModelTitle IS NULL Or @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)   -- Filter by Model if provided
+            AND (
+               @YearTitle IS NULL
+               OR @YearTitle = '0'
+            OR (
+                    -- Check if selected year is within the year range in the Year_Title field
+               TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+                   AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+               )
+             )  -- Filter by year
+            AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle) -- Filter by EngineTitle if valid
+            AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)  -- Filter by LitersTitle if valid
+            AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle) -- Filter by ChassisTitle if valid
+			AND (@Search IS NULL OR @Search = '0' OR ap.Title LIKE '%' + @Search + '%') -- Search filter
+AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+
+
+    -- Select all columns from AutoParts and store Id in the table variable
+ INSERT INTO @IdTable (Id,DisplayOrder,CreatedOn)
+    SELECT DISTINCT ap.Id, ap.DisplayOrder, ap.CreatedOn -- Add DisplayOrder and CreatedOn to satisfy ORDER BY
+    FROM AutoParts ap
+    LEFT JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR @MakeId = 0 OR apm.Make_Id = @MakeId)
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)
+        AND (@YearTitle IS NULL OR @YearTitle = '0' OR
+            (TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+            AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)))
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle)
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle)
+   AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+    ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+    OFFSET @Start ROWS
+    FETCH NEXT @Length ROWS ONLY;
+
+    -- Select all columns, based on pagination logic
+;WITH DistinctParts AS (
+    SELECT DISTINCT ap.Id AS AutoPartId
+    FROM AutoParts ap
+    left JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR @MakeId = 0 OR apm.Make_Id = @MakeId)
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)
+        AND (@YearTitle IS NULL OR @YearTitle = '0' OR
+            (TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+            AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)))
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle)
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle)
+               AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+)
+
+SELECT
+    ap.Id AS AutoPartId,
+    ap.Title AS Title,
+    ap.Description AS Description,
+    ap.Category_Id,
+    ap.ExtraField AS Package,
+    ap.DisplayOrder,
+    ap.CreatedOn,
+    img.ImageUrl,
+	ap.RewriteUrl --------new add
+FROM DistinctParts dp
+JOIN AutoParts ap ON ap.Id = dp.AutoPartId
+LEFT JOIN (
+    SELECT
+        ai.AutoPartId,
+        ai.Image AS ImageUrl,
+        ROW_NUMBER() OVER (PARTITION BY ai.AutoPartId ORDER BY CASE WHEN ai.[Default] = 1 THEN 0 ELSE 1 END, ai.Id) AS ImageRank
+    FROM AutoPartImages ai
+) img ON img.AutoPartId = ap.Id AND img.ImageRank = 1
+ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+OFFSET @Start ROWS
+FETCH NEXT @Length ROWS ONLY;
+
+
+	SELECT
+     	pm.AutoPart_Id as ProductId,
+        pm.Model_Title,
+        pm.Year_Title,
+        m.Title AS Make_Title
+    FROM
+        AutoPartMakes pm
+    LEFT JOIN
+        Makes m ON m.MakeId = pm.Make_Id
+    INNER JOIN
+	    @IdTable it ON pm.AutoPart_Id = it.Id
+		where
+		 (@MakeId IS NULL OR @MakeId = '0' OR pm.Make_Id = @MakeId) -- Filter by Make
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR pm.Model_Title = @ModelTitle) -- Filter by Model
+        AND (
+    @YearTitle IS NULL
+    OR @YearTitle = '0'
+    OR (
+        -- Ensure CHARINDEX finds the hyphen before proceeding
+        CHARINDEX('-', pm.Year_Title) > 0 AND
+        TRY_CAST(SUBSTRING(pm.Year_Title, 1, CHARINDEX('-', pm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+        AND TRY_CAST(SUBSTRING(pm.Year_Title, CHARINDEX('-', pm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+    )
+)
+
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR pm.Engine_Title = @EngineTitle) -- Filter by Engine Title
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR pm.Liter_Title = @LitersTitle) -- Filter by Liters
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR pm.Chassis_Title = @ChassisTitle) -- Filter by Chassis
+
+		  SELECT @TotalCount AS TotalCount;
+END
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetFinalProduct]
+    @Title NVARCHAR(100)
+AS
+BEGIN
+    -- Declare variable to store AutoPart Id
+    DECLARE @Id INT;
+
+    -- Retrieve the AutoPart Id based on the provided Title
+    SELECT @Id = ap.Id
+    FROM AutoParts ap
+    WHERE LOWER(LTRIM(RTRIM(ap.RewriteUrl))) = LOWER(LTRIM(RTRIM(@Title))); -------new add
+
+    -- If no AutoPart is found, return early
+    IF @Id IS NULL
+    BEGIN
+        PRINT 'No matching AutoPart found.';
+        RETURN;
+    END
+
+    -- Select details of the AutoPart
+    SELECT
+        ap.Id AS AutoPartId,
+        ap.Title,
+        ap.Description,
+        ap.Category_Id,
+        ap.ExtraField AS Package
+    FROM AutoParts ap
+    WHERE ap.Id = @Id;
+
+    -- Select images related to the AutoPart
+    SELECT
+	Image,
+	[Default]
+    FROM AutoPartImages
+    WHERE AutoPartId = @Id;
+
+	select
+	apm.Id as AutoPArtMakeID,
+	m.Title as Make,
+	apm.Model_Title as Model,
+	apm.Year_Title  as Year,
+	apm.Engine_Title as Engine,
+	apm.Chassis_Title as Chassis,
+	apm.CreatedOn,
+	apm.DisplayOrder
+	from AutoPartMakes apm
+	left join
+	Makes m on m.MakeId = apm.Make_Id
+
+	Where AutoPart_Id = @Id order By apm.DisplayOrder,apm.CreatedOn Desc;
+END;
+
+
+
+
+ ---------------------------------------------end
+GO
+/****** Object:  UserDefinedTableType [dbo].[MultipleDetailType]    Script Date: 11-10-2024 08:16:45 ******/
+CREATE TYPE [dbo].[MultipleDetailType] AS TABLE(
+	[Make] [nvarchar](100) NULL,
+	[Model] [nvarchar](100) NULL,
+	[Year] [nvarchar](100) NULL,
+	[Engine] [nvarchar](100) NULL,
+	[Liter] [nvarchar](10) NULL,
+	[Chassis] [nvarchar](100) NULL,
+	[DisplayOrder] [int] NULL
+)
+GO
+/****** Object:  Table [dbo].[__MigrationHistory]    Script Date: 11-10-2024 08:16:45 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[__MigrationHistory](
+	[MigrationId] [nvarchar](150) NOT NULL,
+	[ContextKey] [nvarchar](300) NOT NULL,
+	[Model] [varbinary](max) NOT NULL,
+	[ProductVersion] [nvarchar](32) NOT NULL,
+ CONSTRAINT [PK_dbo.__MigrationHistory] PRIMARY KEY CLUSTERED
+(
+	[MigrationId] ASC,
+	[ContextKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[AutoPartImages]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AutoPartImages](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Image] [nvarchar](max) NULL,
+	[Title] [nvarchar](max) NULL,
+	[Default] [bit] NOT NULL,
+	[AutoPartId] [int] NOT NULL,
+ CONSTRAINT [PK_dbo.AutoPartImages] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[AutoPartMakes]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AutoPartMakes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Make_Id] [int] NOT NULL,
+	[Model_Title] [nvarchar](max) NULL,
+	[Year_Title] [nvarchar](max) NULL,
+	[Engine_Title] [nvarchar](max) NULL,
+	[Chassis_Title] [nvarchar](max) NULL,
+	[Liter_Title] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+	[AutoPart_Id] [int] NULL,
+ CONSTRAINT [PK_dbo.AutoPartMakes] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[AutoParts]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AutoParts](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[AutoPartSId] [nvarchar](max) NULL,
+	[Title] [nvarchar](max) NULL,
+	[ExtraField] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[Price] [decimal](18, 2) NOT NULL,
+	[Category_Id] [int] NOT NULL,
+	[IsFeatured] [bit] NOT NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.AutoParts] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Banners]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Banners](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+	[Image] [nvarchar](max) NOT NULL,
+	[Type] [nvarchar](max) NOT NULL,
+	[Heading] [nvarchar](max) NULL,
+	[Subheading] [nvarchar](max) NULL,
+	[url] [nvarchar](max) NULL,
+	[ButtonText] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Banners] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Blogs]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Blogs](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[Image] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[IsFeatured] [bit] NOT NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+	[Date] [datetime] NOT NULL,
+ CONSTRAINT [PK_dbo.Blogs] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Categories]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Categories](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[Image] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[IsFeatured] [bit] NOT NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Categories] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Chassis]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Chassis](
+	[ChassisId] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Chassis] PRIMARY KEY CLUSTERED
+(
+	[ChassisId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Clients]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clients](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Image] [nvarchar](max) NULL,
+	[Title] [nvarchar](255) NOT NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](255) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](255) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ContactForms]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ContactForms](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+	[CompanyName] [nvarchar](max) NULL,
+	[Address] [nvarchar](max) NULL,
+	[Country] [nvarchar](max) NULL,
+	[Phone] [nvarchar](max) NULL,
+	[Comment] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+	[Email] [nvarchar](150) NULL,
+ CONSTRAINT [PK_dbo.ContactForms] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Engines]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Engines](
+	[EngineId] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Engines] PRIMARY KEY CLUSTERED
+(
+	[EngineId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[FileUploadModels]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[FileUploadModels](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](255) NOT NULL,
+	[FilePath] [nvarchar](500) NOT NULL,
+	[CreatedBy] [nvarchar](100) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](50) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](255) NULL,
+	[Date] [datetime] NULL,
+PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Galleries]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Galleries](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Galleries] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[GalleryImages]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[GalleryImages](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[GalleryId] [int] NOT NULL,
+	[Image] [nvarchar](max) NULL,
+	[DefaultImage] [bit] NOT NULL,
+ CONSTRAINT [PK_dbo.GalleryImages] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Keys]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Keys](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+	[Type] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+ CONSTRAINT [PK_dbo.Keys] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Liters]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Liters](
+	[LiterId] [int] IDENTITY(1,1) NOT NULL,
+	[Ttile] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Liters] PRIMARY KEY CLUSTERED
+(
+	[LiterId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Makes]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Makes](
+	[MakeId] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[Image] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+	[IsFeatured] [bit] NULL,
+ CONSTRAINT [PK_dbo.Makes] PRIMARY KEY CLUSTERED
+(
+	[MakeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[MModels]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MModels](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.MModels] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[RoleAssigns]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[RoleAssigns](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[RoleId] [int] NOT NULL,
+	[SchoolId] [int] NULL,
+	[IsFaculity] [bit] NOT NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.RoleAssigns] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Roles]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Roles] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+	[Email] [nvarchar](max) NULL,
+	[HashPassword] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Users] PRIMARY KEY CLUSTERED
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Years]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Years](
+	[YearId] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [int] NOT NULL,
+	[Description] [nvarchar](max) NULL,
+	[CreatedBy] [nvarchar](max) NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[EditedOn] [datetime] NOT NULL,
+	[Status] [bit] NOT NULL,
+	[UserHostAdd] [nvarchar](max) NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[RewriteUrl] [nvarchar](max) NULL,
+ CONSTRAINT [PK_dbo.Years] PRIMARY KEY CLUSTERED
+(
+	[YearId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Banners] ADD  DEFAULT ('') FOR [Image]
+GO
+ALTER TABLE [dbo].[Banners] ADD  DEFAULT ('') FOR [Type]
+GO
+ALTER TABLE [dbo].[Blogs] ADD  DEFAULT ('1900-01-01T00:00:00.000') FOR [Date]
+GO
+ALTER TABLE [dbo].[Clients] ADD  DEFAULT (getdate()) FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[Clients] ADD  DEFAULT (getdate()) FOR [EditedOn]
+GO
+ALTER TABLE [dbo].[AutoPartImages]  WITH CHECK ADD  CONSTRAINT [FK_dbo.AutoPartImages_dbo.AutoParts_AutoPartId] FOREIGN KEY([AutoPartId])
+REFERENCES [dbo].[AutoParts] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AutoPartImages] CHECK CONSTRAINT [FK_dbo.AutoPartImages_dbo.AutoParts_AutoPartId]
+GO
+ALTER TABLE [dbo].[AutoPartMakes]  WITH CHECK ADD  CONSTRAINT [FK_dbo.AutoPartMakes_dbo.AutoParts_AutoPart_Id] FOREIGN KEY([AutoPart_Id])
+REFERENCES [dbo].[AutoParts] ([Id])
+GO
+ALTER TABLE [dbo].[AutoPartMakes] CHECK CONSTRAINT [FK_dbo.AutoPartMakes_dbo.AutoParts_AutoPart_Id]
+GO
+ALTER TABLE [dbo].[GalleryImages]  WITH CHECK ADD  CONSTRAINT [FK_dbo.GalleryImages_dbo.Galleries_GalleryId] FOREIGN KEY([GalleryId])
+REFERENCES [dbo].[Galleries] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[GalleryImages] CHECK CONSTRAINT [FK_dbo.GalleryImages_dbo.Galleries_GalleryId]
+GO
+/****** Object:  StoredProcedure [dbo].[AuthenticateUser]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create Procedure [dbo].[AuthenticateUser]
+    @UserName NVARCHAR(255),  -- Username or Email for login
+    @Password NVARCHAR(255),  -- Password provided by the user
+    @UserId INT OUTPUT,       -- Output parameter to return the user ID
+    @UserRole NVARCHAR(255) OUTPUT,
+	@Url NVARCHAR(255) OUTPUT
+as begin
+ DECLARE @StoredPassword NVARCHAR(255);
+  DECLARE @RoleId INT;
+
+     SELECT @UserId = Id,
+           @StoredPassword = HashPassword
+    FROM Users
+    WHERE Email = @UserName;
+
+	 IF @UserId IS NULL
+	 BEGIN
+        SET @UserRole = 'Invalid user name or password';
+        RETURN;
+    END
+	-- Verify the password
+    IF @StoredPassword <> @Password
+    BEGIN
+        SET @UserRole = 'Invalid user name or password';
+        SET @UserId = NULL;
+        RETURN;
+    END
+
+ SELECT @RoleId = RoleId
+    FROM RoleAssigns
+    WHERE UserId = @UserId;
+
+	-- If RoleId is null, return an error
+    IF @RoleId IS NULL
+    BEGIN
+        SET @UserRole = 'Role not assigned';
+        RETURN;
+    END
+
+    -- Fetch the role name from the Roles table using RoleId
+    SELECT @UserRole = Title
+    FROM Roles
+    WHERE Id = @RoleId;
+
+IF @Url IS NOT NULL
+BEGIN
+    SELECT 1;
+END
+ELSE
+BEGIN
+    SELECT 0;
+	If @UserRole = 'SuperAdmin'
+	Begin
+     set @Url = '/Admin'
+	End
+END
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[CategoryAction]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create procedure [dbo].[CategoryAction]
+@Id INT,
+@Title NVARCHAR(200),
+@Description NVARCHAR(max),
+@Image NVARCHAR(200),
+@CreatedBy NVARCHAR(200),
+@HostAddress NVARCHAR(200),
+@DisplayOrder INT,
+@Result INT OUTPUT,
+@IsCatExist INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IsCatIdExist INT;
+    -- Check for Edit Case
+    IF(@Id > 0)
+    BEGIN
+        -- Check if the Title already exists for another Category (excluding the current one)
+        SELECT @IsCatIdExist = Id FROM Categories WHERE LOWER(Title) = LOWER(@Title) AND Id <> @Id;
+
+        IF @IsCatIdExist IS NOT NULL
+        BEGIN
+            SET @IsCatExist = 1;
+        END
+        ELSE
+        BEGIN
+            IF EXISTS (SELECT 1 FROM Categories WHERE Id = @Id)
+            BEGIN
+                -- Update the Category
+                UPDATE Categories
+                SET
+                    Title = @Title,
+                    Image = @Image,
+                    CreatedBy = @CreatedBy,
+                    UserHostAdd = @HostAddress,
+                    DisplayOrder = @DisplayOrder,
+                    Description = @Description,
+                    EditedOn = GETDATE()
+                WHERE Id = @Id;
+
+                SET @IsCatExist = 0;
+                SET @Result = 1; -- Assume success if the record exists
+            END
+            ELSE
+            BEGIN
+			    SET @IsCatExist = 0;
+                SET @Result = 0; -- Failure, ID not found
+            END
+        END
+    END
+    ELSE
+    BEGIN
+        -- Check if the Title already exists for a new Category
+        SELECT @IsCatIdExist = Id FROM Categories WHERE LOWER(Title) = LOWER(@Title);
+
+        IF @IsCatIdExist IS NOT NULL
+        BEGIN
+            SET @IsCatExist = 1;
+        END
+        ELSE
+        BEGIN
+            BEGIN TRY
+                -- Insert new Category
+                INSERT INTO Categories (Title, Image, CreatedBy, UserHostAdd, DisplayOrder, IsFeatured, Status, Description, CreatedOn, EditedOn)
+                VALUES (@Title, @Image, @CreatedBy, @HostAddress, @DisplayOrder,0, 1, @Description, GETDATE(), GETDATE());
+                SET @IsCatExist = 0;
+                SET @Result = 1; -- Success if no error occurs
+            END TRY
+            BEGIN CATCH
+		   	 SET @IsCatExist = 0;
+                SET @Result = 0; -- Failure if an error occurs
+            END CATCH
+        END
+    END
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[ChangePassword]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create procedure [dbo].[ChangePassword]
+   @OldPassword NVARCHAR(255),
+   @NewPassword NVARCHAR(255),
+   @UserId INT,
+   @Result INT output
+as begin
+ IF EXISTS (SELECT 1 FROM Users
+               WHERE Id = @UserId
+               AND HashPassword = @OldPassword)
+    BEGIN
+	 UPDATE Users
+        SET HashPassword =  @NewPassword
+        WHERE Id = @UserId;
+		SET @Result =1;
+    END
+    ELSE
+    BEGIN
+	    SET @Result =0;
+    END
+END
+
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[ClientAction]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[ClientAction]
+@Id INT,
+@Title NVARCHAR(200),
+@Description NVARCHAR(max),
+@Image NVARCHAR(200),
+@CreatedBy NVARCHAR(200),
+@HostAddress NVARCHAR(200),
+@DisplayOrder INT,
+@Result INT OUTPUT,
+@IsCatExist INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IsCatIdExist INT;
+    -- Check for Edit Case
+    IF(@Id > 0)
+    BEGIN
+        -- Check if the Title already exists for another Category (excluding the current one)
+        SELECT @IsCatIdExist = Id FROM Clients WHERE LOWER(Title) = LOWER(@Title) AND Id <> @Id;
+
+        IF @IsCatIdExist IS NOT NULL
+        BEGIN
+            SET @IsCatExist = 1;
+        END
+        ELSE
+        BEGIN
+            IF EXISTS (SELECT 1 FROM Clients WHERE Id = @Id)
+            BEGIN
+                -- Update the Category
+                UPDATE Clients
+                SET
+                    Title = @Title,
+                    Image = @Image,
+                    CreatedBy = @CreatedBy,
+                    UserHostAdd = @HostAddress,
+                    DisplayOrder = @DisplayOrder,
+                    Description = @Description,
+                    EditedOn = GETDATE()
+                WHERE Id = @Id;
+
+                SET @IsCatExist = 0;
+                SET @Result = 1; -- Assume success if the record exists
+            END
+            ELSE
+            BEGIN
+			    SET @IsCatExist = 0;
+                SET @Result = 0; -- Failure, ID not found
+            END
+        END
+    END
+    ELSE
+    BEGIN
+        -- Check if the Title already exists for a new Category
+        SELECT @IsCatIdExist = Id FROM Clients WHERE LOWER(Title) = LOWER(@Title);
+
+        IF @IsCatIdExist IS NOT NULL
+        BEGIN
+            SET @IsCatExist = 1;
+        END
+        ELSE
+        BEGIN
+            BEGIN TRY
+                -- Insert new Category
+                INSERT INTO Clients (Title, Image, CreatedBy, UserHostAdd, DisplayOrder, Status, Description, CreatedOn, EditedOn)
+                VALUES (@Title, @Image, @CreatedBy, @HostAddress, @DisplayOrder, 1, @Description, GETDATE(), GETDATE());
+                SET @IsCatExist = 0;
+                SET @Result = 1; -- Success if no error occurs
+            END TRY
+            BEGIN CATCH
+		   	 SET @IsCatExist = 0;
+                SET @Result = 0; -- Failure if an error occurs
+            END CATCH
+        END
+    END
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetAllFilterProducts]    Script Date: 11-10-2024 08:16:46 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE [dbo].[GetGalleryData]
+CREATE PROCEDURE [dbo].[GetAllFilterProducts]
+    @Start INT,
+    @Length INT,
+	@CatId INT = NULL,
+    @MakeId INT = NULL,
+    @ModelTitle NVARCHAR(100) = '0',
+    @YearTitle NVARCHAR(100) = '0',
+    @EngineTitle NVARCHAR(100) = '0',
+    @LitersTitle NVARCHAR(100) = '0',
+    @ChassisTitle NVARCHAR(100) = '0',
+    @Search NVARCHAR(100) = '0'
+AS
+BEGIN
+DECLARE @IdTable TABLE (
+    Id INT,
+    DisplayOrder INT,
+    CreatedOn DATETIME
+);
+    DECLARE @TotalCount INT;
+
+    SELECT @TotalCount = COUNT(DISTINCT ap.Id)
+    FROM AutoParts ap
+	LEFT JOIN
+	AutoPartMakes apm on apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+					AND (@MakeId IS NULL Or @MakeId = 0 OR apm.Make_Id = @MakeId)               -- Filter by Make if provided
+            AND (@ModelTitle IS NULL Or @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)   -- Filter by Model if provided
+            AND (
+               @YearTitle IS NULL
+               OR @YearTitle = '0'
+            OR (
+                    -- Check if selected year is within the year range in the Year_Title field
+               TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+                   AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+               )
+             )  -- Filter by year
+            AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle) -- Filter by EngineTitle if valid
+            AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)  -- Filter by LitersTitle if valid
+            AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle) -- Filter by ChassisTitle if valid
+			AND (@Search IS NULL OR @Search = '0' OR ap.Title LIKE '%' + @Search + '%') -- Search filter
+AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+
+
+    -- Select all columns from AutoParts and store Id in the table variable
+ INSERT INTO @IdTable (Id,DisplayOrder,CreatedOn)
+    SELECT DISTINCT ap.Id, ap.DisplayOrder, ap.CreatedOn -- Add DisplayOrder and CreatedOn to satisfy ORDER BY
+    FROM AutoParts ap
+    LEFT JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR @MakeId = 0 OR apm.Make_Id = @MakeId)
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)
+        AND (@YearTitle IS NULL OR @YearTitle = '0' OR
+            (TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+            AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)))
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle)
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle)
+   AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+    ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+    OFFSET @Start ROWS
+    FETCH NEXT @Length ROWS ONLY;
+
+    -- Select all columns, based on pagination logic
+;WITH DistinctParts AS (
+    SELECT DISTINCT ap.Id AS AutoPartId
+    FROM AutoParts ap
+    left JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+    WHERE
+        (@CatId IS NULL OR @CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR @MakeId = 0 OR apm.Make_Id = @MakeId)
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR apm.Model_Title = @ModelTitle)
+        AND (@YearTitle IS NULL OR @YearTitle = '0' OR
+            (TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+            AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)))
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle)
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle)
+               AND (@Search IS NULL OR @Search = '0' OR  LOWER(LTRIM(RTRIM(ap.Title))) LIKE '%' + LOWER(LTRIM(RTRIM(@Search))) + '%')
+)
+
+SELECT
+    ap.Id AS AutoPartId,
+    ap.Title AS Title,
+    ap.Description AS Description,
+    ap.Category_Id,
+    ap.ExtraField AS Package,
+    ap.DisplayOrder,
+    ap.CreatedOn,
+    img.ImageUrl
+FROM DistinctParts dp
+JOIN AutoParts ap ON ap.Id = dp.AutoPartId
+LEFT JOIN (
+    SELECT
+        ai.AutoPartId,
+        ai.Image AS ImageUrl,
+        ROW_NUMBER() OVER (PARTITION BY ai.AutoPartId ORDER BY CASE WHEN ai.[Default] = 1 THEN 0 ELSE 1 END, ai.Id) AS ImageRank
+    FROM AutoPartImages ai
+) img ON img.AutoPartId = ap.Id AND img.ImageRank = 1
+ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+OFFSET @Start ROWS
+FETCH NEXT @Length ROWS ONLY;
+
+
+	SELECT
+     	pm.AutoPart_Id as ProductId,
+        pm.Model_Title,
+        pm.Year_Title,
+        m.Title AS Make_Title
+    FROM
+        AutoPartMakes pm
+    LEFT JOIN
+        Makes m ON m.MakeId = pm.Make_Id
+    INNER JOIN
+	    @IdTable it ON pm.AutoPart_Id = it.Id
+		where
+		 (@MakeId IS NULL OR @MakeId = '0' OR pm.Make_Id = @MakeId) -- Filter by Make
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR pm.Model_Title = @ModelTitle) -- Filter by Model
+        AND (
+    @YearTitle IS NULL
+    OR @YearTitle = '0'
+    OR (
+        -- Ensure CHARINDEX finds the hyphen before proceeding
+        CHARINDEX('-', pm.Year_Title) > 0 AND
+        TRY_CAST(SUBSTRING(pm.Year_Title, 1, CHARINDEX('-', pm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+        AND TRY_CAST(SUBSTRING(pm.Year_Title, CHARINDEX('-', pm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+    )
+)
+
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR pm.Engine_Title = @EngineTitle) -- Filter by Engine Title
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR pm.Liter_Title = @LitersTitle) -- Filter by Liters
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR pm.Chassis_Title = @ChassisTitle) -- Filter by Chassis
+
+		  SELECT @TotalCount AS TotalCount;
+END
+
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetAutoPartList]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetAutoPartList]
+    @Start INT,
+    @Length INT,
+    @dropdownId INT,
+    @SearchValue NVARCHAR(255),
+    @sortColumnIndex NVARCHAR(10) = NULL,  -- Add parameter for column index with default NULL
+    @sortColumnDirection NVARCHAR(4) = NULL  -- Add parameter for sorting direction with default NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Offset INT = @Start;
+    DECLARE @OrderBy NVARCHAR(255);
+
+    -- Set default values if @sortColumnIndex or @sortColumnDirection is NULL or empty
+    IF @sortColumnIndex IS NULL OR @sortColumnIndex = ''
+    BEGIN
+        SET @sortColumnIndex = '1';  -- Default to sorting by DisplayOrder
+    END
+
+    IF @sortColumnDirection IS NULL OR @sortColumnDirection = ''
+    BEGIN
+        SET @sortColumnDirection = 'desc';  -- Default to descending order
+    END
+
+    -- Determine the ORDER BY clause based on the column index
+    SET @OrderBy = CASE @sortColumnIndex
+                    WHEN '1' THEN 'AutoPartSId'
+                    WHEN '2' THEN 'DisplayOrder'
+                    ELSE 'AutoPartSId'  -- Default to DisplayOrder if no valid column is specified
+                   END + ' ' + @sortColumnDirection;
+
+    -- Use dynamic SQL to include the dynamic ORDER BY clause
+    DECLARE @SQL NVARCHAR(MAX);
+    SET @SQL = '
+    ;WITH AutoPartData AS
+    (
+        SELECT
+            a.Id,
+            a.AutoPartSId,
+            a.Title,
+            c.Title AS Category,  -- Fetch Category title from Category table
+            a.Status,
+			a.IsFeatured,
+            a.DisplayOrder
+        FROM
+            AutoParts a
+	    Left JOIN Categories c ON a.Category_Id = c.Id  -- Join with Category table
+        WHERE
+            (@SearchValue IS NULL OR @SearchValue = ''''
+                OR a.Title LIKE ''%'' + @SearchValue + ''%''
+                OR c.Title LIKE ''%'' + @SearchValue + ''%''
+                OR a.AutoPartSId LIKE ''%'' + @SearchValue + ''%'')
+            AND (@dropdownId = 2 OR a.Status = CASE @dropdownId WHEN 0 THEN 0 WHEN 1 THEN 1 END)
+    )
+    SELECT
+        *
+    FROM
+        AutoPartData
+    ORDER BY ' + @OrderBy + '
+    OFFSET @Offset ROWS
+    FETCH NEXT @Length ROWS ONLY;';
+
+    EXEC sp_executesql @SQL,
+        N'@dropdownId INT, @SearchValue NVARCHAR(255), @Offset INT, @Length INT',
+        @dropdownId, @SearchValue, @Offset, @Length;
+
+    -- Return total records count for pagination
+    DECLARE @SQLCount NVARCHAR(MAX);
+    SET @SQLCount = '
+    SELECT COUNT(*) FROM
+    (
+        SELECT
+            a.Id
+        FROM
+            AutoParts a
+        Left JOIN Categories c ON a.Category_Id = c.Id  -- Join with Category table for search count
+        WHERE
+            (@SearchValue IS NULL OR @SearchValue = ''''
+                OR a.Title LIKE ''%'' + @SearchValue + ''%''
+                OR c.Title LIKE ''%'' + @SearchValue + ''%''
+                OR a.AutoPartSId LIKE ''%'' + @SearchValue + ''%'')
+            AND (@dropdownId = 2 OR a.Status = CASE @dropdownId WHEN 0 THEN 0 WHEN 1 THEN 1 END)
+    ) AS TotalRecords';
+
+    EXEC sp_executesql @SQLCount,
+        N'@dropdownId INT, @SearchValue NVARCHAR(255)',
+        @dropdownId, @SearchValue;
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetBlogList]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetBlogList]
+    @Start INT,
+    @Length INT,
+    @dropdownId INT,  -- 0 = inactive (false), 1 = active (true), 2 = all
+    @sortColumnIndex NVARCHAR(50),
+    @sortColumnDirection NVARCHAR(4),
+    @SearchValue NVARCHAR(255) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Table to store blogs temporarily
+    DECLARE @Blogs TABLE (
+        Id INT,
+        Title NVARCHAR(255),
+        Status BIT,
+        IsFeatured BIT,
+        DisplayOrder INT
+    );
+
+    -- Select the data with filtering based on dropdownId (status) and search value
+    INSERT INTO @Blogs
+    SELECT Id, Title, Status, IsFeatured, DisplayOrder
+    FROM Blogs
+    WHERE
+        (@dropdownId = 2 OR (Status = CASE @dropdownId WHEN 0 THEN 0 WHEN 1 THEN 1 END))  -- Filter by status based on dropdownId
+      AND (@SearchValue IS NULL OR Title LIKE '%' + @SearchValue + '%');  -- Filter by search value if provided
+
+    -- Sorting the data based on the column index and direction
+    IF @sortColumnIndex = '0' AND @sortColumnDirection = 'asc'
+    BEGIN
+        SELECT * FROM @Blogs ORDER BY Id OFFSET @Start ROWS FETCH NEXT @Length ROWS ONLY;
+    END
+    ELSE IF @sortColumnIndex = '0' AND @sortColumnDirection = 'desc'
+    BEGIN
+        SELECT * FROM @Blogs ORDER BY Id DESC OFFSET @Start ROWS FETCH NEXT @Length ROWS ONLY;
+    END
+    ELSE IF @sortColumnIndex = '1' AND @sortColumnDirection = 'asc'
+    BEGIN
+        SELECT * FROM @Blogs ORDER BY Title OFFSET @Start ROWS FETCH NEXT @Length ROWS ONLY;
+    END
+    ELSE IF @sortColumnIndex = '1' AND @sortColumnDirection = 'desc'
+    BEGIN
+        SELECT * FROM @Blogs ORDER BY Title DESC OFFSET @Start ROWS FETCH NEXT @Length ROWS ONLY;
+    END
+    ELSE IF @sortColumnIndex = '2' AND @sortColumnDirection = 'asc'
+    BEGIN
+        SELECT * FROM @Blogs ORDER BY DisplayOrder OFFSET @Start ROWS FETCH NEXT @Length ROWS ONLY;
+    END
+    ELSE
+    BEGIN
+        SELECT * FROM @Blogs ORDER BY DisplayOrder DESC OFFSET @Start ROWS FETCH NEXT @Length ROWS ONLY;
+    END
+
+    -- Return the total record count for pagination
+    SELECT COUNT(*) AS TotalRecords
+    FROM Blogs
+    WHERE
+        (@dropdownId = 2 OR (Status = CASE @dropdownId WHEN 0 THEN 0 WHEN 1 THEN 1 END))  -- Filter by status based on dropdownId
+      AND (@SearchValue IS NULL OR Title LIKE '%' + @SearchValue + '%');
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetBlogsRecentAndFeatured]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[GetBlogsRecentAndFeatured]
+as begin
+select * from Blogs where Status = 1 AND IsFeatured = 1 ORDER BY CreatedOn DESC;
+
+select * from Blogs where Status = 1 and IsFeatured = 0 ORDER BY CreatedOn DESC;
+
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetCategoryById]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create procedure [dbo].[GetCategoryById]
+@Id INT
+as begin
+select * from Categories
+where Id = @Id
+end
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetCategoryList]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[GetCategoryList]
+@Active INT = 0
+as begin
+
+If @Active <> 0
+begin
+select * from Categories where Status = 1
+end
+Else
+begin
+select * from Categories
+end
+end
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetClientsAndGallery]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[GetClientsAndGallery]
+as begin
+Select
+Id,
+Title,
+Image
+from Clients where Status = 1 Order By DisplayOrder Desc;
+
+Select
+g.Id as Id,
+gi.Image as Image,
+g.Title as Title
+from Galleries g
+join GalleryImages gi On gi.GalleryId = g.Id
+where g.Status = 1;
+
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetDropCatMake]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[GetDropCatMake]
+as begin
+select
+Id,
+Title
+from Categories where Status = 1
+
+select
+MakeId,
+Title
+from Makes where Status = 1
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetDropMake]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetDropMake]
+    @MakeId INT,
+    @CatId INT
+AS
+BEGIN
+    IF @CatId = 0
+    BEGIN
+        SELECT DISTINCT Model_Title as Title
+        FROM AutoPartMakes WHERE Make_Id = @MakeId AND Status = 1;
+    END
+    ELSE
+    BEGIN
+        -- Filter by both Category_Id and MakeId
+        SELECT DISTINCT apm.Model_Title  as Title
+        FROM AutoParts ap
+        JOIN AutoPartMakes apm ON ap.Id = apm.AutoPart_Id
+        WHERE ap.Category_Id = @CatId AND apm.Make_Id = @MakeId;
+    END
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetDropYELC]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetDropYELC]
+    @CatId INT = 0,
+    @MakeId INT,
+    @ModelTitle NVARCHAR(250),
+    @YearTitle NVARCHAR(50) = NULL,
+    @EngineTitle NVARCHAR(250) = NULL,
+    @LitersTitle NVARCHAR(250) = NULL,
+    @ChassisTitle NVARCHAR(250) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        ap.Id AS AutoPartId,
+        ap.Category_Id,
+        apm.Year_Title as YearTitle,
+        apm.Engine_Title as EngineTitle,
+        apm.Liter_Title as LitersTitle,
+        apm.Chassis_Title as ChassisTitle
+    FROM
+        AutoPartMakes apm
+    INNER JOIN
+        AutoParts ap ON ap.Id = apm.Id
+    WHERE
+        (@CatId = 0 OR ap.Category_Id = @CatId)
+        AND (@MakeId IS NULL OR apm.Make_Id = @MakeId)               -- Filter by Make if provided
+        AND (@ModelTitle IS NULL OR apm.Model_Title = @ModelTitle)   -- Filter by Model if provided
+        AND (
+            @YearTitle IS NULL
+            OR @YearTitle = '0'
+            OR (
+                -- Check if selected year is within the year range in the Year_Title field
+                TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+                AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+            )
+        )  -- Filter by year
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle) -- Filter by EngineTitle if valid
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)  -- Filter by LitersTitle if valid
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle); -- Filter by ChassisTitle if valid
+END
+GO
+/****** Object:  StoredProcedure [dbo].[GetFileUploadList]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[GetFileUploadList]
+as
+begin
+select * from FileUploadModels
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetFinalProduct]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetFinalProduct]
+    @Title NVARCHAR(100)
+AS
+BEGIN
+    -- Declare variable to store AutoPart Id
+    DECLARE @Id INT;
+
+    -- Retrieve the AutoPart Id based on the provided Title
+    SELECT @Id = ap.Id
+    FROM AutoParts ap
+    WHERE LOWER(LTRIM(RTRIM(ap.Title))) = LOWER(LTRIM(RTRIM(@Title)));
+
+    -- If no AutoPart is found, return early
+    IF @Id IS NULL
+    BEGIN
+        PRINT 'No matching AutoPart found.';
+        RETURN;
+    END
+
+    -- Select details of the AutoPart
+    SELECT
+        ap.Id AS AutoPartId,
+        ap.Title,
+        ap.Description,
+        ap.Category_Id,
+        ap.ExtraField AS Package
+    FROM AutoParts ap
+    WHERE ap.Id = @Id;
+
+    -- Select images related to the AutoPart
+    SELECT
+	Image,
+	[Default]
+    FROM AutoPartImages
+    WHERE AutoPartId = @Id;
+
+	select
+	apm.Id as AutoPArtMakeID,
+	m.Title as Make,
+	apm.Model_Title as Model,
+	apm.Year_Title  as Year,
+	apm.Engine_Title as Engine,
+	apm.Chassis_Title as Chassis,
+	apm.CreatedOn,
+	apm.DisplayOrder
+	from AutoPartMakes apm
+	left join
+	Makes m on m.MakeId = apm.Make_Id
+
+	Where AutoPart_Id = @Id order By apm.DisplayOrder,apm.CreatedOn Desc;
+END;
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetGalleryData]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+Create PROCEDURE [dbo].[GetGalleryData]
     @Start INT,
     @Length INT,
 	@dropdownId INT,
@@ -103,32 +1755,558 @@ FROM
 				AND (@dropdownId = 2 OR (g.Status = CASE @dropdownId WHEN 0 THEN 1 WHEN 1 THEN 0 END))
     ) AS TotalRecords;
 END
-
-
-
-
-/*    ==Scripting Parameters==
-
-    Source Server Version : SQL Server 2016 (13.0.4259)
-    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
-    Source Database Engine Type : Standalone SQL Server
-
-    Target Server Version : SQL Server 2017
-    Target Database Engine Edition : Microsoft SQL Server Standard Edition
-    Target Database Engine Type : Standalone SQL Server
-*/
-
-USE [sumarautoDb]
 GO
-/****** Object:  StoredProcedure [dbo].[UpsertGallery]    Script Date: 10/3/2024 1:23:59 PM ******/
+/****** Object:  StoredProcedure [dbo].[GetGalleryDetails]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create PROCEDURE [dbo].[GetGalleryDetails]
+    @GalleryId INT
+AS
+BEGIN
+    SELECT
+        g.Id AS GalleryId,
+        g.Title
+    FROM
+        Galleries g
+		    LEFT JOIN
+        GalleryImages gi ON gi.GalleryId = g.Id
+    WHERE
+        @GalleryId IS NULL OR g.Id = @GalleryId
+
+    -- Second result set: Associated banner images
+    SELECT
+        bi.Id AS GalleryImgId,
+        bi.Image,
+		bi.DefaultImage
+    FROM
+        GalleryImages bi
+    WHERE
+        bi.GalleryId = @GalleryId;
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetHomePageData]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create procedure [dbo].[GetHomePageData]
+as begin
+
+select * from Banners Where Status = 1
+select * from Categories where Status = 1
+select * from Makes where Status = 1
+
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetIsFeaturedMakeAndCat]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create Procedure [dbo].[GetIsFeaturedMakeAndCat]
+as begin
+select
+Title,
+Id,
+Description,
+Image
+from Categories where IsFeatured = 1 AND Status = 1
+select
+MakeId,
+Image,
+Title
+from Makes where IsFeatured = 1 AND Status = 1
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetKeysList]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create procedure [dbo].[GetKeysList]
+as begin
+Select
+Type,
+Name as Title,
+Description as Value
+from Keys
+end
+GO
+/****** Object:  StoredProcedure [dbo].[GetMakeList]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[GetMakeList]
+@Id INT
+as begin
+select *,m.Title as Make_Title,ap.AutoPartSId as AutoPartSId,ap.Id as AutoPartId from
+AutoPartMakes apm
+join Makes m on apm.Make_Id = m.MakeId
+join AutoParts ap ON ap.Id = @Id
+where AutoPart_Id = @Id
+end
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetPartofSameModel]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetPartofSameModel]
+@Make NVARCHAR(100),
+@Model NVARCHAR(100),
+@Engine NVARCHAR(100),
+@Chassis NVARCHAR(100)
+AS
+BEGIN
+    -- Get distinct AutoPart Ids first
+    WITH DistinctAutoParts AS (
+        SELECT DISTINCT ap.Id
+        FROM AutoParts ap
+        INNER JOIN AutoPartMakes apm ON apm.AutoPart_Id = ap.Id
+        INNER JOIN Makes m ON m.MakeId = apm.Make_Id
+		LEFT JOIN AutoPartImages ai ON ai.AutoPartId = ap.Id AND ai.[Default] = 0
+        WHERE m.Title = @Make
+          AND apm.Model_Title = @Model
+          AND apm.Chassis_Title = @Chassis
+    )
+    -- Now select the other fields for the distinct AutoPart Ids
+    SELECT
+        ap.Id,
+        ap.Title,
+        ap.ExtraField as Package,
+		ai.Image
+    FROM AutoParts ap
+    JOIN DistinctAutoParts dap ON dap.Id = ap.Id
+    LEFT JOIN AutoPartImages ai ON ai.AutoPartId = ap.Id AND ai.[Default] = 0
+END
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MakeAction]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[MakeAction]
+@Id INT,
+@Title NVARCHAR(200),
+@Description NVARCHAR(max),
+@Image NVARCHAR(200),
+@CreatedBy NVARCHAR(200),
+@HostAddress NVARCHAR(200),
+@DisplayOrder INT,
+@Result INT OUTPUT,
+@IsMakeExist INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IsMakeIdExist INT;
+    -- Check for Edit Case
+    IF(@Id > 0)
+    BEGIN
+        -- Check if the Title already exists for another Category (excluding the current one)
+        SELECT @IsMakeIdExist = MakeId FROM Makes WHERE LOWER(Title) = LOWER(@Title) AND MakeId <> @Id;
+
+        IF @IsMakeIdExist IS NOT NULL
+        BEGIN
+            SET @IsMakeExist = 1;
+        END
+        ELSE
+        BEGIN
+            IF EXISTS (SELECT 1 FROM Makes WHERE MakeId = @Id)
+            BEGIN
+                -- Update the Category
+                UPDATE Makes
+                SET
+                    Title = @Title,
+                    Image = @Image,
+                    CreatedBy = @CreatedBy,
+                    UserHostAdd = @HostAddress,
+                    DisplayOrder = @DisplayOrder,
+                    Description = @Description,
+                    EditedOn = GETDATE()
+                WHERE MakeId = @Id;
+
+                SET @IsMakeExist = 0;
+                SET @Result = 1; -- Assume success if the record exists
+            END
+            ELSE
+            BEGIN
+			    SET @IsMakeExist = 0;
+                SET @Result = 0; -- Failure, ID not found
+            END
+        END
+    END
+    ELSE
+    BEGIN
+        -- Check if the Title already exists for a new Category
+        SELECT @IsMakeIdExist = MakeId FROM Makes WHERE LOWER(Title) = LOWER(@Title);
+
+        IF @IsMakeIdExist IS NOT NULL
+        BEGIN
+            SET @IsMakeExist = 1;
+        END
+        ELSE
+        BEGIN
+            BEGIN TRY
+                -- Insert new Category
+                INSERT INTO Makes(Title, Image, CreatedBy, UserHostAdd, DisplayOrder, Status,IsFeatured, Description, CreatedOn, EditedOn)
+                VALUES (@Title, @Image, @CreatedBy, @HostAddress, @DisplayOrder,1, 0, @Description, GETDATE(), GETDATE());
+                SET @IsMakeExist = 0;
+                SET @Result = 1; -- Success if no error occurs
+            END TRY
+            BEGIN CATCH
+		   	 SET @IsMakeExist = 0;
+                SET @Result = 0; -- Failure if an error occurs
+            END CATCH
+        END
+    END
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[ModelAction]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+Create procedure [dbo].[ModelAction]
+@Id INT,
+@Title NVARCHAR(200),
+@Description NVARCHAR(max),
+@CreatedBy NVARCHAR(200),
+@HostAddress NVARCHAR(200),
+@DisplayOrder INT,
+@Result INT OUTPUT,
+@IsModelExist INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IsModelIdExist INT;
+    -- Check for Edit Case
+    IF(@Id > 0)
+    BEGIN
+        -- Check if the Title already exists for another Make (excluding the current one)
+        SELECT @IsModelIdExist = Id FROM MModels WHERE LOWER(Title) = LOWER(@Title) AND Id <> @Id;
+
+        IF @IsModelIdExist IS NOT NULL
+        BEGIN
+            SET @IsModelExist = 1;
+        END
+        ELSE
+        BEGIN
+            IF EXISTS (SELECT 1 FROM MModels WHERE Id = @Id)
+            BEGIN
+                -- Update the Category
+                UPDATE MModels
+                SET
+                    Title = @Title,
+                    CreatedBy = @CreatedBy,
+                    UserHostAdd = @HostAddress,
+                    DisplayOrder = @DisplayOrder,
+                    Description = @Description,
+                    EditedOn = GETDATE()
+                WHERE Id = @Id;
+
+                SET @IsModelExist = 0;
+                SET @Result = 1; -- Assume success if the record exists
+            END
+            ELSE
+            BEGIN
+			    SET @IsModelExist = 0;
+                SET @Result = 0; -- Failure, ID not found
+            END
+        END
+    END
+    ELSE
+    BEGIN
+        -- Check if the Title already exists for a new Category
+        SELECT @IsModelIdExist = Id FROM MModels WHERE LOWER(Title) = LOWER(@Title);
+
+        IF @IsModelIdExist IS NOT NULL
+        BEGIN
+            SET @IsModelExist = 1;
+        END
+        ELSE
+        BEGIN
+            BEGIN TRY
+                -- Insert new Category
+                INSERT INTO MModels(Title, CreatedBy, UserHostAdd, DisplayOrder, Status, Description, CreatedOn, EditedOn)
+                VALUES (@Title, @CreatedBy, @HostAddress, @DisplayOrder, 1, @Description, GETDATE(), GETDATE());
+                SET @IsModelExist = 0;
+                SET @Result = 1; -- Success if no error occurs
+            END TRY
+            BEGIN CATCH
+		   	 SET @IsModelExist = 0;
+                SET @Result = 0; -- Failure if an error occurs
+            END CATCH
+        END
+    END
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[SaveOrUpdateAutoPartMake]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SaveOrUpdateAutoPartMake]
+    @Id INT = NULL, -- If NULL, this is an insert
+    @AutoPartId INT,
+    @MakeId INT,
+    @Model_Title NVARCHAR(255),
+    @Year_Title NVARCHAR(50),
+    @Engine_Title NVARCHAR(50),
+    @Liter_Title NVARCHAR(50),
+    @Chassis_Title NVARCHAR(50),
+    @DisplayOrder INT,
+    @Status BIT,
+    @CreatedBy NVARCHAR(100),
+    @UserHostAddress NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        IF @Id IS NULL
+        BEGIN
+            -- Insert new AutoPartMake record
+            INSERT INTO AutoPartMakes (AutoPart_Id, Make_Id, Model_Title, Year_Title, Engine_Title, Liter_Title, Chassis_Title, DisplayOrder, Status, CreatedBy, CreatedOn, EditedOn, UserHostAdd)
+            VALUES (@AutoPartId, @MakeId, @Model_Title, @Year_Title, @Engine_Title, @Liter_Title, @Chassis_Title, @DisplayOrder, @Status, @CreatedBy, GETDATE(), GETDATE(), @UserHostAddress);
+        END
+        ELSE
+        BEGIN
+            -- Update existing AutoPartMake record
+            UPDATE AutoPartMakes
+            SET Make_Id = @MakeId,
+                Model_Title = @Model_Title,
+                Year_Title = @Year_Title,
+                Engine_Title = @Engine_Title,
+                Liter_Title = @Liter_Title,
+                Chassis_Title = @Chassis_Title,
+                DisplayOrder = @DisplayOrder,
+                Status = @Status,
+                EditedOn = GETDATE(),
+                UserHostAdd = @UserHostAddress
+            WHERE Id = @Id;
+        END
+    END TRY
+    BEGIN CATCH
+        -- Handle any errors
+        THROW;
+    END CATCH
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[saveOrUpdateAutoParts]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[saveOrUpdateAutoParts]
+    @ItemId INT = NULL,  -- If NULL, it means this is an insert
+    @Title NVARCHAR(255),
+	@ExtraField NVARCHAR(255),
+	@DefaultImage NVARCHAR(255) = Null,
+    @Description NVARCHAR(MAX),
+    @CategoryId INT,
+    @DisplayOrder INT = 0,
+    @CreatedBy NVARCHAR(100),
+    @UserHostAddress NVARCHAR(100),
+	@IsFeatured bit,
+	@Status bit,
+    -- Table-valued parameter for multiple details
+    @MultipleDetails dbo.MultipleDetailType READONLY
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @NewAutoPartId NVARCHAR(255);
+    DECLARE @NextNumber INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Check if we are inserting or updating
+        IF @ItemId IS NULL
+        BEGIN
+            -- Generate the next AutoPartSId
+            SELECT @NextNumber = ISNULL(MAX(CAST(SUBSTRING(AutoPartSId, 5, LEN(AutoPartSId)) AS INT)), 999) + 1
+            FROM AutoParts
+            WHERE ISNUMERIC(SUBSTRING(AutoPartSId, 5, LEN(AutoPartSId))) = 1;  -- Ensures it's a valid number
+
+            -- Set the new AutoPartSId
+            SET @NewAutoPartId = 'APID' + CAST(@NextNumber AS NVARCHAR(50));
+
+            -- Insert the main item with AutoPartSId
+            INSERT INTO AutoParts (Title,ExtraField, Description, Category_Id, DisplayOrder, Status,IsFeatured, UserHostAdd, CreatedBy, CreatedOn, EditedOn, Price, AutoPartSId)
+            VALUES (@Title,@ExtraField, @Description, @CategoryId, @DisplayOrder, @Status,@IsFeatured, @UserHostAddress, @CreatedBy, GETDATE(), GETDATE(), 0, @NewAutoPartId);
+
+            -- Get the newly inserted ItemId
+            SET @ItemId = SCOPE_IDENTITY();
+
+            -- Insert the multiple details for the item
+            INSERT INTO AutoPartMakes (AutoPart_Id, Make_Id, Model_Title, Year_Title, Engine_Title, Liter_Title, Chassis_Title, Status, UserHostAdd, CreatedBy, CreatedOn, EditedOn,DisplayOrder)
+            SELECT @ItemId, Make, Model, Year, Engine, Liter, Chassis, 1, @UserHostAddress, @CreatedBy, GETDATE(), GETDATE(),DisplayOrder
+            FROM @MultipleDetails;
+        END
+        ELSE
+        BEGIN
+            -- Update the existing item
+            UPDATE AutoParts
+            SET Title = @Title,
+                Description = @Description,
+                Category_Id = @CategoryId,
+                DisplayOrder = @DisplayOrder,
+                UserHostAdd = @UserHostAddress,
+				ExtraField = @ExtraField
+            WHERE Id = @ItemId;
+
+			If @DefaultImage Is NOT Null
+			Begin
+			UPDATE AutoPartImages
+            SET [Default] = 0  -- Remove default from all images for the current AutoPart
+            WHERE AutoPartId = @ItemId;
+
+            -- Set the new image as Default
+            UPDATE AutoPartImages
+            SET [Default] = 1
+            WHERE Image = @DefaultImage;
+			END
+        END
+
+        -- Commit transaction
+        COMMIT TRANSACTION;
+
+        -- Return the ItemId for reference
+        SELECT @ItemId AS ItemId;
+
+    END TRY
+    BEGIN CATCH
+        -- Rollback the transaction on error
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[TestingPage]    Script Date: 11-10-2024 08:16:46 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[UpsertGallery]
+CREATE PROCEDURE [dbo].[TestingPage]
+    @Start INT = 0,
+    @Length INT = 9,
+	@CatId INT = NULL,
+    @MakeId INT = NULL,
+    @ModelTitle NVARCHAR(100) = '0',
+    @YearTitle NVARCHAR(100) = '0',
+    @EngineTitle NVARCHAR(100) = '0',
+    @LitersTitle NVARCHAR(100) = '0',
+    @ChassisTitle NVARCHAR(100) = '0',
+    @Search NVARCHAR(100) = '0'
+AS
+BEGIN
+  DECLARE @IdTable TABLE (Id INT);
+    -- Select all columns from AutoParts and store Id in the table variable
+    INSERT INTO @IdTable (Id)
+    SELECT Id
+    FROM AutoParts
+    ORDER BY (SELECT NULL) -- Replace with actual column name for sorting
+    OFFSET @Start ROWS
+    FETCH NEXT @Length ROWS ONLY;
+
+    -- Select all columns, based on pagination logic
+    SELECT
+	    ap.Id AS AutoPartId,
+        ap.Title AS Title,
+        ap.Description AS Description,
+        ap.Category_Id,
+        ap.ExtraField AS Package,
+		ap.DisplayOrder,
+        img.ImageUrl
+    FROM
+	AutoParts ap
+	Left Join
+	AutoPartMakes apm on apm.AutoPart_Id = ap.Id
+	    LEFT JOIN
+        (SELECT
+            ai.AutoPartId,
+            ai.Image AS ImageUrl,
+            ROW_NUMBER() OVER (PARTITION BY ai.AutoPartId ORDER BY CASE WHEN ai.[Default] = 1 THEN 0 ELSE 1 END, ai.Id) AS ImageRank
+        FROM
+            AutoPartImages ai) img ON img.AutoPartId = ap.Id AND img.ImageRank = 1
+
+		where
+		    (@CatId Is null Or @CatId = 0 OR ap.Category_Id = @CatId)
+            AND (@MakeId IS NULL Or @MakeId = 0 OR apm.Make_Id = @MakeId)               -- Filter by Make if provided
+            AND (@ModelTitle IS NULL OR apm.Model_Title = @ModelTitle)   -- Filter by Model if provided
+        AND (
+            @YearTitle IS NULL
+            OR @YearTitle = '0'
+            OR (
+                -- Check if selected year is within the year range in the Year_Title field
+                TRY_CAST(SUBSTRING(apm.Year_Title, 1, CHARINDEX('-', apm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+                AND TRY_CAST(SUBSTRING(apm.Year_Title, CHARINDEX('-', apm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+            )
+        )  -- Filter by year
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR apm.Engine_Title = @EngineTitle) -- Filter by EngineTitle if valid
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR apm.Liter_Title = @LitersTitle)  -- Filter by LitersTitle if valid
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR apm.Chassis_Title = @ChassisTitle) -- Filter by ChassisTitle if valid
+    ORDER BY ap.DisplayOrder, ap.CreatedOn DESC
+    OFFSET @Start ROWS
+    FETCH NEXT @Length ROWS ONLY;
+
+
+	SELECT
+     	pm.AutoPart_Id as AutoPArtId,
+        pm.Model_Title,
+        pm.Year_Title,
+        m.Title AS Make
+    FROM
+        AutoPartMakes pm
+    LEFT JOIN
+        Makes m ON m.MakeId = pm.Make_Id
+    INNER JOIN
+	    @IdTable it ON pm.AutoPart_Id = it.Id
+		where
+		 (@MakeId IS NULL OR @MakeId = '0' OR pm.Make_Id = @MakeId) -- Filter by Make
+        AND (@ModelTitle IS NULL OR @ModelTitle = '0' OR pm.Model_Title = @ModelTitle) -- Filter by Model
+        AND (
+    @YearTitle IS NULL
+    OR @YearTitle = '0'
+    OR (
+        -- Ensure CHARINDEX finds the hyphen before proceeding
+        CHARINDEX('-', pm.Year_Title) > 0 AND
+        TRY_CAST(SUBSTRING(pm.Year_Title, 1, CHARINDEX('-', pm.Year_Title) - 1) AS INT) <= TRY_CAST(@YearTitle AS INT)
+        AND TRY_CAST(SUBSTRING(pm.Year_Title, CHARINDEX('-', pm.Year_Title) + 1, 4) AS INT) >= TRY_CAST(@YearTitle AS INT)
+    )
+)
+
+        AND (@EngineTitle IS NULL OR @EngineTitle = '0' OR pm.Engine_Title = @EngineTitle) -- Filter by Engine Title
+        AND (@LitersTitle IS NULL OR @LitersTitle = '0' OR pm.Liter_Title = @LitersTitle) -- Filter by Liters
+        AND (@ChassisTitle IS NULL OR @ChassisTitle = '0' OR pm.Chassis_Title = @ChassisTitle) -- Filter by Chassis
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[UpsertGallery]    Script Date: 11-10-2024 08:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpsertGallery]
     @Id INT,
     @Title NVARCHAR(255),
+	@UserHostAdd NVARCHAR(255),
     @SelectedDefault NVARCHAR(255) = NULL,
     @CreatedBy NVARCHAR(100) = 'Admin',
     @OutputId INT OUTPUT  -- Correctly declare the OUTPUT parameter
@@ -162,135 +2340,12 @@ BEGIN
     ELSE
     BEGIN
         -- Insert new gallery
-        INSERT INTO Galleries (Title, CreatedBy, CreatedOn, EditedOn, Status)
-        VALUES (@Title, @CreatedBy, GETDATE(), GETDATE(), 1);
+        INSERT INTO Galleries (Title, CreatedBy, CreatedOn, EditedOn, Status,DisplayOrder,UserHostAdd)
+        VALUES (@Title, @CreatedBy, GETDATE(), GETDATE(), 1,0,@UserHostAdd);
 
         -- Get the newly inserted Id and return it
         SET @OutputId = SCOPE_IDENTITY();
     END
 END
 
-
-
-
-
-
-
-
-
-
-
-USE sumarautoDb
 GO
-/****** Object:  StoredProcedure [dbo].[GetGalleryDetails]    Script Date: 10/3/2024 1:34:57 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-Create PROCEDURE [dbo].[GetGalleryDetails]
-    @GalleryId INT
-AS
-BEGIN
-    SELECT
-        g.Id AS GalleryId,
-        g.Title
-    FROM
-        Galleries g
-		    LEFT JOIN
-        GalleryImages gi ON gi.GalleryId = g.Id
-    WHERE
-        @GalleryId IS NULL OR g.Id = @GalleryId
-
-    -- Second result set: Associated banner images
-    SELECT
-        bi.Id AS GalleryImgId,
-        bi.Image,
-		bi.DefaultImage
-    FROM
-        GalleryImages bi
-    WHERE
-        bi.GalleryId = @GalleryId;
-END
-
-
-
-
-
-
-
-/*    ==Scripting Parameters==
-
-    Source Server Version : SQL Server 2016 (13.0.4259)
-    Source Database Engine Edition : Microsoft SQL Server Enterprise Edition
-    Source Database Engine Type : Standalone SQL Server
-
-    Target Server Version : SQL Server 2017
-    Target Database Engine Edition : Microsoft SQL Server Standard Edition
-    Target Database Engine Type : Standalone SQL Server
-*/
-
-USE [sumarautoDb]
-GO
-/****** Object:  StoredProcedure [dbo].[AuthenticateUser]    Script Date: 10/3/2024 3:29:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER Procedure [dbo].[AuthenticateUser]
-    @UserName NVARCHAR(255),  -- Username or Email for login
-    @Password NVARCHAR(255),  -- Password provided by the user
-    @UserId INT OUTPUT,       -- Output parameter to return the user ID
-    @UserRole NVARCHAR(255) OUTPUT,
-	@Url NVARCHAR(255) OUTPUT
-as begin
- DECLARE @StoredPassword NVARCHAR(255);
-  DECLARE @RoleId INT;
-
-     SELECT @UserId = Id,
-           @StoredPassword = HashPassword
-    FROM Users
-    WHERE Email = @UserName;
-
-	 IF @UserId IS NULL
-	 BEGIN
-        SET @UserRole = 'Invalid user name or password';
-        RETURN;
-    END
-	-- Verify the password
-    IF @StoredPassword <> @Password
-    BEGIN
-        SET @UserRole = 'Invalid user name or password';
-        SET @UserId = NULL;
-        RETURN;
-    END
-
- SELECT @RoleId = RoleId
-    FROM RoleAssigns
-    WHERE UserId = @UserId;
-
-	-- If RoleId is null, return an error
-    IF @RoleId IS NULL
-    BEGIN
-        SET @UserRole = 'Role not assigned';
-        RETURN;
-    END
-
-    -- Fetch the role name from the Roles table using RoleId
-    SELECT @UserRole = Title
-    FROM Roles
-    WHERE Id = @RoleId;
-
-IF @Url IS NOT NULL
-BEGIN
-    SELECT 1;
-END
-ELSE
-BEGIN
-    SELECT 0;
-	If @UserRole = 'SuperAdmin'
-	Begin
-     set @Url = '/Admin'
-	End
-END
-END
-

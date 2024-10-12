@@ -18,9 +18,9 @@
                         <th>#</th>
                         <th>Name</th>
                         <th>Details</th>
-                        <th>Message</th>
-                        <th>Country</th>
+                        <th>Location</th>
                         <th>Date</th>
+                        <th>Message</th>
                         <th style="background-image: none; cursor: auto; text-align:center;">Action</th>
                     </tr>
                 </thead>
@@ -35,25 +35,24 @@
                                 <td>
                                     <h6 class="table-text">@item.Name </h6>
                                 </td>
-                                <td>
+                                <td class="">
+                                    <label><strong>Email :</strong> @item.Email</label>
+                                    <label class=""><strong>Phone :</strong>  @item.Phone</label>
+                                </td>
+                                <td class="d-grid">
                                     <label><strong>Company :</strong> @item.CompanyName</label>
-                                    <label class="">@item.Phone</label>
+                                    <label class=""><strong>Country :</strong>  @item.Country</label>
+                                </td>
+                                <td>
+                                    <h6 class="table-text"> @item.CreatedOn.ToString("MMM-d-yyyy") </h6>
                                 </td>
                                 <td>
                                     <p class="text-dark">
                                         @item.Comment
                                     </p>
                                 </td>
-                                <td>
-                                    <p class="text-dark">
-                                        @item.Country
-                                    </p>
-                                </td>
-                                <td>
-                                    <h6 class="table-text"> @item.CreatedOn.ToString("MMM-d-yyyy") </h6>
-                                </td>
                                 <td style="text-align:center;">
-                                    <button type="button" class="deletebtn text-danger bg-transparent border-0 p-0 m-0" data-id="@item.Id" title="Delete" style="cursor:pointer;"><i class="bi bi-trash"></i></button>
+                                    <button type="button" class="deletebtn text-danger bg-transparent border-0 p-0 m-0" data-id="@item.Id" title="Delete" style="cursor:pointer;"><i class="ti ti-trash" style="font-size:20px;"></i></button>
                                 </td>
                             </tr>
                         }
