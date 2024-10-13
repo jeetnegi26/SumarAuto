@@ -57,5 +57,49 @@ namespace sumarauto.Service
             return makes;
         }
 
+        public List<Category> ReadCategory(string filePath)
+        {
+            var category = new List<Category>();
+
+            using (var workbook = new ClosedXML.Excel.XLWorkbook(filePath))
+            {
+                var worksheet = workbook.Worksheet(1); // Assuming the data is on the first sheet
+                var rows = worksheet.RowsUsed().Skip(1);  // Skip the header row
+                int count = 0;
+                foreach (var row in rows)
+                {
+                    count++;
+                    // Try to parse the Id, set to 0 if it fails
+                    int categoryId;
+                    bool isParsed = int.TryParse(row.Cell(1).GetValue<string>(), out categoryId);
+
+                    if (isParsed && !string.IsNullOrWhiteSpace(row.Cell(2).GetValue<string>()))
+                    {
+                        var Category = new Category
+                        {
+                            Id = categoryId,                        // First column (Id)
+                            Title = row.Cell(2).GetValue<string>(),  // Second column (Title)
+                            Description = row.Cell(3).GetValue<string>(),
+                            Image = "/Content/Images.pl_boot.png",
+                            CreatedBy = "Admin",
+                            CreatedOn = DateTime.Now,
+                            EditedOn = DateTime.Now,
+                            Status = true,
+                            DisplayOrder = count
+                        };
+
+                        category.Add(Category);
+                    }
+                    else
+                    {
+                        // Optionally log the issue or handle bad data
+                        // For example, continue processing valid rows
+                    }
+                }
+            }
+
+            return category;
+        }
+
     }
 }

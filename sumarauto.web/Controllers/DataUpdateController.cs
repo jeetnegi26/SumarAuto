@@ -65,5 +65,42 @@ namespace sumarauto.web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult UploadCategory(HttpPostedFileBase file)
+        {
+            if (file != null && file.ContentLength > 0)
+            {
+                // Ensure the file is an Excel (.xlsx) file
+                if (Path.GetExtension(file.FileName).ToLower() == ".xlsx")
+                {
+                    // Save the file to a temporary location
+                    var filePath = Path.Combine(Server.MapPath("~/Content/Products"), file.FileName);
+                    file.SaveAs(filePath);
+
+                    // Read the Excel file and map it to the Make model
+                    var categories = _csvService.ReadCategory(filePath); // Assuming _csvService is already instantiated
+
+                    // Insert the records into the database
+                    using (var context = new AppDbContext())
+                    {
+                        context.Category.AddRange(categories);  // Adding the list of Make objects to the database
+                        context.SaveChanges();          // Save changes to the database
+                    }
+
+                    ViewBag.Message = "File uploaded and data saved successfully.";
+                }
+                else
+                {
+                    ViewBag.Message = "Invalid file format. Please upload an Excel (.xlsx) file.";
+                }
+            }
+            else
+            {
+                ViewBag.Message = "Please upload a valid file.";
+            }
+
+            return View();
+        }
+
     }
 }
